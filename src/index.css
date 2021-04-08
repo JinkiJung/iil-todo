@@ -57,11 +57,27 @@ div.item_checkbox{
 }
 
 div.item_act{
-  width:91%;
+  width:88%;
 }
 
 div.item_option{
-  width: 3%;
+  width: 6%;
+}
+
+.eqWrap {
+	display: flex;
+}
+
+.equalHW {
+	flex: 1;
+}
+
+.equalHMWrap {
+	justify-content: space-between;
+}
+
+.eq {
+	padding: 10px;
 }
 
 button.item_content_drag_btn{
@@ -73,7 +89,7 @@ button.item_content_drag_btn{
 }
 
 button.item_option_btn{
-  width: 100%;
+  width: 50%;
   height: 100%;
   background-color: teal;
   border-width: 0;

@@ -1,4 +1,4 @@
-enum TascState {
+export enum TascState {
     None = 0,
     Active = 1,
     Focused = 2,
@@ -6,7 +6,8 @@ enum TascState {
     Done = 4
 }
 
-interface ITasc {
+export interface ITasc {
+    iid: number;
     id: string;
     goal: string;
     given: string;
@@ -19,9 +20,11 @@ interface ITasc {
     produce: string;
     state: TascState;
     order: number;
+    ownedBy: string;
 }
 
 class Tasc implements ITasc{
+    public iid: number;
     public id: string;
     public goal: string;
     public given: string;
@@ -34,8 +37,10 @@ class Tasc implements ITasc{
     public produce: string;
     public state: TascState;
     public order: number;
+    public ownedBy: string;
 
     constructor(itasc : Partial<ITasc>){
+        this.iid = 0;
         this.id = itasc.id || "";
         this.goal = itasc.goal || "";
         this.endWhen = itasc.endWhen || "";
@@ -48,23 +53,8 @@ class Tasc implements ITasc{
         this.produce = itasc.produce || "";
         this.leadTo = itasc.leadTo || "";
         this.order = itasc.order || -1;
+        this.ownedBy = itasc.ownedBy || itasc.actor || "";
     }
-    /*
-    constructor(id:string, actor: string, act: string,
-        startWhen: string, endWhen: string, order: number){
-        this.id = id;
-        this.goal = "";
-        this.endWhen = endWhen;
-        this.state = TascState.Active;
-        this.given = "";
-        this.startWhen = startWhen;
-        this.act = act;
-        this.actor = actor;
-        this.guidedBy = "";
-        this.produce = "";
-        this.leadTo = "";
-        this.order = order;
-    }*/
 
     update(entryFromInput: Object): Tasc{
         Object.assign(this, entryFromInput);

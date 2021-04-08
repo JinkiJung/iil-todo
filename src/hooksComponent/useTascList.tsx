@@ -13,17 +13,12 @@ const UseTascList = (initialTascList: Tasc[], validator?: Function) => {
           setTascList(tascs.sort((a, b) => b.order - a.order));
       }
     };
-    const onTascItemChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const {
-          currentTarget: {value},
-      } = event;
-      const attributes = event.currentTarget.name.split('==');
-      if (attributes.length===2){
-        let itemToBeUpdated = tascList.filter(x => x.id === attributes[0]);
-        if (itemToBeUpdated && itemToBeUpdated[0] && itemToBeUpdated[0] instanceof Tasc){
-          const updatedItem: Tasc = itemToBeUpdated[0].update({[attributes[1]]:value});
-          onTascListChange([...tascList.filter(x => x.id !== attributes[0]), updatedItem])
-        }
+    const onTascItemChange = (fieldsToUpdate: Partial<Tasc>) => {
+      let itemToBeUpdated: Tasc = tascList.filter(x => x.id === fieldsToUpdate.id).pop()!;
+      if (itemToBeUpdated){
+        const updatedItem = itemToBeUpdated.update(fieldsToUpdate);
+        //const updatedItem: Tasc = { ...itemToBeUpdated, ...fieldsToUpdate };
+        onTascListChange([...tascList.filter(x => x.id !== updatedItem.id), updatedItem]);
       }
     };
     return { tascList, onTascListChange, onTascItemChange };
