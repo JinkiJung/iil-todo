@@ -1,7 +1,7 @@
 body {
   margin: 0;
   line-height: 1;
-  background-color: rgb(39, 39, 39);
+  background-color: rgb(245, 245, 245);
 }
 ol, ul {
 	list-style: none;
@@ -35,33 +35,43 @@ div.page_header{
 section.item{
   width: 100%;
   height: 3em;
-  background-color: rgb(203, 230, 220);
-  text-align: left;
+  background-color: rgb(245, 245, 245);
+  display: flex;
+  justify-content: space-between;
 }
 
 div.item_division{
   padding: 0;
   margin: 0;
   border-width: 0;
-  height: 100%;
-  position: relative;
-  float: left;
 }
 
 div.item_dragbtn{
-  width:3%;
+  width: 2em;
+  order: 1;
 }
 
-div.item_checkbox{
-  width:3%;
+div.item_check{
+  width: 2em;
+  display: flex;
+  order: 2;
 }
 
 div.item_act{
-  width:88%;
+  order: 3;
+  flex-grow: 4;
+}
+
+div.item_append{
+  width: 2em;
+  order: 4;
+  display: flex;
 }
 
 div.item_option{
-  width: 6%;
+  width: 2em;
+  order: 5;
+  display: flex;
 }
 
 .eqWrap {
@@ -80,18 +90,22 @@ div.item_option{
 	padding: 10px;
 }
 
-button.item_content_drag_btn{
+button.item_btn{
   width: 100%;
-  height: 100%;
-  background-color: teal;
   border-width: 0;
-  color: white;
+  background-color: transparent;
 }
 
-button.item_option_btn{
-  width: 50%;
+button.item_btn_draggable{
+  width: 100%;
   height: 100%;
-  background-color: teal;
+  border-width: 0;
+  background-color: rgb(206, 206, 206);
+}
+
+button.item_btn_highlighted{
+  width:100%;
+  background-color: rgb(110, 110, 110);
   border-width: 0;
   color: white;
 }
@@ -125,11 +139,31 @@ input.item_content_end_when{
 }
 
 .item_container {
-  width: 80%;
   margin-left: 10%;
   margin-right: 10%;
 }
 
 @media screen and (min-width: 700 px) {
 
+}
+
+/* Dashed border */
+hr.dashed {
+  border-top: 1px dashed #bbb;
+}
+
+/* Dotted border */
+hr.dotted {
+  border-top: 1px dotted #bbb;
+}
+
+/* Solid border */
+hr.solid {
+  border-top: 1px solid #bbb;
+}
+
+/* Rounded border */
+hr.rounded {
+  border-top: 8px solid #bbb;
+  border-radius: 5px;
 }

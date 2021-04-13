@@ -17,8 +17,9 @@ const UseTascList = (initialTascList: Tasc[], validator?: Function) => {
       let itemToBeUpdated: Tasc = tascList.filter(x => x.id === fieldsToUpdate.id).pop()!;
       if (itemToBeUpdated){
         const updatedItem = itemToBeUpdated.update(fieldsToUpdate);
+        console.log(updatedItem);
         //const updatedItem: Tasc = { ...itemToBeUpdated, ...fieldsToUpdate };
-        onTascListChange([...tascList.filter(x => x.id !== updatedItem.id), updatedItem]);
+        onTascListChange([...tascList.filter(x => x.id !== updatedItem.id), updatedItem].sort((a,b) => a.iid - b.iid));
       }
     };
     return { tascList, onTascListChange, onTascItemChange };
