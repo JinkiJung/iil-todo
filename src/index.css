@@ -34,7 +34,7 @@ div.page_header{
 
 section.item{
   width: 100%;
-  height: 3em;
+  height: 2em;
   background-color: rgb(245, 245, 245);
   display: flex;
   justify-content: space-between;
@@ -62,15 +62,21 @@ div.item_act{
   flex-grow: 4;
 }
 
+div.item_state{
+  width: 5em;
+  order: 4;
+  display: flex;
+}
+
 div.item_append{
   width: 2em;
-  order: 4;
+  order: 5;
   display: flex;
 }
 
 div.item_option{
   width: 2em;
-  order: 5;
+  order: 6;
   display: flex;
 }
 
@@ -145,6 +151,10 @@ input.item_content_end_when{
 
 @media screen and (min-width: 700 px) {
 
+}
+
+span.emoji_span {
+  font-size: larger;
 }
 
 /* Dashed border */

@@ -6,6 +6,7 @@ import 'reflect-metadata';
 import { callCreateAPI, callGetAPI, callUpdateAPI } from './api/apiHandler';
 import { getValuesFromSectionElement, renderRow } from './element/tascRenderer';
 import { ConfirmProvider } from './hooksComponent/ConfirmContext';
+import { PageContext } from './type/pageContext';
 
 const shortid = require('shortid');
 
@@ -30,12 +31,12 @@ const getSolidTascs = (tascList: Tasc[], indices: string[]) => {
   return tascList.filter((tasc: Tasc) => !indices.includes(tasc.id) );
 }
 
-const getBrandNewTasc = (startWhen: string, goal: string, listSize: number) : Tasc => {
-  return new Tasc({id: shortid.generate(), actor: testActor, act: "", startWhen: startWhen, endWhen: "", goal: goal, order:listSize});
+const getBrandNewTasc = (startWhen: string, goal: string, actor: string, listSize: number) : Tasc => {
+  return new Tasc({id: shortid.generate(), act: "", startWhen, endWhen: "", goal, actor, order:listSize});
 }
 
-export const addNewItem = (tascList: Tasc[], onTascListChange: Function, startWhen: string = "", goal: string = "") => {
-  const newTasc: Tasc= getBrandNewTasc(startWhen, goal, tascList.length); callCreateAPI(testURL, testActor, newTasc).then(() => onTascListChange([...tascList, newTasc])).catch((error) => alert(error));
+export const addNewItem = (tascList: Tasc[], onTascListChange: Function, startWhen: string = "", goal: string = "", actor: string= "") => {
+  const newTasc: Tasc= getBrandNewTasc(startWhen, goal, actor, tascList.length); callCreateAPI(testURL, testActor, newTasc).then(() => onTascListChange([...tascList, newTasc])).catch((error) => alert(error));
 }
 
 export const update = (url: string, ownerId: string, section: HTMLElement) => {
@@ -60,27 +61,28 @@ export const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
 
 function App() {
   const [serviceStatus, setServiceStatus] = useState(0);
+  const [pageContext, setPageContext] = useState<PageContext>(PageContext.Incoming);
 
   let initialTascList: Tasc[] = [];
-  const { tascList, onTascListChange, onTascItemChange }  = UseTascList([...initialTascList, getBrandNewTasc("", "", initialTascList.length)], );
+  const { tascList, onTascListChange, onTascItemChange }  = UseTascList([...initialTascList, getBrandNewTasc("", "", testActor, initialTascList.length)], );
 
   useEffect( () => {
-    callGetAPI(testURL, testActor).then((response) => response.data).then((data: ITasc[]) => data.map((e) => new Tasc(e))).then((tascs) => { onTascListChange(tascs); setServiceStatus(1); }).catch((err) => setServiceStatus(-1))
-  }, [serviceStatus]);
+    callGetAPI(testURL, testActor, pageContext).then((response) => response.data).then((data: ITasc[]) => data.map((e) => new Tasc(e))).then((tascs) => { onTascListChange(tascs); setServiceStatus(1); }).catch((err) => setServiceStatus(-1))
+  }, [serviceStatus, pageContext]);
 
   return (
     <div className="App">
       {serviceStatus>0 ?
       <>
       <div className="equalHWrap eqWrap">
-        <button className="equalHW eq">incoming</button>
-        <button className="equalHW eq">organizing</button>
-        <button className="equalHW eq">focusing</button>
+        <button className="equalHW eq" onClick={() => setPageContext(PageContext.Incoming)}>incoming</button>
+        <button className="equalHW eq" onClick={() => setPageContext(PageContext.Focusing)}>focusing</button>
+        <button className="equalHW eq" onClick={() => setPageContext(PageContext.Admin)}>admin</button>
       </div>
       <div className="item_container">
         <ConfirmProvider>
           <section className="add_item_button_container"><button className="add_item_button" onClick={()=>{ addNewItem(tascList, onTascListChange) }}>+</button></section>
-          {  getSolidTascs(tascList, getChildIndices(tascList)).map( (solidTasc: Tasc) => renderRow(solidTasc, tascList, isChanged, testURL, testActor, onTascItemChange, onTascListChange, setServiceStatus) ) }
+          {  getSolidTascs(tascList, getChildIndices(tascList)).map( (solidTasc: Tasc) => renderRow(pageContext, solidTasc, tascList, isChanged, testURL, testActor, onTascItemChange, onTascListChange) ) }
         </ConfirmProvider>
       </div>
       </>

@@ -40,11 +40,11 @@ class Tasc implements ITasc{
     public ownedBy: string;
 
     constructor(itasc : Partial<ITasc>){
-        this.iid = 0;
+        this.iid = itasc.iid || 0;
         this.id = itasc.id || "";
         this.goal = itasc.goal || "";
         this.endWhen = itasc.endWhen || "";
-        this.state = TascState.Active;
+        this.state = itasc.state || TascState.None;
         this.given = itasc.given || "";
         this.startWhen = itasc.startWhen || "";
         this.act = itasc.act || "";

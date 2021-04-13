@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { addNewItem, handleBlur, handleEnterKey, update } from "../App";
-import Tasc from "../model/tasc.entity";
+import Tasc, { TascState } from "../model/tasc.entity";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import Picker from 'emoji-picker-react';
@@ -8,6 +8,7 @@ import { getRandomEmoji } from "../util/emojiGenerator";
 import { Confirm } from "../hooksComponent/Confirm";
 import DeleteButton from "../hooksComponent/DeleteButton";
 import { callDeleteAPI } from "../api/apiHandler";
+import { PageContext } from "../type/pageContext";
 
 export const getValuesFromInputElement = (event: React.ChangeEvent<HTMLInputElement>): Partial<Tasc> | undefined => {
   const {
@@ -37,11 +38,10 @@ export const getValuesFromSectionElement = (section: HTMLElement): Partial<Tasc>
       }
     }
   }
-  console.log(tascPartial);
   return tascPartial;
 }
 
-export const renderRow = (tasc: Tasc, tascList: Tasc[], isChanged: string[], url: string, ownerId: string, onTascItemChange: Function, onTascListChange: Function, renderTrigger: Function) => {
+export const renderRow = (pageContext: PageContext, tasc: Tasc, tascList: Tasc[], isChanged: string[], url: string, ownerId: string, onTascItemChange: Function, onTascListChange: Function) => {
     return (
       <div key={tasc.id}>
         <section className="item" id={tasc.id} onKeyUp={handleEnterKey} onBlur={handleBlur} >
@@ -55,22 +55,23 @@ export const renderRow = (tasc: Tasc, tascList: Tasc[], isChanged: string[], url
               :
               <Popup onClose={()=>isChanged? update(url, ownerId, document.getElementById(tasc.id)!): console.log() } trigger={
                 <button className="item_btn">{tasc.goal ? (
-                  <span>{tasc.goal}</span>
+                  <span className="emoji_span">{tasc.goal}</span>
                   ) : (
                     <span>{}</span>
                   )}</button>} position="right top">
-                
-                <div>{tasc.act}</div>
-                <Picker onEmojiClick={(e, emoji) => {console.log(tasc.goal); console.log(emoji.emoji); onTascItemChange({id: tasc.id, goal: emoji.emoji}); isChanged.push(`${tasc.id}==goal`); document.getElementsByName(`${tasc.id}==goal`).forEach((e) => (e as HTMLInputElement).value = emoji.emoji);}} />
+                <Picker onEmojiClick={(e, emoji) => {onTascItemChange({id: tasc.id, goal: emoji.emoji}); isChanged.push(`${tasc.id}==goal`); document.getElementsByName(`${tasc.id}==goal`).forEach((e) => (e as HTMLInputElement).value = emoji.emoji);}} />
               </Popup>
             }
           </div>
-            <div className="item_division item_act">
-              <input type="text" name={`${tasc.id}==act`} placeholder={"What do you want to achieve?"} value={tasc.act} onChange={(e) => {onTascItemChange(getValuesFromInputElement(e)); isChanged.push(e.target.name);}} className="item_content_act"/><br />
-              <input type="text" name={`${tasc.id}==endWhen`} placeholder={"When is it done?"} value={tasc.endWhen} onChange={(e) => {onTascItemChange(getValuesFromInputElement(e)); isChanged.push(e.target.name);}} className="item_content_end_when"/>
-            </div>
+          <div className="item_division item_act">
+            <input type="text" name={`${tasc.id}==act`} placeholder={"What do you want to achieve?"} value={tasc.act} onChange={(e) => {onTascItemChange(getValuesFromInputElement(e)); isChanged.push(e.target.name);}} className="item_content_act"/><br />
+            <input type="text" name={`${tasc.id}==endWhen`} placeholder={"When is it done?"} value={tasc.endWhen} onChange={(e) => {onTascItemChange(getValuesFromInputElement(e)); isChanged.push(e.target.name);}} className="item_content_end_when"/>
+          </div>
+          <div className="item_division item_state">
+            {pageContext === PageContext.Admin ? <span>{TascState[tasc.state]}</span> : <span></span>}
+          </div>
           <div className="item_division item_append">
-            <button className="item_btn_highlighted" onClick={() => addNewItem(tascList, onTascListChange, tasc.id, tasc.goal)}>+</button>
+            <button className="item_btn_highlighted" onClick={() => addNewItem(tascList, onTascListChange, tasc.id, tasc.goal, ownerId)}>+</button>
           </div>
           <div className="item_division item_option">
             <Popup trigger={<button className="item_btn_highlighted">...</button>} position="left center">
