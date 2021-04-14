@@ -1,4 +1,4 @@
-import Tasc, { TascState } from "../model/tasc.entity";
+import Tasc from "../model/tasc.entity";
 import { PageContext } from "../type/pageContext";
 const axios = require('axios').default;
 
