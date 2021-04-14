@@ -18,6 +18,7 @@ import Popup from "reactjs-popup";
 import DeleteButton from "../hooksComponent/DeleteButton";
 import { FormControl, MenuItem, Select } from "@material-ui/core";
 import { TascState } from "../type/tascState";
+import { validURL } from "../util/urlStringCheck";
 
 const shortid = require("shortid");
 
@@ -226,17 +227,35 @@ export const PageRenderer = ({
             )}
           </div>
           <div className="item_division item_act">
+              {
+                  validURL(tasc.act) ?
+                  <a href={tasc.act} target={"_blank"}>
+              <input
+                type="text"
+                name={`${tasc.id}==act`}
+                placeholder={"What do you want to achieve?"}
+                value={tasc.act}
+                onChange={(e) => {
+                  onTascItemChange(getValuesFromInputElement(e));
+                  setToBeUpdated([...toBeUpdated, e.target.name]);
+                }}
+                className="item_content_act"
+              />
+            </a>
+            :
             <input
-              type="text"
-              name={`${tasc.id}==act`}
-              placeholder={"What do you want to achieve?"}
-              value={tasc.act}
-              onChange={(e) => {
-                onTascItemChange(getValuesFromInputElement(e));
-                setToBeUpdated([...toBeUpdated, e.target.name]);
-              }}
-              className="item_content_act"
-            />
+                type="text"
+                name={`${tasc.id}==act`}
+                placeholder={"What do you want to achieve?"}
+                value={tasc.act}
+                onChange={(e) => {
+                  onTascItemChange(getValuesFromInputElement(e));
+                  setToBeUpdated([...toBeUpdated, e.target.name]);
+                }}
+                className="item_content_act"
+              />
+              }
+            
             <br />
             <input
               type="text"

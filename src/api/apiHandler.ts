@@ -30,9 +30,7 @@ export const callDeleteAPI = (url: string, ownerId: string, tascId: string): Pro
 export const callGetAPI = async (url: string, ownerId: string, pageContext: PageContext): Promise<any> => {
     return axios({
         method: 'get',
-        url: pageContext === PageContext.Incoming ? `${url}/${ownerId}/active` :
-                pageContext === PageContext.Focusing ? `${url}/${ownerId}/focused` : 
-                    `${url}/${ownerId}/all`,
+        url: `${url}/${ownerId}/${PageContext[pageContext]}`,
         headers: { 'content-type': 'application/json'},
     });
 }
