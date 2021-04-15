@@ -16,7 +16,7 @@ import { ConfirmProvider } from "../hooksComponent/ConfirmContext";
 import { contextMapping, PageContext } from "../type/pageContext";
 import Popup from "reactjs-popup";
 import DeleteButton from "../hooksComponent/DeleteButton";
-import { FormControl, MenuItem, Select } from "@material-ui/core";
+import { Checkbox, FormControl, FormControlLabel, MenuItem, Select } from "@material-ui/core";
 import { TascState } from "../type/tascState";
 import { validURL } from "../util/urlStringCheck";
 
@@ -130,7 +130,7 @@ export const PageRenderer = ({
     return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
   }
 
-  const getSelectMenu = (pageContext: PageContext, tasc: Tasc) => {
+  const getStateSelectMenu = (pageContext: PageContext, tasc: Tasc) => {
     const states: any = [];
     for (const value of enumKeys(TascState)) {
       states.push(value);
@@ -161,7 +161,10 @@ export const PageRenderer = ({
         </FormControl>
       </form>
     ) : (
-      <></>
+      <input hidden={true} name={tasc.id + "==state"} value={tasc.state} onChange={
+        (e) => {
+          }
+      }/>
     );
   };
 
@@ -184,17 +187,18 @@ export const PageRenderer = ({
           </div>
           <div className="item_division item_check">
             <input hidden name={`${tasc.id}==goal`} defaultValue={tasc.goal} />
-            {false ? (
-              <input
-                className="item_content item_content_checkbox"
-                name={`${tasc.id}==state`}
-                onChange={(e) => {
-                  onTascItemChange(getValuesFromInputElement(e));
-                  update(document.getElementById(tasc.id)!);
-                }}
-                type="checkbox"
-              />
-            ) : (
+            {pageContext === PageContext.Focusing ? 
+            <Checkbox
+            checked={tasc.state === TascState.Done}
+            onChange={(e) => {
+                // phase out
+                document.getElementsByName(`${tasc.id}==state`).forEach((e) => (e as HTMLInputElement).value = TascState.Done.toString());
+                onTascItemChange({ id: tasc.id, state: TascState.Done });
+                setToBeUpdated([...toBeUpdated, `${tasc.id}==state`]);
+            }}
+            name={`${tasc.id}==state==checkbox`}
+            color="primary"
+          /> : (
               <Popup
                 onClose={() =>
                   toBeUpdated
@@ -226,7 +230,7 @@ export const PageRenderer = ({
               </Popup>
             )}
           </div>
-          <div className="item_division item_act">
+          <div className={`item_division item_act ${tasc.state === TascState.Focused ? "item_focused" : ""}`}>
               {
                   validURL(tasc.act) ?
                   <a href={tasc.act} target={"_blank"}>
@@ -270,7 +274,7 @@ export const PageRenderer = ({
             />
           </div>
           <div className="item_division item_state">
-            {getSelectMenu(pageContext, tasc)}
+            {getStateSelectMenu(pageContext, tasc)}
           </div>
           <div className="item_division item_append">
             <button
