@@ -230,7 +230,7 @@ export const PageRenderer = ({
               </Popup>
             )}
           </div>
-          <div className={`item_division item_act ${tasc.state === TascState.Focused ? "item_focused" : ""}`}>
+          <div className={`item_division item_act ${tasc.state === TascState.Focused && pageContext === PageContext.Incoming ? "item_focused" : ""}`}>
               {
                   validURL(tasc.act) ?
                   <a href={tasc.act} target={"_blank"}>
