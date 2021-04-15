@@ -19,6 +19,7 @@ import DeleteButton from "../hooksComponent/DeleteButton";
 import { Checkbox, FormControl, FormControlLabel, MenuItem, Select } from "@material-ui/core";
 import { TascState } from "../type/tascState";
 import { validURL } from "../util/urlStringCheck";
+import { getRandomEmoji } from "../util/emojiGenerator";
 
 const shortid = require("shortid");
 
@@ -36,6 +37,7 @@ export const PageRenderer = ({
   const [serviceStatus, setServiceStatus] = useState(0);
   const [toBeUpdated, setToBeUpdated] = useState<string[]>([]);
   const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
+  const [tascListOriginal, setTascListOriginal] = useState<Tasc[]>([]);
 
   const getBrandNewTasc = (
     startWhen: string,
@@ -56,7 +58,7 @@ export const PageRenderer = ({
   let initialTascList: Tasc[] = [];
   const { tascList, onTascListChange, onTascItemChange } = UseTascList([
     ...initialTascList,
-    getBrandNewTasc("", "", ownerId, initialTascList.length),
+    getBrandNewTasc("", shortid.generate(), ownerId, initialTascList.length),
   ]);
 
   useEffect(() => {
@@ -86,12 +88,12 @@ export const PageRenderer = ({
     return tascList.filter((tasc: Tasc) => !indices.includes(tasc.id));
   };
 
-  const addNewItem = (
+  const addNewItem = async (
     tascList: Tasc[],
     onTascListChange: Function,
     actor: string,
+    goal: string,
     startWhen: string = "",
-    goal: string = ""
   ) => {
     const newTasc: Tasc = getBrandNewTasc(
       startWhen,
@@ -99,8 +101,8 @@ export const PageRenderer = ({
       actor,
       tascList.length
     );
-    callCreateAPI(url, ownerId, newTasc)
-      .then(() => onTascListChange([...tascList, newTasc]))
+    return await callCreateAPI(url, ownerId, newTasc)
+      .then((res) => {onTascListChange([...tascList, newTasc]); return res;})
       .catch((error) => alert(error));
   };
 
@@ -208,7 +210,7 @@ export const PageRenderer = ({
                 trigger={
                   <button className="item_btn">
                     {tasc.goal ? (
-                      <span className="emoji_span">{tasc.goal}</span>
+                      <span className="emoji_span">{tasc.goal.split("=goal=")[0]}</span>
                     ) : (
                       <span>{}</span>
                     )}
@@ -218,12 +220,12 @@ export const PageRenderer = ({
               >
                 <Picker
                   onEmojiClick={(e, emoji) => {
-                    onTascItemChange({ id: tasc.id, goal: emoji.emoji });
+                    onTascItemChange({ id: tasc.id, goal: emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1] });
                     setToBeUpdated([...toBeUpdated, `${tasc.id}==goal`]);
                     document
                       .getElementsByName(`${tasc.id}==goal`)
                       .forEach(
-                        (e) => ((e as HTMLInputElement).value = emoji.emoji)
+                        (e) => ((e as HTMLInputElement).value = emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1])
                       );
                   }}
                 />
@@ -280,13 +282,11 @@ export const PageRenderer = ({
             <button
               className="item_btn_highlighted"
               onClick={() =>
-                addNewItem(
-                  tascList,
-                  onTascListChange,
-                  tasc.id,
-                  tasc.goal,
-                  ownerId
-                )
+                {if(tascListOriginal.length) {
+                    updatePageContext(pageContext)
+                } else {
+                    setTascListOriginal(tascList); onTascListChange(tascList.filter((t) => t.goal === tasc.goal));
+                }}
               }
             >
               +
@@ -316,24 +316,32 @@ export const PageRenderer = ({
     );
   };
 
+  const updatePageContext = (givenContext: PageContext) => {
+    if (tascListOriginal.length) {
+        onTascListChange(tascListOriginal);
+        setTascListOriginal([]);
+    }
+    setPageContext(givenContext);
+  }
+
   return serviceStatus > 0 ? (
     <>
       <div className="equalHWrap eqWrap">
         <button
           className="equalHW eq"
-          onClick={() => setPageContext(PageContext.Incoming)}
+          onClick={() => updatePageContext(PageContext.Incoming)}
         >
           incoming
         </button>
         <button
           className="equalHW eq"
-          onClick={() => setPageContext(PageContext.Focusing)}
+          onClick={() => updatePageContext(PageContext.Focusing)}
         >
           focusing
         </button>
         <button
           className="equalHW eq"
-          onClick={() => setPageContext(PageContext.Admin)}
+          onClick={() => updatePageContext(PageContext.Admin)}
         >
           admin
         </button>
@@ -344,7 +352,7 @@ export const PageRenderer = ({
             <button
               className="add_item_button"
               onClick={() => {
-                addNewItem(tascList, onTascListChange, ownerId);
+                addNewItem(tascList, onTascListChange, ownerId, getRandomEmoji()+"=goal="+shortid.generate()).then((res: any) => document.getElementsByName(res.data.id + "==act").forEach((e) => e.focus()))
               }}
             >
               +

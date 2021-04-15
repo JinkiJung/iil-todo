@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import Tasc from '../model/tasc.entity';
 
+export const getTascChain= (tasc: Tasc, tascList: Tasc[]) => {
+  
+}
+
 const UseTascList = (initialTascList: Tasc[], validator?: Function) => {
     const [ tascList, setTascList] = useState(initialTascList);
     const onTascListChange = (tascs: Tasc[]) => {
