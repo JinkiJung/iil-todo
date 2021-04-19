@@ -284,9 +284,9 @@ export const PageRenderer = ({
               className="item_btn_highlighted"
               onClick={() =>
                 {if(tascListOriginal.length) {
-                    updatePageContext(pageContext)
+                    updatePageContext(pageContext); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");
                 } else {
-                    setTascListOriginal(tascList); onTascListChange(tascList.filter((t) => t.goal === tasc.goal)); 
+                    setTascListOriginal(tascList); onTascListChange(tascList.filter((t) => t.goal === tasc.goal));
                 }}
               }
             >
@@ -341,23 +341,23 @@ export const PageRenderer = ({
   }
 
   return serviceStatus > 0 ? (
-    <>
+    <div className="bg bg_normal" id="background">
       <div className="equalHWrap eqWrap">
         <button
           className="equalHW eq"
-          onClick={() => updatePageContext(PageContext.Incoming)}
+          onClick={() => {updatePageContext(PageContext.Incoming); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}
         >
           incoming
         </button>
         <button
           className="equalHW eq"
-          onClick={() => updatePageContext(PageContext.Focusing)}
+          onClick={() => {updatePageContext(PageContext.Focusing); document.getElementById("background")?.classList.replace("bg_normal", "bg_focus");}}
         >
           focusing
         </button>
         <button
           className="equalHW eq"
-          onClick={() => updatePageContext(PageContext.Admin)}
+          onClick={() => {updatePageContext(PageContext.Admin); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}
         >
           admin
         </button>
@@ -382,7 +382,7 @@ export const PageRenderer = ({
           )}
         </ConfirmProvider>
       </div>
-    </>
+    </div>
   ) : serviceStatus < 0 ? (
     <div className="page_header">Something went wrong with server.</div>
   ) : (

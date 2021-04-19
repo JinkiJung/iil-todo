@@ -1,7 +1,6 @@
 body {
   margin: 0;
   line-height: 1;
-  background-color: rgb(245, 245, 245);
 }
 ol, ul {
 	list-style: none;
@@ -152,6 +151,32 @@ input.item_content_end_when{
   margin-right: 10%;
 }
 
+.bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  
+  /* Preserve aspet ratio */
+  min-width: 100%;
+  min-height: 100%;
+}
+
+.bg_normal {
+  color: black;
+  background-color: rgb(245, 245, 245);;
+  -webkit-transition: background-color 1000ms linear;
+  -ms-transition: background-color 1000ms linear;
+  transition: background-color 1000ms linear;
+}
+
+.bg_focus {
+  color: rgb(255, 255, 255);
+  background-color: black;
+  -webkit-transition: background-color 1000ms linear;
+  -ms-transition: background-color 1000ms linear;
+  transition: background-color 1000ms linear;
+}
+
 @media screen and (min-width: 700 px) {
 
 }
@@ -179,11 +204,4 @@ hr.solid {
 hr.rounded {
   border-top: 8px solid #bbb;
   border-radius: 5px;
-}
-
-div.focus_container {
-  background-color: black;    
-
-  /* transition the background-color over 1s with a linear animation */
-  transition: background-color 1s linear;
 }
