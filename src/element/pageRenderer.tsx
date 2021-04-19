@@ -40,25 +40,26 @@ export const PageRenderer = ({
   const [tascListOriginal, setTascListOriginal] = useState<Tasc[]>([]);
 
   const getBrandNewTasc = (
-    startWhen: string,
     goal: string,
     actor: string,
+    ownerId: string,
     listSize: number
   ): Tasc => {
     return new Tasc({
       id: shortid.generate(),
-      startWhen,
       goal,
       actor,
       state: TascState.Active,
+      ownedBy: ownerId,
       order: listSize,
+      namespace: 'tasc-todo',
     });
   };
 
   let initialTascList: Tasc[] = [];
   const { tascList, onTascListChange, onTascItemChange } = UseTascList([
     ...initialTascList,
-    getBrandNewTasc("", shortid.generate(), ownerId, initialTascList.length),
+    getBrandNewTasc(getRandomEmoji()+"=goal="+shortid.generate(), ownerId, ownerId, initialTascList.length),
   ]);
 
   useEffect(() => {
@@ -92,13 +93,13 @@ export const PageRenderer = ({
     tascList: Tasc[],
     onTascListChange: Function,
     actor: string,
+    ownerId: string,
     goal: string,
-    startWhen: string = "",
   ) => {
     const newTasc: Tasc = getBrandNewTasc(
-      startWhen,
       goal,
       actor,
+      ownerId, 
       tascList.length
     );
     return await callCreateAPI(url, ownerId, newTasc)
@@ -278,15 +279,30 @@ export const PageRenderer = ({
           <div className="item_division item_state">
             {getStateSelectMenu(pageContext, tasc)}
           </div>
-          <div className="item_division item_append">
+          <div className="item_division item_org">
             <button
               className="item_btn_highlighted"
               onClick={() =>
                 {if(tascListOriginal.length) {
                     updatePageContext(pageContext)
                 } else {
-                    setTascListOriginal(tascList); onTascListChange(tascList.filter((t) => t.goal === tasc.goal));
+                    setTascListOriginal(tascList); onTascListChange(tascList.filter((t) => t.goal === tasc.goal)); 
                 }}
+              }
+            >
+              Org
+            </button>
+          </div>
+          <div className="item_division item_append">
+            <button
+              className="item_btn_highlighted"
+              onClick={() => addNewItem(
+                tascList,
+                onTascListChange,
+                tasc.actor,
+                ownerId,
+                tasc.goal,
+              )
               }
             >
               +
@@ -352,7 +368,7 @@ export const PageRenderer = ({
             <button
               className="add_item_button"
               onClick={() => {
-                addNewItem(tascList, onTascListChange, ownerId, getRandomEmoji()+"=goal="+shortid.generate()).then((res: any) => document.getElementsByName(res.data.id + "==act").forEach((e) => e.focus()))
+                addNewItem(tascList, onTascListChange, ownerId, ownerId, getRandomEmoji()+"=goal="+shortid.generate()).then((res: any) => document.getElementsByName(res.data.id + "==act").forEach((e) => e.focus()))
               }}
             >
               +

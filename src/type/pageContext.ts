@@ -8,5 +8,6 @@ export enum PageContext {
 
 export const contextMapping: { [id: number] : number[]; } = {};
 contextMapping[PageContext.Incoming] = [TascState.Active, TascState.Focused, TascState.Pending];
+contextMapping[PageContext.Organizing] = [TascState.Active, TascState.Focused, TascState.Pending];
 contextMapping[PageContext.Focusing] = [TascState.Focused];
 contextMapping[PageContext.Admin] = [TascState.None, TascState.Active, TascState.Focused, TascState.Pending, TascState.Done, ];

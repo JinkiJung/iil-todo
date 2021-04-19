@@ -68,6 +68,12 @@ div.item_state{
   display: flex;
 }
 
+div.item_org{
+  width: 2em;
+  order: 6;
+  display: flex;
+}
+
 div.item_append{
   width: 2em;
   order: 5;
@@ -76,7 +82,7 @@ div.item_append{
 
 div.item_option{
   width: 2em;
-  order: 6;
+  order: 7;
   display: flex;
 }
 
@@ -173,4 +179,11 @@ hr.solid {
 hr.rounded {
   border-top: 8px solid #bbb;
   border-radius: 5px;
+}
+
+div.focus_container {
+  background-color: black;    
+
+  /* transition the background-color over 1s with a linear animation */
+  transition: background-color 1s linear;
 }
