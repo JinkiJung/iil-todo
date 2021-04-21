@@ -16,12 +16,11 @@ import { ConfirmProvider } from "../hooksComponent/ConfirmContext";
 import { contextMapping, PageContext } from "../type/pageContext";
 import Popup from "reactjs-popup";
 import DeleteButton from "../hooksComponent/DeleteButton";
-import { Checkbox, FormControl, FormControlLabel, MenuItem, Select } from "@material-ui/core";
+import { Checkbox, FormControl, MenuItem, Select } from "@material-ui/core";
 import { TascState } from "../type/tascState";
 import { validURL } from "../util/urlStringCheck";
 import { getRandomEmoji } from "../util/emojiGenerator";
-
-const shortid = require("shortid");
+import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
 
 export interface IPageRenderer {
   url: string;
@@ -39,27 +38,10 @@ export const PageRenderer = ({
   const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
   const [tascListOriginal, setTascListOriginal] = useState<Tasc[]>([]);
 
-  const getBrandNewTasc = (
-    goal: string,
-    actor: string,
-    ownerId: string,
-    listSize: number
-  ): Tasc => {
-    return new Tasc({
-      id: shortid.generate(),
-      goal,
-      actor,
-      state: TascState.Active,
-      ownedBy: ownerId,
-      order: listSize,
-      namespace: 'tasc-todo',
-    });
-  };
-
   let initialTascList: Tasc[] = [];
   const { tascList, onTascListChange, onTascItemChange } = UseTascList([
     ...initialTascList,
-    getBrandNewTasc(getRandomEmoji()+"=goal="+shortid.generate(), ownerId, ownerId, initialTascList.length),
+    getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, initialTascList.length),
   ]);
 
   useEffect(() => {
@@ -368,7 +350,7 @@ export const PageRenderer = ({
             <button
               className="add_item_button"
               onClick={() => {
-                addNewItem(tascList, onTascListChange, ownerId, ownerId, getRandomEmoji()+"=goal="+shortid.generate()).then((res: any) => document.getElementsByName(res.data.id + "==act").forEach((e) => e.focus()))
+                addNewItem(tascList, onTascListChange, ownerId, ownerId, getBrandNewGoal()).then((res: any) => document.getElementsByName(res.data.id + "==act").forEach((e) => e.focus()))
               }}
             >
               +
