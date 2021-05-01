@@ -265,30 +265,35 @@ export const PageRenderer = ({
             <button
               className="item_btn_highlighted"
               onClick={() =>
-                {if(tascListOriginal.length) {
+                {
+                  if(tascListOriginal.length) {
                     updatePageContext(pageContext); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");
-                } else {
+                  } else {
                     setTascListOriginal(tascList); onTascListChange(tascList.filter((t) => t.goal === tasc.goal));
-                }}
+                  }
+                }
               }
             >
               Org
             </button>
           </div>
           <div className="item_division item_append">
-            <button
-              className="item_btn_highlighted"
-              onClick={() => addNewItem(
-                tascList,
-                onTascListChange,
-                tasc.actor,
-                ownerId,
-                tasc.goal,
-              )
-              }
-            >
-              +
-            </button>
+            {
+              tascListOriginal.length ? <button
+                className="item_btn_highlighted"
+                onClick={() => addNewItem(
+                  tascList,
+                  onTascListChange,
+                  tasc.actor,
+                  ownerId,
+                  tasc.goal,
+                )
+                }
+              >
+                +
+              </button>
+              : <></>
+            }
           </div>
           <div className="item_division item_option">
             <Popup
