@@ -21,6 +21,7 @@ import { TascState } from "../type/tascState";
 import { validURL } from "../util/urlStringCheck";
 import { getRandomEmoji } from "../util/emojiGenerator";
 import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
+import UseTasc from "../hooksComponent/useTasc";
 
 export interface IPageRenderer {
   url: string;
@@ -37,9 +38,10 @@ export const PageRenderer = ({
   const [toBeUpdated, setToBeUpdated] = useState<string[]>([]);
   const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
   const [tascListOriginal, setTascListOriginal] = useState<Tasc[]>([]);
+  const {tascItem, setTascItem, onTascItemChange} = UseTasc(getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, 0));
 
   let initialTascList: Tasc[] = [];
-  const { tascList, onTascListChange, onTascItemChange } = UseTascList([
+  const { tascList, onTascListChange, onTascElemChange } = UseTascList([
     ...initialTascList,
     getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, initialTascList.length),
   ]);
@@ -72,20 +74,18 @@ export const PageRenderer = ({
   };
 
   const addNewItem = async (
+    tasc: Tasc | undefined,
     tascList: Tasc[],
-    onTascListChange: Function,
-    actor: string,
-    ownerId: string,
-    goal: string,
+    onTascListChange: Function
   ) => {
-    const newTasc: Tasc = getBrandNewTasc(
-      goal,
-      actor,
+    const newTasc: Tasc = tasc ? tasc : getBrandNewTasc(
+      getBrandNewGoal(),
+      ownerId,
       ownerId, 
       tascList.length
     );
     return await callCreateAPI(url, ownerId, newTasc)
-      .then((res) => {onTascListChange([...tascList, newTasc]); return res;})
+      .then((res) => {onTascListChange([...tascList, newTasc].sort((a,b) => b.iid - a.iid)); return res;})
       .catch((error) => alert(error));
   };
 
@@ -115,6 +115,22 @@ export const PageRenderer = ({
     return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
   }
 
+  const getInputForAct = (tasc: Tasc, onTascElemChange: Function, tascList?: Tasc[] | undefined) => {
+    return (<input
+      type="text"
+      name={`${tasc.id}==act`}
+      placeholder={"What do you want to achieve?"}
+      value={tasc.act}
+      onChange={(e) => {
+        onTascElemChange(getValuesFromInputElement(e));
+        if (tascList) {
+          setToBeUpdated([...toBeUpdated, e.target.name]);
+        }
+      }}
+      className="item_content_act"
+    />);
+  }
+
   const getStateSelectMenu = (pageContext: PageContext, tasc: Tasc) => {
     const states: any = [];
     for (const value of enumKeys(TascState)) {
@@ -126,7 +142,7 @@ export const PageRenderer = ({
           <Select
             value={tasc.state}
             onChange={(e) => {
-              onTascItemChange({
+              onTascElemChange({
                 id: tasc.id,
                 state: e.target.value,
               } as Partial<Tasc>);
@@ -153,112 +169,25 @@ export const PageRenderer = ({
     );
   };
 
-  const renderRow = (
-    tasc: Tasc,
-    tascList: Tasc[],
-    onTascItemChange: Function,
-    onTascListChange: Function
-  ) => {
+  const renderAddButton = (tasc: Tasc, setTascItem: Function) => {
     return (
-      <div key={tasc.id}>
-        <section
-          className="item"
-          id={tasc.id}
-          onKeyUp={handleEnterKey}
-          onBlur={handleBlur}
-        >
-          <div className="item_division item_dragbtn">
-            <button className="item_btn_draggable"></button>
-          </div>
-          <div className="item_division item_check">
-            <input hidden name={`${tasc.id}==goal`} defaultValue={tasc.goal} />
-            {pageContext === PageContext.Focusing ? 
-            <Checkbox
-            checked={tasc.state === TascState.Done}
-            onChange={(e) => {
-                // phase out
-                document.getElementsByName(`${tasc.id}==state`).forEach((e) => (e as HTMLInputElement).value = TascState.Done.toString());
-                onTascItemChange({ id: tasc.id, state: TascState.Done });
-                setToBeUpdated([...toBeUpdated, `${tasc.id}==state`]);
-            }}
-            name={`${tasc.id}==state==checkbox`}
-            color="primary"
-          /> : (
-              <Popup
-                onClose={() =>
-                  toBeUpdated
-                    ? update(document.getElementById(tasc.id)!)
-                    : console.log()
-                }
-                trigger={
-                  <button className="item_btn">
-                    {tasc.goal ? (
-                      <span className="emoji_span">{tasc.goal.split("=goal=")[0]}</span>
-                    ) : (
-                      <span>{}</span>
-                    )}
-                  </button>
-                }
-                position="right top"
-              >
-                <Picker
-                  onEmojiClick={(e, emoji) => {
-                    onTascItemChange({ id: tasc.id, goal: emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1] });
-                    setToBeUpdated([...toBeUpdated, `${tasc.id}==goal`]);
-                    document
-                      .getElementsByName(`${tasc.id}==goal`)
-                      .forEach(
-                        (e) => ((e as HTMLInputElement).value = emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1])
-                      );
-                  }}
-                />
-              </Popup>
-            )}
-          </div>
-          <div className={`item_division item_act ${tasc.state === TascState.Focused && pageContext === PageContext.Incoming ? "item_focused" : ""}`}>
-              {
-                  validURL(tasc.act) ?
-                  <a href={tasc.act} target={"_blank"}>
-              <input
-                type="text"
-                name={`${tasc.id}==act`}
-                placeholder={"What do you want to achieve?"}
-                value={tasc.act}
-                onChange={(e) => {
-                  onTascItemChange(getValuesFromInputElement(e));
-                  setToBeUpdated([...toBeUpdated, e.target.name]);
-                }}
-                className="item_content_act"
-              />
-            </a>
-            :
-            <input
-                type="text"
-                name={`${tasc.id}==act`}
-                placeholder={"What do you want to achieve?"}
-                value={tasc.act}
-                onChange={(e) => {
-                  onTascItemChange(getValuesFromInputElement(e));
-                  setToBeUpdated([...toBeUpdated, e.target.name]);
-                }}
-                className="item_content_act"
-              />
-              }
-            
-            <br />
-            <input
-              type="text"
-              name={`${tasc.id}==endWhen`}
-              placeholder={"When is it done?"}
-              value={tasc.endWhen}
-              onChange={(e) => {
-                onTascItemChange(getValuesFromInputElement(e));
-                setToBeUpdated([...toBeUpdated, e.target.name]);
+      <div className="item_division item_options">
+      <button
+              className="item_btn_highlighted"
+              onClick={() => {
+                addNewItem(tasc, tascList, onTascListChange).then((res: any) => {setTascItem(getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, 0)); document.getElementsByName(res.data.id + "==act").forEach((e) => e.focus());})
               }}
-              className="item_content_end_when"
-            />
-          </div>
-          <div className="item_division item_state">
+            >
+              +
+            </button>
+      </div>
+    )
+  }
+
+  const renderOptions = (tasc: Tasc, tascList: Tasc[], onTascListChange: Function) => {
+    return (
+      <div className="item_division item_options">
+        <div className="item_division item_state">
             {getStateSelectMenu(pageContext, tasc)}
           </div>
           <div className="item_division item_org">
@@ -282,11 +211,9 @@ export const PageRenderer = ({
               tascListOriginal.length ? <button
                 className="item_btn_highlighted"
                 onClick={() => addNewItem(
+                  undefined,
                   tascList,
-                  onTascListChange,
-                  tasc.actor,
-                  ownerId,
-                  tasc.goal,
+                  onTascListChange
                 )
                 }
               >
@@ -313,6 +240,94 @@ export const PageRenderer = ({
               />
             </Popup>
           </div>
+      </div>
+    );
+  }
+
+  const renderRow = (
+    tasc: Tasc,
+    onTascElemChange: Function,
+    tascList?: Tasc[],
+    onTascListChange?: Function
+  ) => {
+    return (
+      <div key={tasc.id}>
+        <section
+          className="item"
+          id={tasc.id}
+          onKeyUp={handleEnterKey}
+          onBlur={handleBlur}
+        >
+          <div className="item_division item_dragbtn">
+            <button className="item_btn_draggable"></button>
+          </div>
+          <div className="item_division item_check">
+            <input hidden name={`${tasc.id}==goal`} defaultValue={tasc.goal} />
+            {pageContext === PageContext.Focusing ? 
+            <Checkbox
+            checked={tasc.state === TascState.Done}
+            onChange={(e) => {
+                // phase out
+                document.getElementsByName(`${tasc.id}==state`).forEach((e) => (e as HTMLInputElement).value = TascState.Done.toString());
+                onTascElemChange({ id: tasc.id, state: TascState.Done });
+                setToBeUpdated([...toBeUpdated, `${tasc.id}==state`]);
+            }}
+            name={`${tasc.id}==state==checkbox`}
+            color="primary"
+          /> : (
+              <Popup
+                onClose={() =>
+                  toBeUpdated
+                    ? update(document.getElementById(tasc.id)!)
+                    : console.log()
+                }
+                trigger={
+                  <button className="item_btn">
+                    {tasc.goal ? (
+                      <span className="emoji_span">{tasc.goal.split("=goal=")[0]}</span>
+                    ) : (
+                      <span>{}</span>
+                    )}
+                  </button>
+                }
+                position="right top"
+              >
+                <Picker
+                  onEmojiClick={(e, emoji) => {
+                    onTascElemChange({ id: tasc.id, goal: emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1] });
+                    setToBeUpdated([...toBeUpdated, `${tasc.id}==goal`]);
+                    document
+                      .getElementsByName(`${tasc.id}==goal`)
+                      .forEach(
+                        (e) => ((e as HTMLInputElement).value = emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1])
+                      );
+                  }}
+                />
+              </Popup>
+            )}
+          </div>
+          <div className={`item_division item_act ${tasc.state === TascState.Focused && pageContext === PageContext.Incoming ? "item_focused" : ""}`}>
+              {
+                  validURL(tasc.act) ?
+                  <a href={tasc.act} target={"_blank"}>{getInputForAct(tasc, onTascElemChange, tascList)}</a> : getInputForAct(tasc, onTascElemChange, tascList)
+              }
+            
+            <br />
+            <input
+              type="text"
+              name={`${tasc.id}==endWhen`}
+              placeholder={"When is it done?"}
+              value={tasc.endWhen}
+              onChange={(e) => {
+                onTascElemChange(getValuesFromInputElement(e));
+                if (tascList) {
+                  setToBeUpdated([...toBeUpdated, e.target.name]);
+                }
+              }}
+              className="item_content_end_when"
+            />
+          </div>
+          {tascList? renderOptions(tasc, tascList, onTascListChange!) : renderAddButton(tasc, setTascItem)}
         </section>
         <hr className="dashed"></hr>
       </div>
@@ -351,21 +366,13 @@ export const PageRenderer = ({
       </div>
       <div className="item_container">
         <ConfirmProvider>
-          <section className="add_item_button_container">
-            <button
-              className="add_item_button"
-              onClick={() => {
-                addNewItem(tascList, onTascListChange, ownerId, ownerId, getBrandNewGoal()).then((res: any) => document.getElementsByName(res.data.id + "==act").forEach((e) => e.focus()))
-              }}
-            >
-              +
-            </button>
-          </section>
+          <br />
+          {pageContext === PageContext.Incoming ? renderRow(tascItem, onTascItemChange) : <></>}
           {getSolidTascs(
             tascList,
             getChildIndices(tascList)
           ).map((solidTasc: Tasc) =>
-            renderRow(solidTasc, tascList, onTascItemChange, onTascListChange)
+            renderRow(solidTasc, onTascElemChange, tascList, onTascListChange)
           )}
         </ConfirmProvider>
       </div>

@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import Tasc from '../model/tasc.entity';
 
-export const getTascChain= (tasc: Tasc, tascList: Tasc[]) => {
-  
-}
-
 const UseTascList = (initialTascList: Tasc[], validator?: Function) => {
     const [ tascList, setTascList] = useState(initialTascList);
     const onTascListChange = (tascs: Tasc[]) => {
@@ -13,18 +9,18 @@ const UseTascList = (initialTascList: Tasc[], validator?: Function) => {
           willUpdate = validator(tascs);
       }
       if(willUpdate){
-          setTascList(tascs.sort((a, b) => b.order - a.order));
+          setTascList(tascs.sort((a, b) => b.iid - a.iid));
       }
     };
-    const onTascItemChange = (fieldsToUpdate: Partial<Tasc>) => {
+    const onTascElemChange = (fieldsToUpdate: Partial<Tasc>) => {
       let itemToBeUpdated: Tasc = tascList.filter(x => x.id === fieldsToUpdate.id).pop()!;
       if (itemToBeUpdated){
         const updatedItem = itemToBeUpdated.update(fieldsToUpdate);
         //const updatedItem: Tasc = { ...itemToBeUpdated, ...fieldsToUpdate };
-        onTascListChange([...tascList.filter(x => x.id !== updatedItem.id), updatedItem].sort((a,b) => a.iid - b.iid));
+        onTascListChange([...tascList.filter(x => x.id !== updatedItem.id), updatedItem].sort((a,b) => b.iid - a.iid));
       }
     };
-    return { tascList, onTascListChange, onTascItemChange };
+    return { tascList, onTascListChange, onTascElemChange };
   }
 
   export default UseTascList;

@@ -61,6 +61,12 @@ div.item_act{
   flex-grow: 4;
 }
 
+div.item_options{
+  width: 11em;
+  order: 4;
+  display: flex;
+}
+
 div.item_state{
   width: 5em;
   order: 4;
