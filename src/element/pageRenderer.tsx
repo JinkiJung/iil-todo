@@ -85,7 +85,7 @@ export const PageRenderer = ({
       tascList.length
     );
     return await callCreateAPI(url, ownerId, newTasc)
-      .then((res) => {onTascListChange([...tascList, newTasc].sort((a,b) => b.iid - a.iid)); return res;})
+      .then((res: any) => { onTascListChange([...tascList, new Tasc(res.data)].sort((a,b) => b.iid - a.iid)); return res;})
       .catch((error) => alert(error));
   };
 
@@ -162,10 +162,7 @@ export const PageRenderer = ({
         </FormControl>
       </form>
     ) : (
-      <input hidden={true} name={tasc.id + "==state"} value={tasc.state} onChange={
-        (e) => {
-          }
-      }/>
+      <input hidden={true} name={tasc.id + "==state"} value={tasc.state} />
     );
   };
 
