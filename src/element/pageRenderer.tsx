@@ -19,7 +19,6 @@ import DeleteButton from "../hooksComponent/DeleteButton";
 import { Checkbox, FormControl, MenuItem, Select } from "@material-ui/core";
 import { TascState } from "../type/tascState";
 import { validURL } from "../util/urlStringCheck";
-import { getRandomEmoji } from "../util/emojiGenerator";
 import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
 import UseTasc from "../hooksComponent/useTasc";
 
