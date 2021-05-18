@@ -11,13 +11,16 @@ const keycloakJsonFilePath = '../json/keycloak.json';
 
 
 function App() {
-  const {keycloak, authenticated } = useKeycloak(keycloakJsonFilePath);
+  const {keycloak, authenticated, userId } = useKeycloak(keycloakJsonFilePath);
   return (
     <div className="App">
       {keycloak ? 
           authenticated ?
-            <PageRenderer url={testURL} ownerId={testActor} givenPageContext={PageContext.Incoming} />
+            userId ?
+              <PageRenderer url={testURL} ownerId={userId} givenPageContext={PageContext.Incoming} onLogOut={(e) => keycloak.logout()}/>
               :
+              <div>Loading user information</div>
+            :
           <div>Not authenticated yet!</div>
           :
           <div>There is a problem in Keycloak configuration.</div>}

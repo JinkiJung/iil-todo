@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import UseTascList from "../hooksComponent/useTascList";
 import Tasc, { ITasc } from "../model/tasc.entity";
 import {
@@ -26,12 +26,14 @@ export interface IPageRenderer {
   url: string;
   ownerId: string;
   givenPageContext: PageContext;
+  onLogOut: MouseEventHandler<HTMLButtonElement>;
 }
 
 export const PageRenderer = ({
   url,
   ownerId,
   givenPageContext,
+  onLogOut,
 }: IPageRenderer) => {
   const [serviceStatus, setServiceStatus] = useState(0);
   const [toBeUpdated, setToBeUpdated] = useState<string[]>([]);
@@ -340,6 +342,7 @@ export const PageRenderer = ({
 
   return serviceStatus > 0 ? (
     <div className="bg bg_normal" id="background">
+      <div className="pageHeader" id="pageHeader"><button onClick={onLogOut}>logOut</button></div>
       <div className="equalHWrap eqWrap">
         <button
           className="equalHW eq"
