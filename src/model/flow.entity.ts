@@ -1,11 +1,19 @@
 export interface IFlow {
     id: number,
     priority: number,
-    scoring: string,
+    scoringMethod: string,
+    score: number,
+    ownedBy: string,
+}
+
+export interface IFall extends IFlow{
+    to: string,
+    effect: string,
+    feedback: string,
+}
+
+export interface IFork extends IFlow {
     if: string,
-    then: string,
-    else: string,
-    thenFeedback: string,
-    elseFeedback: string,
-    ownedBy: string
+    then: IFlow,
+    else: IFlow,
 }
