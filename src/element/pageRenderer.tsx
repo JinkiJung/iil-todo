@@ -307,7 +307,7 @@ export const PageRenderer = ({
           <div className={`item_division item_act ${tasc.state === TascState.Focused && pageContext === PageContext.Incoming ? "item_focused" : ""}`}>
               {
                   validURL(tasc.act) ?
-                  <a href={tasc.act} target={"_blank"}>{getInputForAct(tasc, onTascElemChange, tascList)}</a> : getInputForAct(tasc, onTascElemChange, tascList)
+                  <a href={tasc.act} target={"_blank"} rel="noreferrer">{getInputForAct(tasc, onTascElemChange, tascList)}</a> : getInputForAct(tasc, onTascElemChange, tascList)
               }
             
             <br />
