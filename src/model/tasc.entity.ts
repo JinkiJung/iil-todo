@@ -1,27 +1,28 @@
-enum TascState {
-    None = 0,
-    Active = 1,
-    Focused = 2,
-    Pending = 3,
-    Done = 4
-}
+import { TascState } from "../type/tascState";
+import { IFlow } from "./flow.entity";
 
-interface ITasc {
+export interface ITasc {
+    iid: number;
     id: string;
     goal: string;
     given: string;
     startWhen: string;
     actor: string;
     act: string;
+    produce: string;
     guidedBy: string;
     endWhen: string;
-    leadTo: string;
-    produce: string;
+    leadTo: IFlow[];
     state: TascState;
+    ownedBy: string;
+    // platform dependent parameters
     order: number;
+    namespace: string;
+    loopCount: number;
 }
 
 class Tasc implements ITasc{
+    public iid: number;
     public id: string;
     public goal: string;
     public given: string;
@@ -30,41 +31,32 @@ class Tasc implements ITasc{
     public act: string;
     public guidedBy: string;
     public endWhen: string;
-    public leadTo: string;
+    public leadTo: IFlow[];
     public produce: string;
     public state: TascState;
     public order: number;
+    public ownedBy: string;
+    public namespace: string;
+    public loopCount: number;
 
     constructor(itasc : Partial<ITasc>){
+        this.iid = itasc.iid || 0;
         this.id = itasc.id || "";
         this.goal = itasc.goal || "";
         this.endWhen = itasc.endWhen || "";
-        this.state = TascState.Active;
+        this.state = itasc.state || TascState.None;
         this.given = itasc.given || "";
         this.startWhen = itasc.startWhen || "";
         this.act = itasc.act || "";
         this.actor = itasc.actor || "";
         this.guidedBy = itasc.guidedBy || "";
         this.produce = itasc.produce || "";
-        this.leadTo = itasc.leadTo || "";
+        this.leadTo = itasc.leadTo || [];
         this.order = itasc.order || -1;
+        this.ownedBy = itasc.ownedBy || itasc.actor || "";
+        this.namespace = itasc.namespace || "";
+        this.loopCount = itasc.loopCount || 0;
     }
-    /*
-    constructor(id:string, actor: string, act: string,
-        startWhen: string, endWhen: string, order: number){
-        this.id = id;
-        this.goal = "";
-        this.endWhen = endWhen;
-        this.state = TascState.Active;
-        this.given = "";
-        this.startWhen = startWhen;
-        this.act = act;
-        this.actor = actor;
-        this.guidedBy = "";
-        this.produce = "";
-        this.leadTo = "";
-        this.order = order;
-    }*/
 
     update(entryFromInput: Object): Tasc{
         Object.assign(this, entryFromInput);
