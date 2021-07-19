@@ -22,7 +22,7 @@ function App() {
               :
               <div>Loading user information</div>
             :
-          <div>Not authenticated yet!</div>
+          <div>Move to authentication page...</div>
           :
           <div>There is a problem in Keycloak configuration.</div>}
       </OperationContext.Provider>

@@ -35,7 +35,7 @@ export const PageRenderer = ({
   const [serviceStatus, setServiceStatus] = useState(0);
   const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
   const [tascListOriginal, setTascListOriginal] = useState<Tasc[]>([]);
-  const {tascItem, onTascItemChange} = UseTasc(getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, 0));
+  const {tascItem} = UseTasc(getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, 0));
 
   const update = (partialTasc : Partial<Tasc>): Promise<any> => {
     return callUpdateAPI(url, ownerId, partialTasc);

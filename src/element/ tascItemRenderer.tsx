@@ -1,11 +1,11 @@
 import { Checkbox } from "@material-ui/core";
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import Popup from "reactjs-popup";
 import { callCreateAPI, callDeleteAPI } from "../api/apiHandler";
 import { OperationContext } from "../App";
 import DeleteButton from "../hooksComponent/DeleteButton";
 import Tasc from "../model/tasc.entity";
-import { PageContext } from "../type/pageContext";
+import { contextMapping, PageContext } from "../type/pageContext";
 import { TascState } from "../type/tascState";
 import { validURL } from "../util/urlStringCheck";
 import { IOperationParam } from "./model/operationParam";
@@ -37,7 +37,6 @@ export const TascItemRenderer = ({
   update,
 }: ITascItemRendererProp) => {
     const param = useContext(OperationContext) as IOperationParam;
-    const [tascToBeUpdated, setTascToBeUpdated] = useState<Partial<Tasc>>();
 
     const mockANewTasc = (goal?: string) => {
         return getBrandNewTasc(
@@ -46,10 +45,6 @@ export const TascItemRenderer = ({
             param.ownerId,
             0
           );
-    }
-
-    const addToUpdateQueue = (param: any) => {
-
     }
 
   const renderAddButton = (
@@ -198,7 +193,7 @@ export const TascItemRenderer = ({
               message={`${tasc.act}`}
               onConfirmCallback={() =>
                 callDeleteAPI(param.backEndUrl, param.ownerId, tasc.id).then(() =>
-                updatePageContext(PageContext.Admin)
+                  onTascListChange(tascList.filter((t:any)=> t.id !== tasc.id))
                 )
               }
               onCancelCallback={() => console.log()}
@@ -217,7 +212,10 @@ export const TascItemRenderer = ({
   };
 
   const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
-    
+    /*
+    const partialTasc = getValuesFromSectionElement(event.currentTarget);
+    update(partialTasc);
+    */
   };
 
   return (
@@ -245,8 +243,9 @@ export const TascItemRenderer = ({
                       ((e as HTMLInputElement).value =
                         TascState.Done.toString())
                   );
-                onTascListElemChange({ id: tasc.id, state: TascState.Done });
-                addToUpdateQueue(`${tasc.id}==state`);
+                const partialTasc = { id: tasc.id, state: TascState.Done };
+                onTascListElemChange(partialTasc);
+                update(partialTasc).then((t:any) => onTascListChange(tascList.filter((t) => contextMapping[pageContext].includes(t.state))));
               }}
               name={`${tasc.id}==state==checkbox`}
               color="primary"
@@ -255,7 +254,7 @@ export const TascItemRenderer = ({
             <Popup
               onClose={() =>
                 {
-                    if(tascToBeUpdated) { update(tascToBeUpdated); /* updateWithSection(document.getElementById(tasc.id)!); */}
+                    /* updateWithSection(document.getElementById(tasc.id)!); */
                 }                
               }
               trigger={
@@ -273,18 +272,20 @@ export const TascItemRenderer = ({
             >
               <Picker
                 onEmojiClick={(e, emoji) => {
-                  onTascListElemChange({
+                  const partialTasc = {
                     id: tasc.id,
                     goal: emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1],
-                  });
-                  addToUpdateQueue(`${tasc.id}==goal`);
-                  document
+                  };
+                  onTascListElemChange(partialTasc);
+                  update(partialTasc).then((t: any) => {
+                    document
                     .getElementsByName(`${tasc.id}==goal`)
                     .forEach(
                       (e) =>
                         ((e as HTMLInputElement).value =
                           emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1])
                     );
+                  });
                 }}
               />
             </Popup>
