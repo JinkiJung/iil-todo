@@ -1,5 +1,5 @@
 import React from "react";
-import Tasc from "../model/tasc.entity";
+import Tasc from "../../model/tasc.entity";
 import 'reactjs-popup/dist/index.css';
 
 export const getValuesFromInputElement = (event: React.ChangeEvent<HTMLInputElement>): Partial<Tasc> | undefined => {
@@ -13,7 +13,9 @@ export const getValuesFromInputElement = (event: React.ChangeEvent<HTMLInputElem
 }
 
 export const getValuesFromSectionElement = (section: HTMLElement): Partial<Tasc> | undefined => {
-  let tascPartial = { id: section.id, state: 1 }
+  console.log((section as HTMLElement));
+  console.log((section as HTMLElement).getAttribute("value"));
+  let tascPartial = { id: section.id.split("==")[0], state: 1 }
   let elements = Array.from(section.getElementsByTagName('input'));
   for (let item of elements) {
     let attributes = item.name.split("==");

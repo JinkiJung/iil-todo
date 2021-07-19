@@ -8,7 +8,7 @@ const UseTasc = (initialItem: Tasc, validator?: Function) => {
             setTascItem(new Tasc({...tascItem, ...item}));
         }
     };
-    return { tascItem, setTascItem, onTascItemChange};
+    return { tascItem, onTascItemChange };
   };
 
 export default UseTasc;

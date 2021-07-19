@@ -12,15 +12,17 @@ const UseTascList = (initialTascList: Tasc[], validator?: Function) => {
           setTascList(tascs.sort((a, b) => b.iid - a.iid));
       }
     };
-    const onTascElemChange = (fieldsToUpdate: Partial<Tasc>) => {
+    const onTascListElemChange = (fieldsToUpdate: Partial<Tasc>) => {
       let itemToBeUpdated: Tasc = tascList.filter(x => x.id === fieldsToUpdate.id).pop()!;
       if (itemToBeUpdated){
         const updatedItem = itemToBeUpdated.update(fieldsToUpdate);
         //const updatedItem: Tasc = { ...itemToBeUpdated, ...fieldsToUpdate };
-        onTascListChange([...tascList.filter(x => x.id !== updatedItem.id), updatedItem].sort((a,b) => b.iid - a.iid));
+        const appendedList = [...tascList.filter(x => x.id !== updatedItem.id), updatedItem];
+        // appendedList.sort((a,b) => b.iid - a.iid);
+        onTascListChange(appendedList);
       }
     };
-    return { tascList, onTascListChange, onTascElemChange };
+    return { tascList, onTascListChange, onTascListElemChange };
   }
 
   export default UseTascList;

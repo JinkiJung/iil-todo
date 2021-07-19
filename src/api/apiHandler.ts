@@ -2,7 +2,7 @@ import Tasc from "../model/tasc.entity";
 import { PageContext } from "../type/pageContext";
 const axios = require('axios').default;
 
-export const callCreateAPI = (url: string, ownerId: string, tasc: object): Promise<string> => {
+export const callCreateAPI = (url: string, ownerId: string, tasc: object): Promise<any> => {
     return axios({
       method: 'post',
       url: url + "/"+ ownerId,
@@ -11,7 +11,7 @@ export const callCreateAPI = (url: string, ownerId: string, tasc: object): Promi
     });
   }
   
-export const callUpdateAPI = (url: string, ownerId: string, tasc: Partial<Tasc>): Promise<string> => {
+export const callUpdateAPI = (url: string, ownerId: string, tasc: Partial<Tasc>): Promise<any> => {
     return axios({
         method: 'patch',
         url: url + "/"+ ownerId,
@@ -20,7 +20,16 @@ export const callUpdateAPI = (url: string, ownerId: string, tasc: Partial<Tasc>)
     });
 }
 
-export const callDeleteAPI = (url: string, ownerId: string, tascId: string): Promise<string> => {
+export const callUpdateBatchAPI = (url: string, ownerId: string, tascs: Partial<Tasc>[]): Promise<any> => {
+    return axios({
+        method: 'patch',
+        url: url + "/"+ ownerId,
+        data: tascs,
+        headers: { 'content-type': 'application/json'},
+    });
+}
+
+export const callDeleteAPI = (url: string, ownerId: string, tascId: string): Promise<any> => {
     return axios({
         method: 'delete',
         url: url + "/"+ ownerId + "/" + tascId,
