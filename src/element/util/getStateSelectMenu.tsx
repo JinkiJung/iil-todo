@@ -40,7 +40,7 @@ export const getStateSelectMenu = (pageContext: PageContext, tasc: Tasc, onTascL
             id: tasc.id + "==state",
           }}
         >
-          {contextMapping[pageContext].map((k: any) => (
+          {contextMapping[PageContext.Managing].map((k: any) => (
             <MenuItem key={tasc.id + "==" + k} value={k}>
               {states[k]}
             </MenuItem>
@@ -49,6 +49,6 @@ export const getStateSelectMenu = (pageContext: PageContext, tasc: Tasc, onTascL
       </FormControl>
     </form>
   ) : (
-    <input hidden={true} name={tasc.id + "==state"} value={tasc.state} />
+    <input hidden={true} name={tasc.id + "==state"} value={tasc.state} readOnly/>
   );
 };

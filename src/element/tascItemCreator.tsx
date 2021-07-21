@@ -8,49 +8,48 @@ import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
 import { getValuesFromInputElement } from "./util/elemToTasc";
 import Picker from "emoji-picker-react";
 import UseTasc from "../hooksComponent/useTasc";
+import { isOrganizeMode, PageContext } from "../type/pageContext";
+import { renderAddButtonForNewField } from "./util/tascAddButton";
 
 const shortid = require("shortid");
 
 interface ITascItemCreatorProp {
   tascList: Tasc[];
   onTascListChange: Function;
-  create?: Function;
+  pageContext: PageContext;
+  create: Function;
+  givenTasc?: Tasc;
 }
   
 export const TascItemCreator = ({
   tascList,
   onTascListChange,
+  pageContext,
   create,
+  givenTasc,
 }: ITascItemCreatorProp) => {
   const param = useContext(OperationContext) as IOperationParam;
-  const {tascItem, onTascItemChange} = UseTasc(getBrandNewTasc(
+  const {tascItem, onTascItemChange} = UseTasc(givenTasc? givenTasc : 
+    getBrandNewTasc(
     getBrandNewGoal(),
     param.ownerId,
     param.ownerId,
     0
   ));
 
-    const mockANewTasc = (goal?: string) => {
-        return getBrandNewTasc(
-            goal ? goal : getBrandNewGoal(),
-            param.ownerId,
-            param.ownerId,
-            0
-          );
-    }
-
   const checkEmptyTasc = (t: Tasc) => {
     return t.act.length === 0
   };
 
   const createTasc = (tasc: Tasc) => {
-    create!({...tasc, id: shortid.generate()})
-          .then((res: any) => {
-            onTascListChange(
-              [...tascList, new Tasc(res.data)].sort((a, b) => b.iid - a.iid)
+    const newId = shortid.generate();
+    create!({...tasc, id: newId})
+          .then(async (res: any) => {
+            await onTascListChange(
+              [...tascList.filter(t => t.id !== tasc.id), new Tasc(res.data)].sort((a, b) => b.iid - a.iid)
             );
             const newTasc = getBrandNewTasc(
-              getBrandNewGoal(),
+              tasc.goal,
               param.ownerId,
               param.ownerId,
               0
@@ -179,7 +178,18 @@ export const TascItemCreator = ({
         </div>
         {renderAddForNewItem(tascItem, onTascItemChange)}
       </section>
-      <hr className="dashed"></hr>
+      {isOrganizeMode(pageContext) ? (
+        <div className="separator">
+          <input type="text"></input>
+        </div>
+      ) : (
+        <hr className="dashed"></hr>
+      )}
+      {isOrganizeMode(pageContext) ? (
+        renderAddButtonForNewField(tascList!, onTascListChange!, param, tascItem.goal)
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

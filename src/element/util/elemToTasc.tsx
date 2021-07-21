@@ -1,4 +1,3 @@
-import React from "react";
 import Tasc from "../../model/tasc.entity";
 import 'reactjs-popup/dist/index.css';
 

@@ -8,7 +8,6 @@ import {
 } from "../api/apiHandler";
 import { ConfirmProvider } from "../hooksComponent/ConfirmContext";
 import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
-import UseTasc from "../hooksComponent/useTasc";
 import { TascItemUpdator } from "./ tascItemUpdator";
 import { contextMapping, PageContext } from "../type/pageContext";
 import { TascItemCreator } from "./tascItemCreator";
@@ -37,7 +36,6 @@ export const PageRenderer = ({
   const [serviceStatus, setServiceStatus] = useState(0);
   const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
   const [tascListOriginal, setTascListOriginal] = useState<Tasc[]>([]);
-  const {tascItem} = UseTasc(getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, 0));
   
   const create = (tasc : Tasc): Promise<any> => {
     return callCreateAPI(url, ownerId, tasc);
@@ -117,18 +115,24 @@ export const PageRenderer = ({
       <div className="item_container">
         <ConfirmProvider>
           <br />
-          {pageContext === PageContext.Incoming ? <TascItemCreator tascList={tascList} onTascListChange={onTascListChange} create={create}/> : <></>
+          {pageContext === PageContext.Incoming ? <TascItemCreator tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} create={create}/> : <></>
           }
           {getSolidTascs(
             tascList,
             getChildIndices(tascList)
           ).map((tasc: Tasc) =>
-          <TascItemUpdator key={tasc.id} givenTasc={tasc} onTascListElemChange={onTascListElemChange} tascList={tascList}
+          tasc.act.length ?
+            <TascItemUpdator key={tasc.id} givenTasc={tasc} 
+                              onTascListElemChange={onTascListElemChange}
+                              tascList={tascList}
                               onTascListChange={onTascListChange}
                               pageContext={pageContext}
                               updatePageContext={updatePageContext}
+                              create={create}
                               update={update}
                               />
+            :
+            <TascItemCreator key={tasc.id} tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} create={create} givenTasc={tasc}/>
           )}
         </ConfirmProvider>
       </div>

@@ -1,11 +1,11 @@
 import { Checkbox } from "@material-ui/core";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Popup from "reactjs-popup";
 import { callCreateAPI, callDeleteAPI } from "../api/apiHandler";
 import { OperationContext } from "../App";
 import DeleteButton from "../hooksComponent/DeleteButton";
 import Tasc from "../model/tasc.entity";
-import { contextMapping, PageContext } from "../type/pageContext";
+import { contextMapping, isOrganizeMode, PageContext } from "../type/pageContext";
 import { TascState } from "../type/tascState";
 import { validURL } from "../util/urlStringCheck";
 import { IOperationParam } from "./model/operationParam";
@@ -16,6 +16,7 @@ import {
 } from "./util/elemToTasc";
 import { getStateSelectMenu } from "./util/getStateSelectMenu";
 import UseTasc from "../hooksComponent/useTasc";
+import { renderAddButtonForNewField } from "./util/tascAddButton";
 
 interface ITascItemUpdatorProp {
   givenTasc: Tasc;
@@ -24,6 +25,7 @@ interface ITascItemUpdatorProp {
   onTascListChange: Function;
   pageContext: PageContext;
   updatePageContext: Function;
+  create: Function;
   update: Function;
 }
 
@@ -34,11 +36,13 @@ export const TascItemUpdator = ({
   onTascListChange,
   pageContext,
   updatePageContext,
+  create,
   update,
 }: ITascItemUpdatorProp) => {
   const param = useContext(OperationContext) as IOperationParam;
 
   const {tascItem, onTascItemChange} = UseTasc(givenTasc);
+  const [toBeCreated, setToBeCreated] = useState<Tasc[]>([]);
 
     const mockANewTasc = (goal?: string) => {
         return getBrandNewTasc(
@@ -73,10 +77,8 @@ export const TascItemUpdator = ({
     );
   };
 
-  const checkEmptyTasc = (tascList: Tasc[]) => {
-    let result = false;
-    tascList.forEach((t) => (result = result || t.act.length === 0));
-    return result;
+  const isTascEmpty = (tasc: Tasc) => {
+    return tasc.act.length === 0;
   };
 
   const renderAddForNewItem = (
@@ -91,33 +93,7 @@ export const TascItemUpdator = ({
     );
   };
 
-  const renderAddButtonForNewField = (
-    tascList: Tasc[],
-    onTascListChange: Function,
-    goal: string
-  ) => {
-    return (
-      <button
-        className="item_btn_highlighted"
-        onClick={() => {
-          if (checkEmptyTasc(tascList)) {
-            alert("You have empty field!");
-          } else {
-            onTascListChange([
-              ...tascList,
-              new Tasc(getBrandNewTasc(goal, param.ownerId, param.ownerId, 0)),
-            ]);
-          }
-        }}
-      >
-        +
-      </button>
-    );
-  };
-
-  const isOrganizeMode = (pageContext: PageContext) => {
-    return pageContext === PageContext.Organizing;
-  };
+  
 
   const addNewItem = async (
     tasc: Tasc | undefined,
@@ -208,12 +184,20 @@ export const TascItemUpdator = ({
 
   const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      update(tascItem);
+      if (!isTascEmpty(tascItem)){
+        toBeCreated.filter(t => t.id === tascItem.id).length ? create(tascItem).then((res: any) => onTascListChange(tascList.filter(t => t.id !== tascItem.id)))
+          : update(tascItem);
+        //setToBeCreated([]);
+      }
     }
   };
 
   const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
-    update(tascItem);
+    if (!isTascEmpty(tascItem)){
+      toBeCreated.filter(t => t.id === tascItem.id).length ? create(tascItem).then((res: any) => onTascListChange(tascList.filter(t => t.id !== tascItem.id)))
+        : update(tascItem);
+      //setToBeCreated([]);
+    }
   };
 
   return (
@@ -329,7 +313,7 @@ export const TascItemUpdator = ({
         <hr className="dashed"></hr>
       )}
       {isOrganizeMode(pageContext) ? (
-        renderAddButtonForNewField(tascList!, onTascListChange!, tascItem.goal)
+        renderAddButtonForNewField(tascList!, onTascListChange!, param, tascItem.goal)
       ) : (
         <></>
       )}
