@@ -13,12 +13,12 @@ import Picker from "emoji-picker-react";
 import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
 import {
   getValuesFromInputElement,
-  getValuesFromSectionElement,
 } from "./util/elemToTasc";
 import { getStateSelectMenu } from "./util/getStateSelectMenu";
+import UseTasc from "../hooksComponent/useTasc";
 
 interface ITascItemUpdatorProp {
-  tasc: Tasc;
+  givenTasc: Tasc;
   onTascListElemChange: Function;
   tascList: Tasc[];
   onTascListChange: Function;
@@ -28,7 +28,7 @@ interface ITascItemUpdatorProp {
 }
 
 export const TascItemUpdator = ({
-  tasc,
+  givenTasc,
   onTascListElemChange,
   tascList,
   onTascListChange,
@@ -36,7 +36,9 @@ export const TascItemUpdator = ({
   updatePageContext,
   update,
 }: ITascItemUpdatorProp) => {
-    const param = useContext(OperationContext) as IOperationParam;
+  const param = useContext(OperationContext) as IOperationParam;
+
+  const {tascItem, onTascItemChange} = UseTasc(givenTasc);
 
     const mockANewTasc = (goal?: string) => {
         return getBrandNewTasc(
@@ -137,7 +139,7 @@ export const TascItemUpdator = ({
 
   const getInputForAct = (
     tasc: Tasc,
-    onTascListElemChange: Function,
+    onTascItemChange: Function,
     tascList?: Tasc[] | undefined
   ) => {
     return (
@@ -147,7 +149,7 @@ export const TascItemUpdator = ({
         placeholder={"What do you want to achieve?"}
         value={tasc.act}
         onChange={(e) => {
-          onTascListElemChange(getValuesFromInputElement(e));
+          onTascItemChange(getValuesFromInputElement(e.currentTarget));
         }}
         className="item_content_act"
       />
@@ -204,25 +206,21 @@ export const TascItemUpdator = ({
     );
   };
 
-  const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      const partialTasc = getValuesFromSectionElement(event.currentTarget);
-      update(partialTasc);
+  const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      update(tascItem);
     }
   };
 
   const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
-    /*
-    const partialTasc = getValuesFromSectionElement(event.currentTarget);
-    update(partialTasc);
-    */
+    update(tascItem);
   };
 
   return (
-    <div id={tasc.id} key={tasc.id}>
+    <div id={tascItem.id} key={tascItem.id}>
       <section
         className="item"
-        id={tasc.id}
+        id={tascItem.id}
         onKeyUp={handleEnterKey}
         onBlur={handleBlur}
       >
@@ -230,24 +228,24 @@ export const TascItemUpdator = ({
           <button className="item_btn_draggable"></button>
         </div>
         <div className="item_division item_check">
-          <input hidden name={`${tasc.id}==goal`} defaultValue={tasc.goal} readOnly />
+          <input hidden name={`${tascItem.id}==goal`} defaultValue={tascItem.goal} readOnly />
           {pageContext === PageContext.Focusing ? (
             <Checkbox
-              checked={tasc.state === TascState.Done}
+              checked={tascItem.state === TascState.Done}
               onChange={(e) => {
                 // phase out
                 document
-                  .getElementsByName(`${tasc.id}==state`)
+                  .getElementsByName(`${tascItem.id}==state`)
                   .forEach(
                     (e) =>
                       ((e as HTMLInputElement).value =
                         TascState.Done.toString())
                   );
-                const partialTasc = { id: tasc.id, state: TascState.Done };
-                onTascListElemChange(partialTasc);
+                const partialTasc = { id: tascItem.id, state: TascState.Done };
+                //onTascListElemChange(partialTasc);
                 update(partialTasc).then((t:any) => onTascListChange(tascList.filter((t) => contextMapping[pageContext].includes(t.state))));
               }}
-              name={`${tasc.id}==state==checkbox`}
+              name={`${tascItem.id}==state==checkbox`}
               color="primary"
             />
           ) : (
@@ -255,13 +253,13 @@ export const TascItemUpdator = ({
               onClose={() =>
                 {
                     /* updateWithSection(document.getElementById(tasc.id)!); */
-                }                
+                }
               }
               trigger={
                 <button className="item_btn">
-                  {tasc.goal ? (
+                  {tascItem.goal ? (
                     <span className="emoji_span">
-                      {tasc.goal.split("=goal=")[0]}
+                      {tascItem.goal.split("=goal=")[0]}
                     </span>
                   ) : (
                     <span>{}</span>
@@ -273,17 +271,17 @@ export const TascItemUpdator = ({
               <Picker
                 onEmojiClick={(e, emoji) => {
                   const partialTasc = {
-                    id: tasc.id,
-                    goal: emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1],
+                    id: tascItem.id,
+                    goal: emoji.emoji + "=goal=" + tascItem.goal.split("=goal=")[1],
                   };
                   onTascListElemChange(partialTasc);
                   update(partialTasc).then((t: any) => {
                     document
-                    .getElementsByName(`${tasc.id}==goal`)
+                    .getElementsByName(`${tascItem.id}==goal`)
                     .forEach(
                       (e) =>
                         ((e as HTMLInputElement).value =
-                          emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1])
+                          emoji.emoji + "=goal=" + tascItem.goal.split("=goal=")[1])
                     );
                   });
                 }}
@@ -293,35 +291,35 @@ export const TascItemUpdator = ({
         </div>
         <div
           className={`item_division item_act ${
-            tasc.state === TascState.Focused &&
+            tascItem.state === TascState.Focused &&
             pageContext === PageContext.Incoming
               ? "item_focused"
               : ""
           }`}
         >
-          {validURL(tasc.act) ? (
-            <a href={tasc.act} target={"_blank"} rel="noreferrer">
-              {getInputForAct(tasc, onTascListElemChange, tascList)}
+          {validURL(tascItem.act) ? (
+            <a href={tascItem.act} target={"_blank"} rel="noreferrer">
+              {getInputForAct(tascItem, onTascItemChange, tascList)}
             </a>
           ) : (
-            getInputForAct(tasc, onTascListElemChange, tascList)
+            getInputForAct(tascItem, onTascItemChange, tascList)
           )}
 
           <br />
           <input
             type="text"
-            name={`${tasc.id}==endWhen`}
+            name={`${tascItem.id}==endWhen`}
             placeholder={"When is it done?"}
-            value={tasc.endWhen}
+            value={tascItem.endWhen}
             onChange={(e) => {
-              onTascListElemChange(getValuesFromInputElement(e));
+              onTascItemChange(tascItem.update(getValuesFromInputElement(e.currentTarget)!));
             }}
             className="item_content_end_when"
           />
         </div>
         {tascList
-          ? renderOptions(tasc, pageContext)
-          : renderAddForNewItem(tasc, onTascListElemChange)}
+          ? renderOptions(tascItem, pageContext)
+          : renderAddForNewItem(tascItem, onTascListElemChange)}
       </section>
       {isOrganizeMode(pageContext) ? (
         <div className="separator">
@@ -331,7 +329,7 @@ export const TascItemUpdator = ({
         <hr className="dashed"></hr>
       )}
       {isOrganizeMode(pageContext) ? (
-        renderAddButtonForNewField(tascList!, onTascListChange!, tasc.goal)
+        renderAddButtonForNewField(tascList!, onTascListChange!, tascItem.goal)
       ) : (
         <></>
       )}

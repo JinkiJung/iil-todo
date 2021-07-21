@@ -122,8 +122,8 @@ export const PageRenderer = ({
           {getSolidTascs(
             tascList,
             getChildIndices(tascList)
-          ).map((solidTasc: Tasc) =>
-          <TascItemUpdator key={solidTasc.id} tasc={solidTasc} onTascListElemChange={onTascListElemChange} tascList={tascList}
+          ).map((tasc: Tasc) =>
+          <TascItemUpdator key={tasc.id} givenTasc={tasc} onTascListElemChange={onTascListElemChange} tascList={tascList}
                               onTascListChange={onTascListChange}
                               pageContext={pageContext}
                               updatePageContext={updatePageContext}

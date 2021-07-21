@@ -105,7 +105,7 @@ export const TascItemCreator = ({
         placeholder={"What do you want to achieve?"}
         value={tasc.act}
         onChange={(e) => {
-          onTascItemChange(getValuesFromInputElement(e));
+          onTascItemChange(getValuesFromInputElement(e.currentTarget));
         }}
         className="item_content_act"
       />
@@ -172,7 +172,7 @@ export const TascItemCreator = ({
             placeholder={"When is it done?"}
             value={tascItem.endWhen}
             onChange={(e) => {
-              onTascItemChange(getValuesFromInputElement(e)!);
+              onTascItemChange(getValuesFromInputElement(e.currentTarget)!);
             }}
             className="item_content_end_when"
           />
