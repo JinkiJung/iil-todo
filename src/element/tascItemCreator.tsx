@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useContext } from "react";
 import Popup from "reactjs-popup";
-import { callCreateAPI, callDeleteAPI } from "../api/apiHandler";
 import { OperationContext } from "../App";
 import Tasc from "../model/tasc.entity";
-import { PageContext } from "../type/pageContext";
 import { IOperationParam } from "./model/operationParam";
 import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
-import { getValuesFromInputElement, getValuesFromSectionElement } from "./util/elemToTasc";
+import { getValuesFromInputElement } from "./util/elemToTasc";
 import Picker from "emoji-picker-react";
 import UseTasc from "../hooksComponent/useTasc";
 
@@ -25,7 +23,6 @@ export const TascItemCreator = ({
   create,
 }: ITascItemCreatorProp) => {
   const param = useContext(OperationContext) as IOperationParam;
-  const [needToRefresh, setNeedToRefresh] = useState(0);
   const {tascItem, onTascItemChange} = UseTasc(getBrandNewTasc(
     getBrandNewGoal(),
     param.ownerId,
@@ -58,8 +55,7 @@ export const TascItemCreator = ({
               param.ownerId,
               0
             );
-            onTascItemChange(newTasc);
-            setNeedToRefresh(needToRefresh+1);
+            onTascItemChange({...newTasc, id: tasc.id});
           })
           .catch((error: any) => alert(error));
   }
@@ -100,7 +96,7 @@ export const TascItemCreator = ({
 
   const getInputForAct = (
     tasc: Tasc,
-    onTascListElemChange: Function,
+    onTascItemChange: Function,
   ) => {
     return (
       <input
@@ -109,7 +105,7 @@ export const TascItemCreator = ({
         placeholder={"What do you want to achieve?"}
         value={tasc.act}
         onChange={(e) => {
-          onTascListElemChange(getValuesFromInputElement(e));
+          onTascItemChange(getValuesFromInputElement(e));
         }}
         className="item_content_act"
       />
@@ -121,8 +117,6 @@ export const TascItemCreator = ({
       createTasc(tascItem);
     }
   };
-
-  useEffect(() => console.log(needToRefresh), [needToRefresh]);
 
   return (
     <div id={tascItem.id} key={tascItem.id}>
