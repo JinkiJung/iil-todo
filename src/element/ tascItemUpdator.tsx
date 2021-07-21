@@ -17,7 +17,7 @@ import {
 } from "./util/elemToTasc";
 import { getStateSelectMenu } from "./util/getStateSelectMenu";
 
-interface ITascItemRendererProp {
+interface ITascItemUpdatorProp {
   tasc: Tasc;
   onTascListElemChange: Function;
   tascList: Tasc[];
@@ -27,7 +27,7 @@ interface ITascItemRendererProp {
   update: Function;
 }
 
-export const TascItemRenderer = ({
+export const TascItemUpdator = ({
   tasc,
   onTascListElemChange,
   tascList,
@@ -35,7 +35,7 @@ export const TascItemRenderer = ({
   pageContext,
   updatePageContext,
   update,
-}: ITascItemRendererProp) => {
+}: ITascItemUpdatorProp) => {
     const param = useContext(OperationContext) as IOperationParam;
 
     const mockANewTasc = (goal?: string) => {

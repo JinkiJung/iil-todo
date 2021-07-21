@@ -2,14 +2,16 @@ import React, { MouseEventHandler, useEffect, useState } from "react";
 import UseTascList from "../hooksComponent/useTascList";
 import Tasc, { ITasc } from "../model/tasc.entity";
 import {
+  callCreateAPI,
   callGetAPI,
   callUpdateAPI,
 } from "../api/apiHandler";
 import { ConfirmProvider } from "../hooksComponent/ConfirmContext";
 import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
 import UseTasc from "../hooksComponent/useTasc";
-import { TascItemRenderer } from "./ tascItemRenderer";
+import { TascItemUpdator } from "./ tascItemUpdator";
 import { contextMapping, PageContext } from "../type/pageContext";
+import { TascItemCreator } from "./tascItemCreator";
 
 export interface IPageRenderer {
   url: string;
@@ -36,11 +38,14 @@ export const PageRenderer = ({
   const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
   const [tascListOriginal, setTascListOriginal] = useState<Tasc[]>([]);
   const {tascItem} = UseTasc(getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, 0));
-
+  
+  const create = (tasc : Tasc): Promise<any> => {
+    return callCreateAPI(url, ownerId, tasc);
+  }
+  
   const update = (partialTasc : Partial<Tasc>): Promise<any> => {
     return callUpdateAPI(url, ownerId, partialTasc);
   }
-
   let initialTascList: Tasc[] = [];
   const { tascList, onTascListChange, onTascListElemChange } = UseTascList([
     ...initialTascList,
@@ -112,18 +117,13 @@ export const PageRenderer = ({
       <div className="item_container">
         <ConfirmProvider>
           <br />
-          {pageContext === PageContext.Incoming ? <TascItemRenderer tasc={tascItem} onTascListElemChange={onTascListElemChange} tascList={tascList}
-          onTascListChange={onTascListChange}
-          pageContext={pageContext}
-          updatePageContext={updatePageContext}
-          update={update}
-          /> : <></>
+          {pageContext === PageContext.Incoming ? <TascItemCreator tascList={tascList} onTascListChange={onTascListChange} create={create}/> : <></>
           }
           {getSolidTascs(
             tascList,
             getChildIndices(tascList)
           ).map((solidTasc: Tasc) =>
-          <TascItemRenderer key={solidTasc.id} tasc={solidTasc} onTascListElemChange={onTascListElemChange} tascList={tascList}
+          <TascItemUpdator key={solidTasc.id} tasc={solidTasc} onTascListElemChange={onTascListElemChange} tascList={tascList}
                               onTascListChange={onTascListChange}
                               pageContext={pageContext}
                               updatePageContext={updatePageContext}
