@@ -1,5 +1,5 @@
 import { Checkbox } from "@material-ui/core";
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import Popup from "reactjs-popup";
 import { callCreateAPI, callDeleteAPI } from "../api/apiHandler";
 import { OperationContext } from "../App";
@@ -17,8 +17,11 @@ import {
 import { getStateSelectMenu } from "./util/getStateSelectMenu";
 import UseTasc from "../hooksComponent/useTasc";
 import { renderAddButtonForNewField } from "./util/tascAddButton";
+import { DropTargetMonitor, useDrag, useDrop, XYCoord } from "react-dnd";
+import { ItemTypes } from "./model/itemType";
 
 interface ITascItemUpdatorProp {
+  index: number;
   givenTasc: Tasc;
   onTascListElemChange: Function;
   tascList: Tasc[];
@@ -27,9 +30,17 @@ interface ITascItemUpdatorProp {
   updatePageContext: Function;
   create: Function;
   update: Function;
+  moveCard: (dragIndex: number, hoverIndex: number) => void;
+}
+
+interface DragItem {
+  index: number
+  id: string
+  type: string
 }
 
 export const TascItemUpdator = ({
+  index,
   givenTasc,
   onTascListElemChange,
   tascList,
@@ -38,12 +49,82 @@ export const TascItemUpdator = ({
   updatePageContext,
   create,
   update,
+  moveCard,
 }: ITascItemUpdatorProp) => {
+  const ref = useRef<HTMLDivElement>(null);
   const param = useContext(OperationContext) as IOperationParam;
 
   const {tascItem, onTascItemChange} = UseTasc(givenTasc);
   const [toBeCreated, setToBeCreated] = useState<Tasc[]>([]);
 
+  const [{ handlerId }, drop] = useDrop({
+    accept: ItemTypes.TASC,
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId(),
+      }
+    },
+    hover(item: DragItem, monitor: DropTargetMonitor) {
+      if (!ref.current) {
+        return
+      }
+      
+      const dragIndex = item.index
+      const hoverIndex = index
+
+      // Don't replace items with themselves
+      if (dragIndex === hoverIndex) {
+        return
+      }
+
+      // Determine rectangle on screen
+      const hoverBoundingRect = ref.current?.getBoundingClientRect()
+
+      // Get vertical middle
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+
+      // Determine mouse position
+      const clientOffset = monitor.getClientOffset()
+
+      // Get pixels to the top
+      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top
+
+      // Only perform the move when the mouse has crossed half of the items height
+      // When dragging downwards, only move when the cursor is below 50%
+      // When dragging upwards, only move when the cursor is above 50%
+
+      // Dragging downwards
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return
+      }
+
+      // Dragging upwards
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return
+      }
+
+      // Time to actually perform the action
+      moveCard(dragIndex, hoverIndex)
+
+      // Note: we're mutating the monitor item here!
+      // Generally it's better to avoid mutations,
+      // but it's good here for the sake of performance
+      // to avoid expensive index searches.
+      item.index = hoverIndex
+    },
+  })
+
+  const [{ isDragging }, drag] = useDrag({
+    type: ItemTypes.TASC,
+    item: () => {
+      return tascItem;
+    },
+    collect: (monitor: any) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  })
+  
     const mockANewTasc = (goal?: string) => {
         return getBrandNewTasc(
             goal ? goal : getBrandNewGoal(),
@@ -93,8 +174,6 @@ export const TascItemUpdator = ({
     );
   };
 
-  
-
   const addNewItem = async (
     tasc: Tasc | undefined,
     tascList: Tasc[],
@@ -106,7 +185,7 @@ export const TascItemUpdator = ({
     return await callCreateAPI(param.backEndUrl, param.ownerId, newTasc)
       .then((res: any) => {
         onTascListChange(
-          [...tascList, new Tasc(res.data)].sort((a, b) => b.iid - a.iid)
+          [...tascList, new Tasc(res.data)]
         );
         return res;
       })
@@ -193,15 +272,19 @@ export const TascItemUpdator = ({
   };
 
   const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
-    if (!isTascEmpty(tascItem)){
+    if (!isTascEmpty(tascItem) && JSON.stringify(tascList.find((t) => t.id === tascItem.id)) !== JSON.stringify(tascItem)){
       toBeCreated.filter(t => t.id === tascItem.id).length ? create(tascItem).then((res: any) => onTascListChange(tascList.filter(t => t.id !== tascItem.id)))
         : update(tascItem);
       //setToBeCreated([]);
     }
   };
 
+  if (pageContext === PageContext.Organizing)
+  {
+    drag(drop(ref));
+  }
   return (
-    <div id={tascItem.id} key={tascItem.id}>
+    <div ref={ref} id={tascItem.id} key={tascItem.id} data-handler-id={handlerId}>
       <section
         className="item"
         id={tascItem.id}

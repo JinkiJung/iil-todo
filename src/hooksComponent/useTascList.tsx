@@ -9,7 +9,7 @@ const UseTascList = (initialTascList: Tasc[], validator?: Function) => {
           willUpdate = validator(tascs);
       }
       if(willUpdate){
-          setTascList(tascs.sort((a, b) => b.iid - a.iid));
+          setTascList(tascs);
       }
     };
     const onTascListElemChange = (fieldsToUpdate: Partial<Tasc>) => {
@@ -18,7 +18,6 @@ const UseTascList = (initialTascList: Tasc[], validator?: Function) => {
         const updatedItem = itemToBeUpdated.update(fieldsToUpdate);
         //const updatedItem: Tasc = { ...itemToBeUpdated, ...fieldsToUpdate };
         const appendedList = [...tascList.filter(x => x.id !== updatedItem.id), updatedItem];
-        // appendedList.sort((a,b) => b.iid - a.iid);
         onTascListChange(appendedList);
       }
     };

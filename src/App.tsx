@@ -4,6 +4,7 @@ import 'reflect-metadata';
 import { PageRenderer } from './element/pageRenderer';
 import { PageContext } from './type/pageContext';
 import useKeycloak from './keycloak/useKeycloak';
+import { Container } from './element/drag-drop-test/Container';
 
 const testURL = "http://localhost:12500/tasc";
 const keycloakJsonFilePath = '../json/keycloak.json';
@@ -15,7 +16,8 @@ function App() {
   return (
     <div className="App">
       <OperationContext.Provider value={{backEndUrl: testURL, ownerId: userId}}>
-        {keycloak ? 
+        {
+        keycloak ? 
           authenticated ?
             userId ?
               <PageRenderer url={testURL} ownerId={userId} givenPageContext={PageContext.Incoming} onLogOut={(e) => keycloak.logout()}/>
@@ -24,7 +26,8 @@ function App() {
             :
           <div>Move to authentication page...</div>
           :
-          <div>There is a problem in Keycloak configuration.</div>}
+        <div>There is a problem in Keycloak configuration.</div>
+        }
       </OperationContext.Provider>
     </div>
   );

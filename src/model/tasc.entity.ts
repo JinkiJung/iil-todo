@@ -66,6 +66,10 @@ class Tasc implements ITasc{
     toJson(): object{
         return JSON.parse(JSON.stringify(this));
     }
+
+    setOrder(i: number){
+        this.order = i;
+    }
 }
 
 export default Tasc;

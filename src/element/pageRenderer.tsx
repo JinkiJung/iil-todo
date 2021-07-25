@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useState } from "react";
+import React, { MouseEventHandler, useCallback, useEffect, useState } from "react";
 import UseTascList from "../hooksComponent/useTascList";
 import Tasc, { ITasc } from "../model/tasc.entity";
 import {
@@ -11,6 +11,9 @@ import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
 import { TascItemUpdator } from "./ tascItemUpdator";
 import { contextMapping, PageContext } from "../type/pageContext";
 import { TascItemCreator } from "./tascItemCreator";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import update from 'immutability-helper'
 
 export interface IPageRenderer {
   url: string;
@@ -22,7 +25,7 @@ export interface IPageRenderer {
 const removeAllFocused = async (tascList: Tasc[]) => {
   /*
   return await callUpdateAPI(url, ownerId, newTasc)
-      .then((res: any) => { onTascListChange([...tascList, new Tasc(res.data)].sort((a,b) => b.iid - a.iid)); return res;})
+      .then((res: any) => { onTascListChange([...tascList, new Tasc(res.data)]); return res;})
       .catch((error) => alert(error));
       */
 }
@@ -37,11 +40,11 @@ export const PageRenderer = ({
   const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
   const [tascListOriginal, setTascListOriginal] = useState<Tasc[]>([]);
   
-  const create = (tasc : Tasc): Promise<any> => {
+  const createCall = (tasc : Tasc): Promise<any> => {
     return callCreateAPI(url, ownerId, tasc);
   }
   
-  const update = (partialTasc : Partial<Tasc>): Promise<any> => {
+  const updateCall = (partialTasc : Partial<Tasc>): Promise<any> => {
     return callUpdateAPI(url, ownerId, partialTasc);
   }
   let initialTascList: Tasc[] = [];
@@ -55,12 +58,16 @@ export const PageRenderer = ({
       .then((response) => response.data)
       .then((data: ITasc[]) => data.map((e) => new Tasc(e)))
       .then((tascs) => {
-        setTascListOriginal(tascs);
+        setTascListOriginal(setTascListOrder(tascs));
         updatePageContext(pageContext);
         setServiceStatus(1);
       })
       .catch((err) => setServiceStatus(-1));
   }, [serviceStatus, url, ownerId]);
+
+  const setTascListOrder = (tascList: Tasc[]): Tasc[] => {
+    return tascList.reverse();
+  }
 
   const getChildIndices = (tascList: Tasc[]): string[] => {
     let indiceSet = new Set<string>();
@@ -88,6 +95,23 @@ export const PageRenderer = ({
     setPageContext(givenContext);
   }
 
+  const moveCard = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      const dragCard = tascList[dragIndex];//tascList.filter(t => t.order === dragIndex).pop();
+      if(dragCard){
+        onTascListChange(
+          update(tascList, {
+            $splice: [
+              [dragIndex, 1],
+              [hoverIndex, 0, dragCard],
+            ],
+          }),
+        )
+      }
+    },
+    [tascList],
+  )
+
   return serviceStatus > 0 ? (
     <div className="bg bg_normal" id="background">
       <div className="pageHeader" id="pageHeader"><button onClick={onLogOut}>logOut</button></div>
@@ -113,28 +137,31 @@ export const PageRenderer = ({
       </div>
       <div className="menu">{pageContext === PageContext.Focusing ? <button onClick={() => removeAllFocused(tascList)}>Remove all</button> : <></>}</div>
       <div className="item_container">
-        <ConfirmProvider>
-          <br />
-          {pageContext === PageContext.Incoming ? <TascItemCreator tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} create={create}/> : <></>
-          }
-          {getSolidTascs(
-            tascList,
-            getChildIndices(tascList)
-          ).map((tasc: Tasc) =>
-          tasc.act.length ?
-            <TascItemUpdator key={tasc.id} givenTasc={tasc} 
-                              onTascListElemChange={onTascListElemChange}
-                              tascList={tascList}
-                              onTascListChange={onTascListChange}
-                              pageContext={pageContext}
-                              updatePageContext={updatePageContext}
-                              create={create}
-                              update={update}
-                              />
-            :
-            <TascItemCreator key={tasc.id} tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} create={create} givenTasc={tasc}/>
-          )}
-        </ConfirmProvider>
+        <DndProvider backend={HTML5Backend}>
+          <ConfirmProvider>
+            <br />
+            {pageContext === PageContext.Incoming ? <TascItemCreator tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} create={createCall}/> : <></>
+            }
+            {getSolidTascs(
+              tascList,
+              getChildIndices(tascList)
+            ).map((tasc: Tasc, i: number) =>
+            tasc.act.length ?
+              <TascItemUpdator key={tasc.id} index={i} givenTasc={tasc} 
+                                onTascListElemChange={onTascListElemChange}
+                                tascList={tascList}
+                                onTascListChange={onTascListChange}
+                                pageContext={pageContext}
+                                updatePageContext={updatePageContext}
+                                create={createCall}
+                                update={updateCall}
+                                moveCard={moveCard}
+                                />
+              :
+              <TascItemCreator key={tasc.id} tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} create={createCall} givenTasc={tasc}/>
+            )}
+          </ConfirmProvider>
+        </DndProvider>
       </div>
     </div>
   ) : serviceStatus < 0 ? (

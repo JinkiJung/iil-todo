@@ -46,7 +46,7 @@ export const TascItemCreator = ({
     create!({...tasc, id: newId})
           .then(async (res: any) => {
             await onTascListChange(
-              [...tascList.filter(t => t.id !== tasc.id), new Tasc(res.data)].sort((a, b) => b.iid - a.iid)
+              [...tascList.filter(t => t.id !== tasc.id), new Tasc(res.data)]
             );
             const newTasc = getBrandNewTasc(
               tasc.goal,
