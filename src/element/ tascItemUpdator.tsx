@@ -21,7 +21,7 @@ import { DropTargetMonitor, useDrag, useDrop, XYCoord } from "react-dnd";
 import { ItemTypes } from "./model/itemType";
 
 interface ITascItemUpdatorProp {
-  index: number;
+  order: number;
   givenTasc: Tasc;
   onTascListElemChange: Function;
   tascList: Tasc[];
@@ -34,13 +34,13 @@ interface ITascItemUpdatorProp {
 }
 
 interface DragItem {
-  index: number
+  order: number
   id: string
   type: string
 }
 
 export const TascItemUpdator = ({
-  index,
+  order,
   givenTasc,
   onTascListElemChange,
   tascList,
@@ -68,9 +68,11 @@ export const TascItemUpdator = ({
       if (!ref.current) {
         return
       }
+
+      console.log(tascList);
       
-      const dragIndex = item.index
-      const hoverIndex = index
+      const dragIndex = item.order
+      const hoverIndex = order
 
       // Don't replace items with themselves
       if (dragIndex === hoverIndex) {
@@ -111,7 +113,7 @@ export const TascItemUpdator = ({
       // Generally it's better to avoid mutations,
       // but it's good here for the sake of performance
       // to avoid expensive index searches.
-      item.index = hoverIndex
+      item.order = hoverIndex
     },
   })
 
@@ -194,8 +196,7 @@ export const TascItemUpdator = ({
 
   const getInputForAct = (
     tasc: Tasc,
-    onTascItemChange: Function,
-    tascList?: Tasc[] | undefined
+    onTascItemChange: Function
   ) => {
     return (
       <input
@@ -207,6 +208,24 @@ export const TascItemUpdator = ({
           onTascItemChange(getValuesFromInputElement(e.currentTarget));
         }}
         className="item_content_act"
+      />
+    );
+  };
+
+  const getInputForEndWhen = (
+    tasc: Tasc,
+    onTascItemChange: Function
+  ) => {
+    return (
+      <input
+        type="text"
+        name={`${tascItem.id}==endWhen`}
+        placeholder={"When is it done?"}
+        value={tascItem.endWhen}
+        onChange={(e) => {
+          onTascItemChange(tascItem.update(getValuesFromInputElement(e.currentTarget)!));
+        }}
+        className="item_content_end_when"
       />
     );
   };
@@ -264,7 +283,9 @@ export const TascItemUpdator = ({
   const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       if (!isTascEmpty(tascItem)){
-        toBeCreated.filter(t => t.id === tascItem.id).length ? create(tascItem).then((res: any) => onTascListChange(tascList.filter(t => t.id !== tascItem.id)))
+        tascList.filter(t => t.id === tascItem.id).length === 0
+        && toBeCreated.filter(t => t.id === tascItem.id).length 
+        ? create(tascItem).then((res: any) => onTascListChange(tascList.filter(t => t.id !== tascItem.id)))
           : update(tascItem);
         //setToBeCreated([]);
       }
@@ -272,14 +293,17 @@ export const TascItemUpdator = ({
   };
 
   const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
-    if (!isTascEmpty(tascItem) && JSON.stringify(tascList.find((t) => t.id === tascItem.id)) !== JSON.stringify(tascItem)){
-      toBeCreated.filter(t => t.id === tascItem.id).length ? create(tascItem).then((res: any) => onTascListChange(tascList.filter(t => t.id !== tascItem.id)))
+    if (!isTascEmpty(tascItem)
+      && JSON.stringify(tascList.find((t) => t.id === tascItem.id)) !== JSON.stringify(tascItem)){
+        tascList.filter(t => t.id === tascItem.id).length === 0
+        && toBeCreated.filter(t => t.id === tascItem.id).length 
+        ? create(tascItem).then((res: any) => onTascListChange(tascList.filter(t => t.id !== tascItem.id)))
         : update(tascItem);
       //setToBeCreated([]);
     }
   };
 
-  if (pageContext === PageContext.Organizing)
+  if (pageContext === PageContext.Focusing)
   {
     drag(drop(ref));
   }
@@ -366,23 +390,14 @@ export const TascItemUpdator = ({
         >
           {validURL(tascItem.act) ? (
             <a href={tascItem.act} target={"_blank"} rel="noreferrer">
-              {getInputForAct(tascItem, onTascItemChange, tascList)}
+              {getInputForAct(tascItem, onTascItemChange)}
             </a>
           ) : (
-            getInputForAct(tascItem, onTascItemChange, tascList)
+            getInputForAct(tascItem, onTascItemChange)
           )}
 
           <br />
-          <input
-            type="text"
-            name={`${tascItem.id}==endWhen`}
-            placeholder={"When is it done?"}
-            value={tascItem.endWhen}
-            onChange={(e) => {
-              onTascItemChange(tascItem.update(getValuesFromInputElement(e.currentTarget)!));
-            }}
-            className="item_content_end_when"
-          />
+          {getInputForEndWhen(tascItem, onTascItemChange)}
         </div>
         {tascList
           ? renderOptions(tascItem, pageContext)

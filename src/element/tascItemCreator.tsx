@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useContext } from "react";
 import Popup from "reactjs-popup";
 import { OperationContext } from "../App";
@@ -29,6 +29,7 @@ export const TascItemCreator = ({
   givenTasc,
 }: ITascItemCreatorProp) => {
   const param = useContext(OperationContext) as IOperationParam;
+
   const {tascItem, onTascItemChange} = UseTasc(givenTasc? givenTasc : 
     getBrandNewTasc(
     getBrandNewGoal(),
@@ -116,6 +117,13 @@ export const TascItemCreator = ({
       createTasc(tascItem);
     }
   };
+
+  useEffect( () => {
+    let mounted = true;
+    if (mounted){
+    }
+    return () => {mounted = false;}
+  }, [tascItem])
 
   return (
     <div id={tascItem.id} key={tascItem.id}>

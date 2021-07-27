@@ -54,15 +54,20 @@ export const PageRenderer = ({
   ]);
 
   useEffect(() => {
+    let mounted = true;
     callGetAPI(url, ownerId, PageContext.Admin)
       .then((response) => response.data)
       .then((data: ITasc[]) => data.map((e) => new Tasc(e)))
       .then((tascs) => {
-        setTascListOriginal(setTascListOrder(tascs));
-        updatePageContext(pageContext);
-        setServiceStatus(1);
+        if (mounted){
+          setTascListOriginal(setTascListOrder(tascs));
+          updatePageContext(pageContext);
+          setServiceStatus(1);
+        }
       })
       .catch((err) => setServiceStatus(-1));
+
+      return () => {mounted = false;}
   }, [serviceStatus, url, ownerId]);
 
   const setTascListOrder = (tascList: Tasc[]): Tasc[] => {
@@ -88,6 +93,9 @@ export const PageRenderer = ({
   const updatePageContext = (givenContext: PageContext, goal?: string) => {
     if (givenContext === PageContext.Organizing && goal) {
       onTascListChange(tascListOriginal.filter((t) => contextMapping[givenContext].includes(t.state) && t.goal === goal));
+    }
+    else if (givenContext === PageContext.Focusing) {
+      onTascListChange(tascListOriginal.filter((t) => contextMapping[givenContext].includes(t.state)).map((t,i) => {t.setOrder(i); return t;}).sort((a,b) => a.order - b.order));
     }
     else {
       onTascListChange(tascListOriginal.filter((t) => contextMapping[givenContext].includes(t.state)));
@@ -147,7 +155,7 @@ export const PageRenderer = ({
               getChildIndices(tascList)
             ).map((tasc: Tasc, i: number) =>
             tasc.act.length ?
-              <TascItemUpdator key={tasc.id} index={i} givenTasc={tasc} 
+              <TascItemUpdator key={tasc.id} order={i} givenTasc={tasc} 
                                 onTascListElemChange={onTascListElemChange}
                                 tascList={tascList}
                                 onTascListChange={onTascListChange}
