@@ -23,7 +23,7 @@ export const callUpdateAPI = (url: string, ownerId: string, tasc: Partial<Tasc>)
 export const callUpdateBatchAPI = (url: string, ownerId: string, tascs: Partial<Tasc>[]): Promise<any> => {
     return axios({
         method: 'patch',
-        url: url + "/"+ ownerId,
+        url: url + "s" + "/"+ ownerId,
         data: tascs,
         headers: { 'content-type': 'application/json'},
     });
@@ -39,7 +39,7 @@ export const callDeleteAPI = (url: string, ownerId: string, tascId: string): Pro
 export const callGetAPI = async (url: string, ownerId: string, pageContext: PageContext): Promise<any> => {
     return axios({
         method: 'get',
-        url: `${url}/${ownerId}/${PageContext[pageContext]}`,
+        url: `${url}s/${ownerId}/${PageContext[pageContext]}`,
         headers: { 'content-type': 'application/json'},
     });
 }
