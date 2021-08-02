@@ -5,6 +5,7 @@ import {
   callCreateAPI,
   callGetAPI,
   callUpdateAPI,
+  callUpdateBatchAPI,
 } from "../api/apiHandler";
 import { ConfirmProvider } from "../hooksComponent/ConfirmContext";
 import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
@@ -22,37 +23,19 @@ export interface IPageRenderer {
   onLogOut: MouseEventHandler<HTMLButtonElement>;
 }
 
-const removeAllFocused = async (tascList: Tasc[]) => {
-  /*
-  return await callUpdateAPI(url, ownerId, newTasc)
-      .then((res: any) => { onTascListChange([...tascList, new Tasc(res.data)]); return res;})
-      .catch((error) => alert(error));
-      */
-}
-
 export const PageRenderer = ({
   url,
   ownerId,
   givenPageContext,
   onLogOut,
 }: IPageRenderer) => {
+  let pendingUpdateFn: any;
+  let requestedFrame: number | undefined;
+
   const [serviceStatus, setServiceStatus] = useState(0);
   const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
   const [tascListOriginal, setTascListOriginal] = useState<Tasc[]>([]);
   
-  const createCall = (tasc : Tasc): Promise<any> => {
-    return callCreateAPI(url, ownerId, tasc);
-  }
-  
-  const updateCall = (partialTasc : Partial<Tasc>): Promise<any> => {
-    return callUpdateAPI(url, ownerId, partialTasc);
-  }
-  let initialTascList: Tasc[] = [];
-  const { tascList, onTascListChange, onTascListElemChange } = UseTascList([
-    ...initialTascList,
-    getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, initialTascList.length),
-  ]);
-
   useEffect(() => {
     let mounted = true;
     callGetAPI(url, ownerId, PageContext.Admin)
@@ -69,6 +52,25 @@ export const PageRenderer = ({
 
       return () => {mounted = false;}
   }, [serviceStatus, url, ownerId]);
+
+  const createCall = (tasc : Tasc): Promise<any> => {
+    return callCreateAPI(url, ownerId, tasc);
+  }
+  
+  const updateCall = (partialTasc : Partial<Tasc>): Promise<any> => {
+    return callUpdateAPI(url, ownerId, partialTasc);
+  }
+  let initialTascList: Tasc[] = [];
+  const { tascList, onTascListChange, onTascListElemChange } = UseTascList([
+    ...initialTascList,
+    getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, initialTascList.length),
+  ]);
+
+  const removeAllFocused = async (ptascList: Partial<Tasc>[]) => {
+    return await callUpdateBatchAPI(url, ownerId, ptascList)
+        .then((res: any) => { onTascListChange([...tascList, new Tasc(res.data)]); return res;})
+        .catch((error) => alert(error));
+  }
 
   const setTascListOrder = (tascList: Tasc[]): Tasc[] => {
     return tascList.reverse();
@@ -103,22 +105,34 @@ export const PageRenderer = ({
     setPageContext(givenContext);
   }
 
-  const moveCard = useCallback(
-    (dragIndex: number, hoverIndex: number) => {
-      const dragCard = tascList[dragIndex];//tascList.filter(t => t.order === dragIndex).pop();
-      if(dragCard){
-        onTascListChange(
-          update(tascList, {
-            $splice: [
-              [dragIndex, 1],
-              [hoverIndex, 0, dragCard],
-            ],
-          }),
-        )
-      }
-    },
-    [tascList],
-  )
+  const scheduleUpdate = (updateFn: any) => {
+    pendingUpdateFn = updateFn;
+
+    if (!requestedFrame) {
+      requestedFrame = requestAnimationFrame(drawFrame);
+    }
+  }
+
+  const drawFrame = (): void => {
+    const nextState = update(tascList, pendingUpdateFn);
+    onTascListChange(nextState);
+
+    pendingUpdateFn = undefined;
+    requestedFrame = undefined;
+  }
+
+  const moveCard = (id: string, afterId: string): void => {
+    const cardIndex = tascList.findIndex((t) => t.id === id);
+    const afterIndex = tascList.findIndex((t) => t.id === afterId);
+    const card = tascList[cardIndex];
+    
+    scheduleUpdate({
+        $splice: [
+          [cardIndex, 1],
+          [afterIndex, 0, card],
+        ],
+      })
+  }
 
   return serviceStatus > 0 ? (
     <div className="bg bg_normal" id="background">
@@ -155,7 +169,7 @@ export const PageRenderer = ({
               getChildIndices(tascList)
             ).map((tasc: Tasc, i: number) =>
             tasc.act.length ?
-              <TascItemUpdator key={tasc.id} order={i} givenTasc={tasc} 
+              <TascItemUpdator key={tasc.id} givenTasc={tasc} 
                                 onTascListElemChange={onTascListElemChange}
                                 tascList={tascList}
                                 onTascListChange={onTascListChange}
