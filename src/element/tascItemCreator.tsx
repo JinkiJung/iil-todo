@@ -47,7 +47,7 @@ export const TascItemCreator = ({
     create!({...tasc, id: newId})
           .then(async (res: any) => {
             await onTascListChange(
-              [...tascList.filter(t => t.id !== tasc.id), new Tasc(res.data)]
+              [new Tasc(res.data), ...tascList.filter(t => t.id !== tasc.id)]
             );
             const newTasc = getBrandNewTasc(
               tasc.goal,
