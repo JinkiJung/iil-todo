@@ -97,7 +97,7 @@ export const PageRenderer = ({
       onTascListChange(tascListOriginal.filter((t) => contextMapping[givenContext].includes(t.state) && t.goal === goal));
     }
     else if (givenContext === PageContext.Focusing) {
-      onTascListChange(tascListOriginal.filter((t) => contextMapping[givenContext].includes(t.state)).map((t,i) => {t.setOrder(i); return t;}).sort((a,b) => a.order - b.order));
+      onTascListChange(tascListOriginal.filter((t) => contextMapping[givenContext].includes(t.state)).sort((a,b) => a.order - b.order));
     }
     else {
       onTascListChange(tascListOriginal.filter((t) => contextMapping[givenContext].includes(t.state)));
@@ -125,13 +125,19 @@ export const PageRenderer = ({
     const cardIndex = tascList.findIndex((t) => t.id === id);
     const afterIndex = tascList.findIndex((t) => t.id === afterId);
     const card = tascList[cardIndex];
-    
+
     scheduleUpdate({
         $splice: [
           [cardIndex, 1],
           [afterIndex, 0, card],
         ],
       })
+  }
+
+  const updateOrderOfList = () => {
+    const partials = tascList.map((t, i) => {return {id: t.id, order: i}});
+    // TODO: hold the page until the update being settled
+    callUpdateBatchAPI(url, ownerId, partials).then((res) => console.log(partials));
   }
 
   return serviceStatus > 0 ? (
@@ -178,6 +184,7 @@ export const PageRenderer = ({
                                 create={createCall}
                                 update={updateCall}
                                 moveCard={moveCard}
+                                updateOrderOfList={updateOrderOfList}
                                 />
               :
               <TascItemCreator key={tasc.id} tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} create={createCall} givenTasc={tasc}/>

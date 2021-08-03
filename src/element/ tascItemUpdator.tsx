@@ -30,6 +30,7 @@ interface ITascItemUpdatorProp {
   create: Function;
   update: Function;
   moveCard: (draggedId: string, id: string) => void;
+  updateOrderOfList: () => void;
 }
 
 export const TascItemUpdator = ({
@@ -42,6 +43,7 @@ export const TascItemUpdator = ({
   create,
   update,
   moveCard,
+  updateOrderOfList,
 }: ITascItemUpdatorProp) => {
   const ref = useRef<HTMLDivElement>(null);
   const param = useContext(OperationContext) as IOperationParam;
@@ -68,6 +70,9 @@ export const TascItemUpdator = ({
         moveCard(draggedId, givenTasc.id)
       }
     },
+    drop(item, monitor) {
+      updateOrderOfList();
+    }
   })
   
     const mockANewTasc = (goal?: string) => {

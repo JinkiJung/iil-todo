@@ -4,7 +4,6 @@ import 'reflect-metadata';
 import { PageRenderer } from './element/pageRenderer';
 import { PageContext } from './type/pageContext';
 import useKeycloak from './keycloak/useKeycloak';
-import { Container } from './element/drag-drop-test/Container';
 
 const testURL = "http://localhost:12500/tasc";
 const keycloakJsonFilePath = '../json/keycloak.json';
