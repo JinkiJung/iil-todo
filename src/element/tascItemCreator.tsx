@@ -2,14 +2,16 @@ import React, { useEffect } from "react";
 import { useContext } from "react";
 import Popup from "reactjs-popup";
 import { OperationContext } from "../App";
-import Tasc from "../model/tasc.entity";
+import Tasc, { validateTasc } from "../model/tasc.entity";
 import { IOperationParam } from "./model/operationParam";
 import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
 import { getValuesFromInputElement } from "./util/elemToTasc";
 import Picker from "emoji-picker-react";
 import UseTasc from "../hooksComponent/useTasc";
 import { isOrganizeMode, PageContext } from "../type/pageContext";
-import { renderAddButtonForNewField } from "./util/tascAddButton";
+import DeleteButton from "../hooksComponent/DeleteButton";
+import { callDeleteAPI } from "../api/apiHandler";
+import { renderAddButton, renderAddButtonForNewField, renderDeleteButton } from "./util/tascButtons";
 
 const shortid = require("shortid");
 
@@ -38,10 +40,6 @@ export const TascItemCreator = ({
     0
   ));
 
-  const checkEmptyTasc = (t: Tasc) => {
-    return t.act.length === 0
-  };
-
   const createTasc = (tasc: Tasc) => {
     const newId = shortid.generate();
     create!({...tasc, id: newId})
@@ -60,36 +58,18 @@ export const TascItemCreator = ({
           .catch((error: any) => alert(error));
   }
 
-  const renderAddButton = (
-    tasc: Tasc,
-    setTascItem: Function,
-    goal?: string
-  ) => {
-    return (
-      <button
-        className="item_btn_highlighted"
-        onClick={() => {
-          if(checkEmptyTasc(tasc)) {
-            alert("You have empty field!");
-          }
-          else{
-            createTasc(tasc);
-          }
-        }}
-      >
-        +
-      </button>
-    );
-  };
+  const deleteTasc = (tasc: Tasc) => {
+    callDeleteAPI(param.backEndUrl, param.ownerId, tasc.id).then(() =>
+                onTascListChange(tascList.filter((t:any)=> t.id !== tasc.id)))
+  }
 
   const renderAddForNewItem = (
-    tasc: Tasc,
-    setTascItem: Function,
-    goal?: string
+    tasc: Tasc
   ) => {
     return (
-      <div className="item_division item_options">
-        {renderAddButton(tasc, setTascItem, goal)}
+      <div className="item_division item_options button_container">
+        <div>{renderAddButton(tasc, createTasc)}</div>
+        { givenTasc && <div>{renderDeleteButton(tasc, deleteTasc)}</div> }
       </div>
     );
   };
@@ -113,7 +93,7 @@ export const TascItemCreator = ({
   };
 
   const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && validateTasc(tascItem)) {
       createTasc(tascItem);
     }
   };
@@ -184,7 +164,7 @@ export const TascItemCreator = ({
             className="item_content_end_when"
           />
         </div>
-        {renderAddForNewItem(tascItem, onTascItemChange)}
+        {renderAddForNewItem(tascItem)}
       </section>
       {isOrganizeMode(pageContext) ? (
         <div className="separator">
@@ -194,7 +174,9 @@ export const TascItemCreator = ({
         <hr className="dashed"></hr>
       )}
       {isOrganizeMode(pageContext) ? (
+        <div className="button_container">{
         renderAddButtonForNewField(tascList!, onTascListChange!, param, tascItem.goal)
+        }</div>
       ) : (
         <></>
       )}

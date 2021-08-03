@@ -124,9 +124,34 @@ button.item_btn_draggable{
   background-color: rgb(206, 206, 206);
 }
 
-button.item_btn_highlighted{
-  width:100%;
+.button_container {
+  display: flex;
+  flex-wrap: wrap;
+  
+  > div {
+    flex: 1;
+    display: flex;
+  }
+}
+
+button.item_btn{
+  flex: 1;
+}
+
+button.highlighted {
   background-color: rgb(110, 110, 110);
+  border-width: 0;
+  color: white;
+}
+
+button.organize {
+  background-color: rgb(45, 117, 75);
+  border-width: 0;
+  color: white;
+}
+
+button.warning {
+  background-color: rgb(158, 67, 67);
   border-width: 0;
   color: white;
 }

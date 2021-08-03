@@ -1,6 +1,10 @@
 import { TascState } from "../type/tascState";
 import { IFlow } from "./flow.entity";
 
+export const validateTasc = (tasc: Tasc): Tasc | undefined => {
+    return tasc.act.length ? tasc : undefined;
+}
+
 export interface ITasc {
     iid: number;
     id: string;

@@ -4,7 +4,7 @@ import Popup from "reactjs-popup";
 import { callCreateAPI, callDeleteAPI } from "../api/apiHandler";
 import { OperationContext } from "../App";
 import DeleteButton from "../hooksComponent/DeleteButton";
-import Tasc from "../model/tasc.entity";
+import Tasc, { validateTasc } from "../model/tasc.entity";
 import { contextMapping, isOrganizeMode, PageContext } from "../type/pageContext";
 import { TascState } from "../type/tascState";
 import { validURL } from "../util/urlStringCheck";
@@ -16,9 +16,9 @@ import {
 } from "./util/elemToTasc";
 import { getStateSelectMenu } from "./util/getStateSelectMenu";
 import UseTasc from "../hooksComponent/useTasc";
-import { renderAddButtonForNewField } from "./util/tascAddButton";
 import { DropTargetMonitor, useDrag, useDrop, XYCoord } from "react-dnd";
 import { ItemTypes } from "./model/itemType";
+import { renderAddButtonForNewField, renderDeleteButton } from "./util/tascButtons";
 
 interface ITascItemUpdatorProp {
   givenTasc: Tasc;
@@ -74,6 +74,11 @@ export const TascItemUpdator = ({
       updateOrderOfList();
     }
   })
+
+  const deleteTasc = (tasc: Tasc) => {
+    callDeleteAPI(param.backEndUrl, param.ownerId, tasc.id).then(() =>
+                onTascListChange(tascList.filter((t:any)=> t.id !== tasc.id)))
+  }
   
     const mockANewTasc = (goal?: string) => {
         return getBrandNewTasc(
@@ -83,46 +88,6 @@ export const TascItemUpdator = ({
             0
           );
     }
-
-  const renderAddButton = (
-    tasc: Tasc,
-    setTascItem: Function,
-    goal?: string
-  ) => {
-    return (
-      <button
-        className="item_btn_highlighted"
-        onClick={() => {
-          addNewItem(tasc, tascList, onTascListChange).then((res: any) => {
-            setTascItem(
-                mockANewTasc(goal)
-            );
-            document
-              .getElementsByName(res.data.id + "==act")
-              .forEach((e) => e.focus());
-          });
-        }}
-      >
-        +
-      </button>
-    );
-  };
-
-  const isTascEmpty = (tasc: Tasc) => {
-    return tasc.act.length === 0;
-  };
-
-  const renderAddForNewItem = (
-    tasc: Tasc,
-    setTascItem: Function,
-    goal?: string
-  ) => {
-    return (
-      <div className="item_division item_options">
-        {renderAddButton(tasc, setTascItem, goal)}
-      </div>
-    );
-  };
 
   const addNewItem = async (
     tasc: Tasc | undefined,
@@ -183,7 +148,7 @@ export const TascItemUpdator = ({
     pageContext: PageContext,
   ) => {
     return (
-      <div className="item_division item_options">
+      <div className="item_division item_options button_container">
         <div className="item_division item_state">
           {getStateSelectMenu(
             pageContext,
@@ -192,9 +157,9 @@ export const TascItemUpdator = ({
             update,
             (id: string) => {onTascListChange(tascList.filter((t) => t.id !== id))})}
         </div>
-        <div className="item_division item_org">
+        <div className="item_division item_org ">
           <button
-            className="item_btn_highlighted"
+            className="item_btn organize"
             onClick={() => {
               if (isOrganizeMode(pageContext)) {
                 updatePageContext(PageContext.Incoming);
@@ -203,26 +168,11 @@ export const TascItemUpdator = ({
               }
             }}
           >
-            Organize
+            Chain
           </button>
         </div>
         <div className="item_division item_option">
-          <Popup
-            trigger={<button className="item_btn_highlighted">...</button>}
-            position="left center"
-          >
-            <DeleteButton
-              open={false}
-              title={`Are you sure to delete this?`}
-              message={`${tasc.act}`}
-              onConfirmCallback={() =>
-                callDeleteAPI(param.backEndUrl, param.ownerId, tasc.id).then(() =>
-                  onTascListChange(tascList.filter((t:any)=> t.id !== tasc.id))
-                )
-              }
-              onCancelCallback={() => console.log()}
-            />
-          </Popup>
+          {renderDeleteButton(tascItem, deleteTasc)}
         </div>
       </div>
     );
@@ -230,7 +180,7 @@ export const TascItemUpdator = ({
 
   const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      if (!isTascEmpty(tascItem)){
+      if (validateTasc(tascItem)){
         tascList.filter(t => t.id === tascItem.id).length === 0
         && toBeCreated.filter(t => t.id === tascItem.id).length 
         ? create(tascItem).then((res: any) => onTascListChange(tascList.filter(t => t.id !== tascItem.id)))
@@ -242,7 +192,7 @@ export const TascItemUpdator = ({
 
   const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
     /*
-    if (!isTascEmpty(tascItem)
+    if (validateTasc(tascItem)
       && JSON.stringify(tascList.find((t) => t.id === tascItem.id)) !== JSON.stringify(tascItem)){
         tascList.filter(t => t.id === tascItem.id).length === 0
         && toBeCreated.filter(t => t.id === tascItem.id).length 
@@ -284,7 +234,7 @@ export const TascItemUpdator = ({
                         TascState.Done.toString())
                   );
                 const partialTasc = { id: tascItem.id, state: TascState.Done };
-                //onTascListElemChange(partialTasc);
+                onTascListElemChange(partialTasc);
                 update(partialTasc).then((t:any) => onTascListChange(tascList.filter((t) => contextMapping[pageContext].includes(t.state))));
               }}
               name={`${tascItem.id}==state==checkbox`}
@@ -350,9 +300,7 @@ export const TascItemUpdator = ({
           <br />
           {getInputForEndWhen(tascItem, onTascItemChange)}
         </div>
-        {tascList
-          ? renderOptions(tascItem, pageContext)
-          : renderAddForNewItem(tascItem, onTascListElemChange)}
+        {renderOptions(tascItem, pageContext)}
       </section>
       {isOrganizeMode(pageContext) ? (
         <div className="separator">
@@ -362,7 +310,10 @@ export const TascItemUpdator = ({
         <hr className="dashed"></hr>
       )}
       {isOrganizeMode(pageContext) ? (
-        renderAddButtonForNewField(tascList!, onTascListChange!, param, tascItem.goal)
+        <div className="button_container">{
+          renderAddButtonForNewField(tascList!, onTascListChange!, param, tascItem.goal)
+        }
+        </div>
       ) : (
         <></>
       )}
