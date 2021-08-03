@@ -59,15 +59,18 @@ export const TascItemCreator = ({
   }
 
   const deleteTasc = (tasc: Tasc) => {
-    deleteCall(tasc).then(() =>
+    !isOrganizeMode(pageContext) ?
+      deleteCall(tasc).then(() =>
                 onTascListChange(tascList.filter((t:any)=> t.id !== tasc.id)))
+      :
+      onTascListChange(tascList.filter((t:any)=> t.id !== tasc.id))
   }
 
   const renderAddForNewItem = (
     tasc: Tasc
   ) => {
     return (
-      <div className="item_division item_options button_container">
+      <div className="item_options button_container">
         <div>{renderAddButton(tasc, createTasc)}</div>
         { givenTasc && <div>{renderDeleteButton(tasc, deleteTasc)}</div> }
       </div>

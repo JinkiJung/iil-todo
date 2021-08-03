@@ -8,7 +8,6 @@ import { TascState } from "../type/tascState";
 import { validURL } from "../util/urlStringCheck";
 import { IOperationParam } from "./model/operationParam";
 import Picker from "emoji-picker-react";
-import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
 import {
   getValuesFromInputElement,
 } from "./util/elemToTasc";
@@ -16,7 +15,7 @@ import { getStateSelectMenu } from "./util/getStateSelectMenu";
 import UseTasc from "../hooksComponent/useTasc";
 import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "./model/itemType";
-import { renderAddButtonForNewField, renderDeleteButton } from "./util/tascButtons";
+import { renderAddButtonForNewField, renderDeleteButton, renderDragButton } from "./util/tascButtons";
 
 interface ITascItemUpdatorProp {
   givenTasc: Tasc;
@@ -76,8 +75,11 @@ export const TascItemUpdator = ({
   })
 
   const deleteTasc = (tasc: Tasc) => {
-    deleteCall(tasc).then(() =>
+    !isOrganizeMode(pageContext) ?
+      deleteCall(tasc).then(() =>
                 onTascListChange(tascList.filter((t:any)=> t.id !== tasc.id)))
+      :
+      onTascListChange(tascList.filter((t:any)=> t.id !== tasc.id))
   }
 
   const getInputForAct = (
@@ -116,21 +118,35 @@ export const TascItemUpdator = ({
     );
   };
 
+  const updateTascState = (partialTasc: Partial<Tasc>) => {
+    updateCall(partialTasc).then((res: any) => {
+      if(res.status === 200){
+        const partialTasc = res.data as Partial<Tasc>;
+        onTascListElemChange(partialTasc);
+        if ((pageContext === PageContext.Incoming || pageContext === PageContext.Focusing)
+            && partialTasc.state === TascState.Done){
+          onTascListChange(tascList.filter((t) => t.id !== partialTasc.id))
+        }
+        else{
+          onTascListChange(tascList.sort((a,b) => b.iid - a.iid))
+        }
+      }
+      });
+  }
+
   const renderOptions = (
     tasc: Tasc,
     pageContext: PageContext,
   ) => {
     return (
-      <div className="item_division item_options button_container">
-        <div className="item_division item_state">
+      <div className="item_options button_container">
+        <div>
           {getStateSelectMenu(
             pageContext,
             tasc,
-            onTascListElemChange,
-            updateCall,
-            (id: string) => {onTascListChange(tascList.filter((t) => t.id !== id))})}
+            updateTascState)}
         </div>
-        <div className="item_division item_org ">
+        <div>
           <button
             className="item_btn organize"
             onClick={() => {
@@ -141,12 +157,10 @@ export const TascItemUpdator = ({
               }
             }}
           >
-            Chain
+            {isOrganizeMode(pageContext) ? "Back" : "Chain"}
           </button>
         </div>
-        <div className="item_division item_option">
-          {renderDeleteButton(tascItem, deleteTasc)}
-        </div>
+        {isOrganizeMode(pageContext)? renderDragButton(tascItem) : <div>{renderDeleteButton(tascItem, deleteTasc)}</div>}
       </div>
     );
   };
@@ -164,16 +178,14 @@ export const TascItemUpdator = ({
   };
 
   const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
-    /*
     if (validateTasc(tascItem)
       && JSON.stringify(tascList.find((t) => t.id === tascItem.id)) !== JSON.stringify(tascItem)){
         tascList.filter(t => t.id === tascItem.id).length === 0
         && toBeCreated.filter(t => t.id === tascItem.id).length 
-        ? create(tascItem).then((res: any) => onTascListChange(tascList.filter(t => t.id !== tascItem.id)))
-        : update(tascItem);
+        ? createCall(tascItem).then((res: any) => onTascListChange(tascList.filter(t => t.id !== tascItem.id)))
+        : updateCall(tascItem);
       //setToBeCreated([]);
     }
-    */
   };
 
   if (pageContext === PageContext.Focusing)
@@ -273,7 +285,7 @@ export const TascItemUpdator = ({
           <br />
           {getInputForEndWhen(tascItem, onTascItemChange)}
         </div>
-        {renderOptions(tascItem, pageContext)}
+        {pageContext !== PageContext.Focusing && renderOptions(tascItem, pageContext)}
       </section>
       {isOrganizeMode(pageContext) ? (
         <div className="separator">

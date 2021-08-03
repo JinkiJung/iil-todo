@@ -144,7 +144,7 @@ export const PageRenderer = ({
   const updateOrderOfList = () => {
     const partials = tascList.map((t, i) => {return {id: t.id, order: i}});
     // TODO: hold the page until the update being settled
-    callUpdateBatchAPI(url, ownerId, partials).then((res) => console.log(partials));
+    callUpdateBatchAPI(url, ownerId, partials).then((res) => onTascListChange(tascList.map((t, i) => { t.setOrder(i); return t; })));
   }
 
   return serviceStatus > 0 ? (

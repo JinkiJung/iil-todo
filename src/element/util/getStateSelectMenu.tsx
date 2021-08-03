@@ -10,7 +10,7 @@ function enumKeys<O extends object, K extends keyof O = keyof O>(
   return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
 }
 
-export const getStateSelectMenu = (pageContext: PageContext, tasc: Tasc, onTascListElemChange: Function, update: Function, deleteFromTascList: Function) => {
+export const getStateSelectMenu = (pageContext: PageContext, tasc: Tasc, updateTascState: Function) => {
   const states: any = [];
   for (const value of enumKeys(TascState)) {
     states.push(value);
@@ -25,15 +25,7 @@ export const getStateSelectMenu = (pageContext: PageContext, tasc: Tasc, onTascL
               id: tasc.id,
               state: e.target.value,
             } as Partial<Tasc>;
-            onTascListElemChange(partialTasc);
-            update(partialTasc).then((res: any) => { 
-              if(res.status === 200){
-                const partialTasc = res.data as Partial<Tasc>;
-                if (pageContext !== PageContext.Admin && partialTasc.state === TascState.Done){
-                  deleteFromTascList(partialTasc.id);
-                }
-              }
-             });
+            updateTascState(partialTasc);
           }}
           inputProps={{
             name: tasc.id + "==state",

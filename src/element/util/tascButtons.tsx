@@ -4,6 +4,7 @@ import DeleteButton from "../../hooksComponent/DeleteButton";
 import Tasc, { validateTasc } from "../../model/tasc.entity";
 import { IOperationParam } from "../model/operationParam";
 import { getBrandNewTasc } from "../model/tascManager";
+import { FlowButton } from "./flowButton";
 
 export const renderAddButton = (
   tasc: Tasc,
@@ -56,7 +57,7 @@ export const renderAddButtonForNewField = (
 ) => {
   return (
     <button
-      className="item_btn_highlighted"
+      className="item_btn highlighted"
       onClick={() => {
         const newTasc = new Tasc(getBrandNewTasc(goal, param.ownerId, param.ownerId, 0));
         onTascListChange([
@@ -67,5 +68,13 @@ export const renderAddButtonForNewField = (
     >
       +
     </button>
+  );
+};
+
+export const renderDragButton = (
+  tasc: Tasc
+) => {
+  return (
+    <FlowButton />
   );
 };

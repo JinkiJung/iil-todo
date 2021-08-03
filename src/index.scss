@@ -67,18 +67,6 @@ div.item_options{
   display: flex;
 }
 
-div.item_state{
-  width: 5em;
-  order: 4;
-  display: flex;
-}
-
-div.item_org{
-  width: 2em;
-  order: 6;
-  display: flex;
-}
-
 div.item_append{
   width: 2em;
   order: 5;
@@ -152,6 +140,12 @@ button.organize {
 
 button.warning {
   background-color: rgb(158, 67, 67);
+  border-width: 0;
+  color: white;
+}
+
+div.draggable {
+  background-color: rgb(67, 158, 131);
   border-width: 0;
   color: white;
 }
