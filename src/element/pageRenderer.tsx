@@ -3,6 +3,7 @@ import UseTascList from "../hooksComponent/useTascList";
 import Tasc, { ITasc } from "../model/tasc.entity";
 import {
   callCreateAPI,
+  callDeleteAPI,
   callGetAPI,
   callUpdateAPI,
   callUpdateBatchAPI,
@@ -60,6 +61,12 @@ export const PageRenderer = ({
   const updateCall = (partialTasc : Partial<Tasc>): Promise<any> => {
     return callUpdateAPI(url, ownerId, partialTasc);
   }
+
+  const deleteCall = (partialTasc: Partial<Tasc>): Promise<any> => {
+    return callDeleteAPI(url, ownerId, partialTasc.id!);
+  }
+
+
   let initialTascList: Tasc[] = [];
   const { tascList, onTascListChange, onTascListElemChange } = UseTascList([
     ...initialTascList,
@@ -168,7 +175,7 @@ export const PageRenderer = ({
         <DndProvider backend={HTML5Backend}>
           <ConfirmProvider>
             <br />
-            {pageContext === PageContext.Incoming ? <TascItemCreator tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} create={createCall}/> : <></>
+            {pageContext === PageContext.Incoming ? <TascItemCreator tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall}/> : <></>
             }
             {getSolidTascs(
               tascList,
@@ -181,13 +188,14 @@ export const PageRenderer = ({
                                 onTascListChange={onTascListChange}
                                 pageContext={pageContext}
                                 updatePageContext={updatePageContext}
-                                create={createCall}
-                                update={updateCall}
+                                createCall={createCall}
+                                updateCall={updateCall}
+                                deleteCall={deleteCall}
                                 moveCard={moveCard}
                                 updateOrderOfList={updateOrderOfList}
                                 />
               :
-              <TascItemCreator key={tasc.id} tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} create={createCall} givenTasc={tasc}/>
+              <TascItemCreator key={tasc.id} tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall} givenTasc={tasc}/>
             )}
           </ConfirmProvider>
         </DndProvider>

@@ -9,8 +9,6 @@ import { getValuesFromInputElement } from "./util/elemToTasc";
 import Picker from "emoji-picker-react";
 import UseTasc from "../hooksComponent/useTasc";
 import { isOrganizeMode, PageContext } from "../type/pageContext";
-import DeleteButton from "../hooksComponent/DeleteButton";
-import { callDeleteAPI } from "../api/apiHandler";
 import { renderAddButton, renderAddButtonForNewField, renderDeleteButton } from "./util/tascButtons";
 
 const shortid = require("shortid");
@@ -19,7 +17,8 @@ interface ITascItemCreatorProp {
   tascList: Tasc[];
   onTascListChange: Function;
   pageContext: PageContext;
-  create: Function;
+  createCall: Function;
+  deleteCall: Function;
   givenTasc?: Tasc;
 }
   
@@ -27,7 +26,8 @@ export const TascItemCreator = ({
   tascList,
   onTascListChange,
   pageContext,
-  create,
+  createCall,
+  deleteCall,
   givenTasc,
 }: ITascItemCreatorProp) => {
   const param = useContext(OperationContext) as IOperationParam;
@@ -42,7 +42,7 @@ export const TascItemCreator = ({
 
   const createTasc = (tasc: Tasc) => {
     const newId = shortid.generate();
-    create!({...tasc, id: newId})
+    createCall!({...tasc, id: newId})
           .then(async (res: any) => {
             await onTascListChange(
               [new Tasc(res.data), ...tascList.filter(t => t.id !== tasc.id)]
@@ -59,7 +59,7 @@ export const TascItemCreator = ({
   }
 
   const deleteTasc = (tasc: Tasc) => {
-    callDeleteAPI(param.backEndUrl, param.ownerId, tasc.id).then(() =>
+    deleteCall(tasc).then(() =>
                 onTascListChange(tascList.filter((t:any)=> t.id !== tasc.id)))
   }
 
