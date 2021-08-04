@@ -74,6 +74,10 @@ class Tasc implements ITasc{
     setOrder(i: number){
         this.order = i;
     }
+
+    setState(state: TascState){
+        this.state = state;
+    }
 }
 
 export default Tasc;

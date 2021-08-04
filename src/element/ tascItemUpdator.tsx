@@ -28,7 +28,7 @@ interface ITascItemUpdatorProp {
   updateCall: Function;
   deleteCall: Function;
   moveCard: (draggedId: string, id: string) => void;
-  updateOrderOfList: () => void;
+  updateOrderOfList: () => Promise<any>;
 }
 
 export const TascItemUpdator = ({
@@ -70,7 +70,7 @@ export const TascItemUpdator = ({
       }
     },
     drop(item, monitor) {
-      updateOrderOfList();
+      updateOrderOfList().then((res) => onTascListChange(tascList.map((t, i) => { t.setOrder(i); return t; })));
     }
   })
 

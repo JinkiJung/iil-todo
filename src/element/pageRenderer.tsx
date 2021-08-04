@@ -16,6 +16,7 @@ import { TascItemCreator } from "./tascItemCreator";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import update from 'immutability-helper'
+import { TascState } from "../type/tascState";
 
 export interface IPageRenderer {
   url: string;
@@ -75,7 +76,7 @@ export const PageRenderer = ({
 
   const removeAllFocused = async (ptascList: Partial<Tasc>[]) => {
     return await callUpdateBatchAPI(url, ownerId, ptascList)
-        .then((res: any) => { onTascListChange([...tascList, new Tasc(res.data)]); return res;})
+        .then((res: any) => { onTascListChange([]); return res;})
         .catch((error) => alert(error));
   }
 
@@ -134,17 +135,17 @@ export const PageRenderer = ({
     const card = tascList[cardIndex];
 
     scheduleUpdate({
-        $splice: [
-          [cardIndex, 1],
-          [afterIndex, 0, card],
-        ],
-      })
+      $splice: [
+        [cardIndex, 1],
+        [afterIndex, 0, card],
+      ],
+    })
   }
 
-  const updateOrderOfList = () => {
+  const updateOrderOfList = async () => {
     const partials = tascList.map((t, i) => {return {id: t.id, order: i}});
     // TODO: hold the page until the update being settled
-    callUpdateBatchAPI(url, ownerId, partials).then((res) => onTascListChange(tascList.map((t, i) => { t.setOrder(i); return t; })));
+    return callUpdateBatchAPI(url, ownerId, partials);
   }
 
   return serviceStatus > 0 ? (
@@ -170,7 +171,9 @@ export const PageRenderer = ({
           admin
         </button>
       </div>
-      <div className="menu">{pageContext === PageContext.Focusing ? <button onClick={() => removeAllFocused(tascList)}>Remove all</button> : <></>}</div>
+      <div className="menu">{pageContext === PageContext.Focusing 
+        && <button onClick={() => removeAllFocused(tascList.filter(t => t.state === TascState.Focused).map((t) => {t.setState(TascState.Active); return t;}))}>Remove all</button>}
+      </div>
       <div className="item_container">
         <DndProvider backend={HTML5Backend}>
           <ConfirmProvider>
