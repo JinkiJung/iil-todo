@@ -67,18 +67,6 @@ div.item_options{
   display: flex;
 }
 
-div.item_state{
-  width: 5em;
-  order: 4;
-  display: flex;
-}
-
-div.item_org{
-  width: 2em;
-  order: 6;
-  display: flex;
-}
-
 div.item_append{
   width: 2em;
   order: 5;
@@ -124,9 +112,40 @@ button.item_btn_draggable{
   background-color: rgb(206, 206, 206);
 }
 
-button.item_btn_highlighted{
-  width:100%;
+.button_container {
+  display: flex;
+  flex-wrap: wrap;
+  
+  > div {
+    flex: 1;
+    display: flex;
+  }
+}
+
+button.item_btn{
+  flex: 1;
+}
+
+button.highlighted {
   background-color: rgb(110, 110, 110);
+  border-width: 0;
+  color: white;
+}
+
+button.organize {
+  background-color: rgb(45, 117, 75);
+  border-width: 0;
+  color: white;
+}
+
+button.warning {
+  background-color: rgb(158, 67, 67);
+  border-width: 0;
+  color: white;
+}
+
+div.draggable {
+  background-color: rgb(67, 158, 131);
   border-width: 0;
   color: white;
 }
@@ -211,4 +230,25 @@ hr.solid {
 hr.rounded {
   border-top: 8px solid #bbb;
   border-radius: 5px;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #000;
+}
+
+.separator:not(:empty)::before {
+  margin-right: .25em;
+}
+
+.separator:not(:empty)::after {
+  margin-left: .25em;
 }

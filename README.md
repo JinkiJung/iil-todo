@@ -1,6 +1,6 @@
-# Tasc to-do list
+# Iil to-do list
 
-Tasc is designed by [Jinki Jung](https://jinkijung.github.io/) to write task descriptions according to [Tasc format](https://tasc.readthedocs.io/en/latest/basicConcept.html).
+Iil is designed by [Jinki Jung](https://jinkijung.github.io/) to write task descriptions according to [Tasc format](https://tasc.readthedocs.io/en/latest/basicConcept.html).
 
 This repository is one of implementations of Tasc, a to-do list, which will be used to focus on specific tasks in a daily routine.
 

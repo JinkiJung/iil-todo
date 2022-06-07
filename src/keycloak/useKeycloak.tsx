@@ -2,7 +2,7 @@ import {useEffect, useState } from 'react';
 import Keycloak, { KeycloakInstance } from 'keycloak-js';
 
 const UseKeycloak = (jsonFilePath: string) => {
-    const [ keycloak, setKeycloak ] = useState<KeycloakInstance>(Keycloak(jsonFilePath));
+    const [ keycloak ] = useState<KeycloakInstance>(Keycloak(jsonFilePath));
     const [ authenticated, setAuthenticated ] = useState(false);
     const [ userId, setUserId ] = useState("");
     useEffect(() => {

@@ -1,26 +1,17 @@
-import React, { MouseEventHandler, useEffect, useState } from "react";
-import UseTascList from "../hooksComponent/useTascList";
-import Tasc, { ITasc } from "../model/tasc.entity";
-import {
-  callCreateAPI,
-  callDeleteAPI,
-  callGetAPI,
-  callUpdateAPI,
-} from "../api/apiHandler";
-import {
-  getValuesFromInputElement,
-  getValuesFromSectionElement,
-} from "../element/tascRenderer";
-import Picker from "emoji-picker-react";
+import React, { MouseEventHandler, useCallback, useEffect, useState } from "react";
+import UseiilList from "../hooksComponent/useIilList";
 import { ConfirmProvider } from "../hooksComponent/ConfirmContext";
+import { getBrandNewName, getBrandNewIil } from "./model/iilManager";
+import { IilItemUpdator } from "./iilItemUpdator";
 import { contextMapping, PageContext } from "../type/pageContext";
-import Popup from "reactjs-popup";
-import DeleteButton from "../hooksComponent/DeleteButton";
-import { Checkbox, FormControl, MenuItem, Select } from "@material-ui/core";
-import { TascState } from "../type/tascState";
-import { validURL } from "../util/urlStringCheck";
-import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
-import UseTasc from "../hooksComponent/useTasc";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import update from 'immutability-helper'
+import { IilDto, IilDtoStatusEnum } from "../models";
+import { IilControllerApi } from "../api/iil-controller-api";
+import { AxiosResponse } from "axios";
+import UseIilList from "../hooksComponent/useIilList";
+import { IilItemCreator } from "./iilItemCreator";
 
 export interface IPageRenderer {
   url: string;
@@ -35,32 +26,66 @@ export const PageRenderer = ({
   givenPageContext,
   onLogOut,
 }: IPageRenderer) => {
-  const [serviceStatus, setServiceStatus] = useState(0);
-  const [toBeUpdated, setToBeUpdated] = useState<string[]>([]);
-  const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
-  const [tascListOriginal, setTascListOriginal] = useState<Tasc[]>([]);
-  const {tascItem, setTascItem, onTascItemChange} = UseTasc(getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, 0));
+  let pendingUpdateFn: any;
+  let requestedFrame: number | undefined;
 
-  let initialTascList: Tasc[] = [];
-  const { tascList, onTascListChange, onTascElemChange } = UseTascList([
-    ...initialTascList,
-    getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, initialTascList.length),
-  ]);
+  const [serviceStatus, setServiceStatus] = useState(0);
+  const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
+  const [iilListOriginal, setIilListOriginal] = useState<IilDto[]>([]);
+
+  const [newIil, setNewIil] = useState<IilDto>(getBrandNewIil(getBrandNewName(), ownerId, "", ownerId, "new"));
+  const apiHandler = new IilControllerApi();
 
   useEffect(() => {
-    callGetAPI(url, ownerId, pageContext)
-      .then((response) => response.data)
-      .then((data: ITasc[]) => data.map((e) => new Tasc(e)))
-      .then((tascs) => {
-        onTascListChange(tascs);
-        setServiceStatus(1);
+    let mounted = true;
+    getCall().then((response) => response.data)
+      .then((iils: IilDto[]) => {
+        if (mounted){
+          setIilListOriginal(setIilListOrder(iils));
+          updatePageContext(pageContext);
+          setServiceStatus(1);
+        }
       })
       .catch((err) => setServiceStatus(-1));
-  }, [serviceStatus, pageContext, url, ownerId]);
 
-  const getChildIndices = (tascList: Tasc[]): string[] => {
+      return () => {mounted = false;}
+  }, [serviceStatus, url, ownerId]);
+
+  const getCall = (): Promise<AxiosResponse<IilDto[]>> => {
+    return apiHandler.getIils();
+  }
+
+  const createCall = (iilDto : IilDto): Promise<any> => {
+    return apiHandler.createIil(iilDto);
+  }
+  
+  const updateCall = (partialIilDto : IilDto, id: string): Promise<any> => {
+    return apiHandler.updateIil(partialIilDto, id);
+  }
+
+  const deleteCall = (id: string): Promise<any> => {
+    return apiHandler.deleteIil(id);
+  }
+
+
+  let initialiilList: IilDto[] = [];
+  const { iilList, onIilListChange, onIilListElemChange } = UseIilList(initialiilList);
+
+  const removeAllFocused = async (piilList: IilDto[]) => {
+    /*
+    return await callUpdateBatchAPI(url, ownerId, piilList)
+        .then((res: any) => { oniilListChange([]); return res;})
+        .catch((error) => alert(error));
+        */
+  }
+
+  const setIilListOrder = (iilList: IilDto[]): IilDto[] => {
+    return iilList.reverse();
+  }
+
+  const getChildIndices = (iilList: IilDto[]): string[] => {
     let indiceSet = new Set<string>();
-    tascList.forEach((element) => {
+    iilList.forEach((element) => {
       if (Array.isArray(element.act)) {
         element.act.forEach((subElement) => {
           indiceSet.add(subElement);
@@ -70,274 +95,56 @@ export const PageRenderer = ({
     return Array.from(indiceSet);
   };
 
-  const getSolidTascs = (tascList: Tasc[], indices: string[]) => {
-    return tascList.filter((tasc: Tasc) => !indices.includes(tasc.id));
+  const getIilsNotIncluded = (iilList: IilDto[], indices: string[]) => {
+    return iilList.filter((iilDto: IilDto) => !indices.includes(iilDto.id!));
   };
 
-  const addNewItem = async (
-    tasc: Tasc | undefined,
-    tascList: Tasc[],
-    onTascListChange: Function
-  ) => {
-    const newTasc: Tasc = tasc ? tasc : getBrandNewTasc(
-      getBrandNewGoal(),
-      ownerId,
-      ownerId, 
-      tascList.length
-    );
-    return await callCreateAPI(url, ownerId, newTasc)
-      .then((res: any) => { onTascListChange([...tascList, new Tasc(res.data)].sort((a,b) => b.iid - a.iid)); return res;})
-      .catch((error) => alert(error));
-  };
-
-  const update = (section: HTMLElement) => {
-    const partialTasc = getValuesFromSectionElement(section);
-    if (partialTasc) {
-      callUpdateAPI(url, ownerId, partialTasc);
+  const updatePageContext = (givenContext: PageContext, name?: string) => {
+    if (givenContext === PageContext.Organizing && name) {
+      onIilListChange(iilListOriginal.filter((t) => contextMapping[givenContext].includes(t.status!) && t.name === name));
     }
-    setToBeUpdated([]);
-  };
-
-  const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      update(event.currentTarget);
+    else if (givenContext === PageContext.Focusing) {
+      onIilListChange(iilListOriginal.filter((t) => contextMapping[givenContext].includes(t.status!)));
     }
-  };
-
-  const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
-    if (toBeUpdated.length) {
-      update(event.currentTarget);
-    }
-  };
-
-  function enumKeys<O extends object, K extends keyof O = keyof O>(
-    obj: O
-  ): K[] {
-    return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
-  }
-
-  const getInputForAct = (tasc: Tasc, onTascElemChange: Function, tascList?: Tasc[] | undefined) => {
-    return (<input
-      type="text"
-      name={`${tasc.id}==act`}
-      placeholder={"What do you want to achieve?"}
-      value={tasc.act}
-      onChange={(e) => {
-        onTascElemChange(getValuesFromInputElement(e));
-        if (tascList) {
-          setToBeUpdated([...toBeUpdated, e.target.name]);
-        }
-      }}
-      className="item_content_act"
-    />);
-  }
-
-  const getStateSelectMenu = (pageContext: PageContext, tasc: Tasc) => {
-    const states: any = [];
-    for (const value of enumKeys(TascState)) {
-      states.push(value);
-    }
-    return pageContext !== PageContext.Focusing ? (
-      <form noValidate>
-        <FormControl>
-          <Select
-            value={tasc.state}
-            onChange={(e) => {
-              onTascElemChange({
-                id: tasc.id,
-                state: e.target.value,
-              } as Partial<Tasc>);
-              setToBeUpdated([...toBeUpdated, `${tasc.id}==state`]);
-            }}
-            inputProps={{
-              name: tasc.id + "==state",
-              id: tasc.id + "==state",
-            }}
-          >
-            {contextMapping[pageContext].map((k: any) => (
-              <MenuItem key={tasc.id + "==" + k} value={k}>
-                {states[k]}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </form>
-    ) : (
-      <input hidden={true} name={tasc.id + "==state"} value={tasc.state} />
-    );
-  };
-
-  const renderAddButton = (tasc: Tasc, setTascItem: Function) => {
-    return (
-      <div className="item_division item_options">
-      <button
-              className="item_btn_highlighted"
-              onClick={() => {
-                addNewItem(tasc, tascList, onTascListChange).then((res: any) => {setTascItem(getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, 0)); document.getElementsByName(res.data.id + "==act").forEach((e) => e.focus());})
-              }}
-            >
-              +
-            </button>
-      </div>
-    )
-  }
-
-  const renderOptions = (tasc: Tasc, tascList: Tasc[], onTascListChange: Function) => {
-    return (
-      <div className="item_division item_options">
-        <div className="item_division item_state">
-            {getStateSelectMenu(pageContext, tasc)}
-          </div>
-          <div className="item_division item_org">
-            <button
-              className="item_btn_highlighted"
-              onClick={() =>
-                {
-                  if(tascListOriginal.length) {
-                    updatePageContext(pageContext); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");
-                  } else {
-                    setTascListOriginal(tascList); onTascListChange(tascList.filter((t) => t.goal === tasc.goal));
-                  }
-                }
-              }
-            >
-              Org
-            </button>
-          </div>
-          <div className="item_division item_append">
-            {
-              tascListOriginal.length ? <button
-                className="item_btn_highlighted"
-                onClick={() => addNewItem(
-                  undefined,
-                  tascList,
-                  onTascListChange
-                )
-                }
-              >
-                +
-              </button>
-              : <></>
-            }
-          </div>
-          <div className="item_division item_option">
-            <Popup
-              trigger={<button className="item_btn_highlighted">...</button>}
-              position="left center"
-            >
-              <DeleteButton
-                open={false}
-                title={`Are you sure to delete this?`}
-                message={`${tasc.act}`}
-                onConfirmCallback={() =>
-                  callDeleteAPI(url, ownerId, tasc.id).then(() =>
-                    setPageContext(PageContext.Admin)
-                  )
-                }
-                onCancelCallback={() => console.log()}
-              />
-            </Popup>
-          </div>
-      </div>
-    );
-  }
-
-  const renderRow = (
-    tasc: Tasc,
-    onTascElemChange: Function,
-    tascList?: Tasc[],
-    onTascListChange?: Function
-  ) => {
-    return (
-      <div key={tasc.id}>
-        <section
-          className="item"
-          id={tasc.id}
-          onKeyUp={handleEnterKey}
-          onBlur={handleBlur}
-        >
-          <div className="item_division item_dragbtn">
-            <button className="item_btn_draggable"></button>
-          </div>
-          <div className="item_division item_check">
-            <input hidden name={`${tasc.id}==goal`} defaultValue={tasc.goal} />
-            {pageContext === PageContext.Focusing ? 
-            <Checkbox
-            checked={tasc.state === TascState.Done}
-            onChange={(e) => {
-                // phase out
-                document.getElementsByName(`${tasc.id}==state`).forEach((e) => (e as HTMLInputElement).value = TascState.Done.toString());
-                onTascElemChange({ id: tasc.id, state: TascState.Done });
-                setToBeUpdated([...toBeUpdated, `${tasc.id}==state`]);
-            }}
-            name={`${tasc.id}==state==checkbox`}
-            color="primary"
-          /> : (
-              <Popup
-                onClose={() =>
-                  toBeUpdated
-                    ? update(document.getElementById(tasc.id)!)
-                    : console.log()
-                }
-                trigger={
-                  <button className="item_btn">
-                    {tasc.goal ? (
-                      <span className="emoji_span">{tasc.goal.split("=goal=")[0]}</span>
-                    ) : (
-                      <span>{}</span>
-                    )}
-                  </button>
-                }
-                position="right top"
-              >
-                <Picker
-                  onEmojiClick={(e, emoji) => {
-                    onTascElemChange({ id: tasc.id, goal: emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1] });
-                    setToBeUpdated([...toBeUpdated, `${tasc.id}==goal`]);
-                    document
-                      .getElementsByName(`${tasc.id}==goal`)
-                      .forEach(
-                        (e) => ((e as HTMLInputElement).value = emoji.emoji + "=goal=" + tasc.goal.split("=goal=")[1])
-                      );
-                  }}
-                />
-              </Popup>
-            )}
-          </div>
-          <div className={`item_division item_act ${tasc.state === TascState.Focused && pageContext === PageContext.Incoming ? "item_focused" : ""}`}>
-              {
-                  validURL(tasc.act) ?
-                  <a href={tasc.act} target={"_blank"} rel="noreferrer">{getInputForAct(tasc, onTascElemChange, tascList)}</a> : getInputForAct(tasc, onTascElemChange, tascList)
-              }
-            
-            <br />
-            <input
-              type="text"
-              name={`${tasc.id}==endWhen`}
-              placeholder={"When is it done?"}
-              value={tasc.endWhen}
-              onChange={(e) => {
-                onTascElemChange(getValuesFromInputElement(e));
-                if (tascList) {
-                  setToBeUpdated([...toBeUpdated, e.target.name]);
-                }
-              }}
-              className="item_content_end_when"
-            />
-          </div>
-          {tascList? renderOptions(tasc, tascList, onTascListChange!) : renderAddButton(tasc, setTascItem)}
-        </section>
-        <hr className="dashed"></hr>
-      </div>
-    );
-  };
-
-  const updatePageContext = (givenContext: PageContext) => {
-    if (tascListOriginal.length) {
-        onTascListChange(tascListOriginal);
-        setTascListOriginal([]);
+    else {
+      onIilListChange(iilListOriginal.filter((t) => contextMapping[givenContext].includes(t.status!)));
     }
     setPageContext(givenContext);
+  }
+
+  const scheduleUpdate = (updateFn: any) => {
+    pendingUpdateFn = updateFn;
+
+    if (!requestedFrame) {
+      requestedFrame = requestAnimationFrame(drawFrame);
+    }
+  }
+
+  const drawFrame = (): void => {
+    const nextState = update(iilList, pendingUpdateFn);
+    onIilListChange(nextState);
+
+    pendingUpdateFn = undefined;
+    requestedFrame = undefined;
+  }
+
+  const moveCard = (id: string, afterId: string): void => {
+    const cardIndex = iilList.findIndex((t: IilDto) => t.id === id);
+    const afterIndex = iilList.findIndex((t: IilDto) => t.id === afterId);
+    const card = iilList[cardIndex];
+
+    scheduleUpdate({
+      $splice: [
+        [cardIndex, 1],
+        [afterIndex, 0, card],
+      ],
+    })
+  }
+
+  const updateOrderOfList = async () => {
+    const partials = iilList.map((t: IilDto, i: number) => {return {id: t.id, order: i}});
+    // TODO: hold the page until the update being settled
+    //return callUpdateBatchAPI(url, ownerId, partials);
   }
 
   return serviceStatus > 0 ? (
@@ -363,17 +170,40 @@ export const PageRenderer = ({
           admin
         </button>
       </div>
+      <div className="menu">{pageContext === PageContext.Focusing 
+        && <button onClick={() => removeAllFocused(iilList.filter((t: IilDto) => t.status === IilDtoStatusEnum.FOCUSED).map((t: IilDto) => {t.status = IilDtoStatusEnum.ACTIVE; return t;}))}>Remove all</button>}
+      </div>
       <div className="item_container">
-        <ConfirmProvider>
-          <br />
-          {pageContext === PageContext.Incoming ? renderRow(tascItem, onTascItemChange) : <></>}
-          {getSolidTascs(
-            tascList,
-            getChildIndices(tascList)
-          ).map((solidTasc: Tasc) =>
-            renderRow(solidTasc, onTascElemChange, tascList, onTascListChange)
-          )}
-        </ConfirmProvider>
+        <DndProvider backend={HTML5Backend}>
+          <ConfirmProvider>
+            <br />
+            {pageContext === PageContext.Incoming ?
+              <IilItemCreator iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall}
+              ownerId={ownerId} givenIil={newIil}/> : <></>
+            }
+            {getIilsNotIncluded(
+              iilList,
+              getChildIndices(iilList)
+            ).map((iil: IilDto, i: number) =>
+            iil.act!.length ?
+              <IilItemUpdator key={iil.id} givenIil={iil} 
+                                onIilListElemChange={onIilListElemChange}
+                                iilList={iilList}
+                                onIilListChange={onIilListChange}
+                                pageContext={pageContext}
+                                updatePageContext={updatePageContext}
+                                createCall={createCall}
+                                updateCall={updateCall}
+                                deleteCall={deleteCall}
+                                moveCard={moveCard}
+                                updateOrderOfList={updateOrderOfList}
+                                />
+              :
+              <IilItemCreator key={iil.id} iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall}
+              ownerId={ownerId} givenIil={iil}/>
+            )}
+          </ConfirmProvider>
+        </DndProvider>
       </div>
     </div>
   ) : serviceStatus < 0 ? (
