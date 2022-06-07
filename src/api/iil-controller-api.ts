@@ -370,7 +370,8 @@ export class IilControllerApi extends BaseAPI {
      * @memberof IilControllerApi
      */
     public async createIil(body: IilDto, options?: AxiosRequestConfig) : Promise<AxiosResponse<IilDto>> {
-        return IilControllerApiFp(this.configuration).createIil(body, options).then((request) => request(this.axios, this.basePath));
+        return IilControllerApiFp(this.configuration).createIil(body, options)
+            .then((request) => request(this.axios, this.basePath));
     }
     /**
      * 

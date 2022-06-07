@@ -1,4 +1,4 @@
 export const ItemTypes = {
-    TASC: 'tasc',
+    IIL: 'iil',
     FLOW: 'flow'
 }

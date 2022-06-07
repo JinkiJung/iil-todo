@@ -2,93 +2,85 @@ import React, { useEffect } from "react";
 import { useContext } from "react";
 import Popup from "reactjs-popup";
 import { OperationContext } from "../App";
-import Tasc, { validateTasc } from "../model/tasc.entity";
 import { IOperationParam } from "./model/operationParam";
-import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
-import { getValuesFromInputElement } from "./util/elemToTasc";
+import { getBrandNewName, getBrandNewIil } from "./model/iilManager";
+import { getValuesFromInputElement } from "./util/elemToIil";
 import Picker from "emoji-picker-react";
-import UseTasc from "../hooksComponent/useTasc";
+import UseIil from "../hooksComponent/useIil";
 import { isOrganizeMode, PageContext } from "../type/pageContext";
-import { renderAddButton, renderAddButtonForNewField, renderDeleteButton } from "./util/tascButtons";
+import { renderAddButton, renderAddButtonForNewField, renderDeleteButton } from "./util/iilButtons";
+import { IilDto } from "../models";
+import { validateIil } from "./util/iilValidator";
 
-const shortid = require("shortid");
-
-interface ITascItemCreatorProp {
-  tascList: Tasc[];
-  onTascListChange: Function;
+interface IIilItemCreatorProp {
+  iilList: IilDto[];
+  onIilListChange: Function;
   pageContext: PageContext;
+  ownerId: string;
   createCall: Function;
   deleteCall: Function;
-  givenTasc?: Tasc;
+  givenIil: IilDto;
 }
   
-export const TascItemCreator = ({
-  tascList,
-  onTascListChange,
+export const IilItemCreator = ({
+  iilList,
+  onIilListChange,
   pageContext,
+  ownerId,
   createCall,
   deleteCall,
-  givenTasc,
-}: ITascItemCreatorProp) => {
+  givenIil,
+}: IIilItemCreatorProp) => {
   const param = useContext(OperationContext) as IOperationParam;
 
-  const {tascItem, onTascItemChange} = UseTasc(givenTasc? givenTasc : 
-    getBrandNewTasc(
-    getBrandNewGoal(),
-    param.ownerId,
-    param.ownerId,
-    0
-  ));
+  const {iilItem, onIilItemChange} = UseIil(givenIil!);
 
-  const createTasc = (tasc: Tasc) => {
-    const newId = shortid.generate();
-    createCall!({...tasc, id: newId})
+  const createIil = (iil: IilDto) => {
+    createCall!({...iil, id: undefined})
           .then(async (res: any) => {
-            await onTascListChange(
-              [new Tasc(res.data), ...tascList.filter(t => t.id !== tasc.id)]
+            await onIilListChange(
+              [res.data, ...iilList.filter(t => t.id !== iil.id)]
             );
-            const newTasc = getBrandNewTasc(
-              tasc.goal,
-              param.ownerId,
-              param.ownerId,
-              0
-            );
-            onTascItemChange({...newTasc, id: tasc.id});
+            renewIil(ownerId, ownerId);
           })
           .catch((error: any) => alert(error));
   }
 
-  const deleteTasc = (tasc: Tasc) => {
+  const renewIil = (actor: string, owner: string) => {
+    onIilItemChange(getBrandNewIil(getBrandNewName(), actor, "", owner, "new"));
+  }
+
+  const deleteIil = (iil: IilDto) => {
     !isOrganizeMode(pageContext) ?
-      deleteCall(tasc).then(() =>
-                onTascListChange(tascList.filter((t:any)=> t.id !== tasc.id)))
+      deleteCall(iil).then(() =>
+                onIilListChange(iilList.filter((t:any)=> t.id !== iil.id)))
       :
-      onTascListChange(tascList.filter((t:any)=> t.id !== tasc.id))
+      onIilListChange(iilList.filter((t:any)=> t.id !== iil.id))
   }
 
   const renderAddForNewItem = (
-    tasc: Tasc
+    iil: IilDto
   ) => {
     return (
       <div className="item_options button_container">
-        <div>{renderAddButton(tasc, createTasc)}</div>
-        { givenTasc && <div>{renderDeleteButton(tasc, deleteTasc)}</div> }
+        <div>{renderAddButton(iil, createIil)}</div>
+        { givenIil && <div>{renderDeleteButton(iil, deleteIil)}</div> }
       </div>
     );
   };
 
   const getInputForAct = (
-    tasc: Tasc,
-    onTascItemChange: Function,
+    iil: IilDto,
+    onIilItemChange: Function,
   ) => {
     return (
       <input
         type="text"
-        name={`${tasc.id}==act`}
+        name={`${iil.id ? iil.id : 'new'}==act`}
         placeholder={"What do you want to achieve?"}
-        value={tasc.act}
+        value={iil.act}
         onChange={(e) => {
-          onTascItemChange(getValuesFromInputElement(e.currentTarget));
+          onIilItemChange(getValuesFromInputElement(e.currentTarget));
         }}
         className="item_content_act"
       />
@@ -96,8 +88,8 @@ export const TascItemCreator = ({
   };
 
   const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter" && validateTasc(tascItem)) {
-      createTasc(tascItem);
+    if (event.key === "Enter" && validateIil(iilItem)) {
+      createIil(iilItem);
     }
   };
 
@@ -106,20 +98,20 @@ export const TascItemCreator = ({
     if (mounted){
     }
     return () => {mounted = false;}
-  }, [tascItem])
+  }, [iilItem])
 
   return (
-    <div id={tascItem.id} key={tascItem.id}>
+    <div id={iilItem.id} key={iilItem.id}>
       <section
         className="item"
-        id={tascItem.id}
+        id={iilItem.id}
         onKeyUp={handleEnterKey}
       >
         <div className="item_division item_dragbtn">
           <button className="item_btn_draggable"></button>
         </div>
         <div className="item_division item_check">
-          <input hidden name={`${tascItem.id}==goal`} defaultValue={tascItem.goal} readOnly />
+          <input hidden name={`${iilItem.id}==name`} defaultValue={iilItem.name} readOnly />
             <Popup
               onClose={() =>
                 {
@@ -128,9 +120,9 @@ export const TascItemCreator = ({
               }
               trigger={
                 <button className="item_btn">
-                  {tascItem.goal ? (
+                  {iilItem.name ? (
                     <span className="emoji_span">
-                      {tascItem.goal.split("=goal=")[0]}
+                      {iilItem.name}
                     </span>
                   ) : (
                     <span>{}</span>
@@ -141,33 +133,33 @@ export const TascItemCreator = ({
             >
               <Picker
                 onEmojiClick={(e, emoji) => {
-                  const partialTasc = {
-                    id: tascItem.id,
-                    goal: emoji.emoji + "=goal=" + tascItem.goal.split("=goal=")[1],
+                  const partialIilDto = {
+                    id: iilItem.id,
+                    name: emoji.emoji,
                   };
-                  onTascItemChange(partialTasc);
+                  onIilItemChange(partialIilDto);
                 }}
               />
             </Popup>
         </div>
         <div className={`item_division item_act`}>
           {
-            getInputForAct(tascItem, onTascItemChange)
+            getInputForAct(iilItem, onIilItemChange)
           }
 
           <br />
           <input
             type="text"
-            name={`${tascItem.id}==endWhen`}
+            name={`${iilItem.id}==endWhen`}
             placeholder={"When is it done?"}
-            value={tascItem.endWhen}
+            value={iilItem.endWhen}
             onChange={(e) => {
-              onTascItemChange(getValuesFromInputElement(e.currentTarget)!);
+              onIilItemChange(getValuesFromInputElement(e.currentTarget)!);
             }}
             className="item_content_end_when"
           />
         </div>
-        {renderAddForNewItem(tascItem)}
+        {renderAddForNewItem(iilItem)}
       </section>
       {isOrganizeMode(pageContext) ? (
         <div className="separator">
@@ -178,7 +170,7 @@ export const TascItemCreator = ({
       )}
       {isOrganizeMode(pageContext) ? (
         <div className="button_container">{
-        renderAddButtonForNewField(tascList!, onTascListChange!, param, tascItem.goal)
+        renderAddButtonForNewField(iilList!, onIilListChange!, param, iilItem.name!)
         }</div>
       ) : (
         <></>

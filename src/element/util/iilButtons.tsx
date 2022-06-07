@@ -1,21 +1,22 @@
 import React from "react";
 import Popup from "reactjs-popup";
 import DeleteButton from "../../hooksComponent/DeleteButton";
-import Tasc, { validateTasc } from "../../model/tasc.entity";
 import { IOperationParam } from "../model/operationParam";
-import { getBrandNewTasc } from "../model/tascManager";
+import { getBrandNewIil } from "../model/iilManager";
 import { FlowButton } from "./flowButton";
+import { IilDto } from "../../models";
+import { validateIil } from "./iilValidator";
 
 export const renderAddButton = (
-  tasc: Tasc,
-  createTasc: Function,
+  iilDto: IilDto,
+  createIil: Function,
 ) => {
   return (
     <button
       className="item_btn highlighted"
       onClick={() => {
-        if(validateTasc(tasc)) {
-          createTasc(tasc);
+        if(validateIil(iilDto)) {
+          createIil(iilDto);
         }
         else{
           alert("You have empty field!");
@@ -28,8 +29,8 @@ export const renderAddButton = (
 };
 
 export const renderDeleteButton = (
-  tasc: Tasc,
-  deleteTasc: Function,
+  iilDto: IilDto,
+  deleteIil: Function,
 ) => {
   return (
     <Popup
@@ -39,9 +40,9 @@ export const renderDeleteButton = (
           <DeleteButton
             open={false}
             title={`Are you sure to delete this?`}
-            message={`${tasc.act}`}
+            message={`${iilDto.act}`}
             onConfirmCallback={() =>
-              deleteTasc(tasc)
+              deleteIil(iilDto)
             }
             onCancelCallback={() => console.log()}
           />
@@ -50,19 +51,20 @@ export const renderDeleteButton = (
 };
 
 export const renderAddButtonForNewField = (
-  tascList: Tasc[],
-  onTascListChange: Function,
+  iilList: IilDto[],
+  onIilListChange: Function,
   param: IOperationParam,
-  goal: string
+  name: string
 ) => {
   return (
     <button
       className="item_btn highlighted"
       onClick={() => {
-        const newTasc = new Tasc(getBrandNewTasc(goal, param.ownerId, param.ownerId, 0));
-        onTascListChange([
-          ...tascList,
-          newTasc,
+        console.log(param);
+        //const newIil = getBrandNewIil(name, param.ownerId, "", param.ownerId);
+        onIilListChange([
+          ...iilList,
+          //newIil,
         ]);
       }}
     >
@@ -72,7 +74,7 @@ export const renderAddButtonForNewField = (
 };
 
 export const renderDragButton = (
-  tasc: Tasc
+  iilDto: IilDto
 ) => {
   return (
     <FlowButton />

@@ -29,7 +29,7 @@ export interface IilDto {
      * @type {string}
      * @memberof IilDto
      */
-    name: string;
+    name?: string;
     /**
      * 
      * @type {string}

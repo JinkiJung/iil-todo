@@ -1,22 +1,17 @@
 import React, { MouseEventHandler, useCallback, useEffect, useState } from "react";
-import UseTascList from "../hooksComponent/useTascList";
-import Tasc, { ITasc } from "../model/tasc.entity";
-import {
-  callCreateAPI,
-  callDeleteAPI,
-  callGetAPI,
-  callUpdateAPI,
-  callUpdateBatchAPI,
-} from "../api/apiHandler";
+import UseiilList from "../hooksComponent/useIilList";
 import { ConfirmProvider } from "../hooksComponent/ConfirmContext";
-import { getBrandNewGoal, getBrandNewTasc } from "./model/tascManager";
-import { TascItemUpdator } from "./ tascItemUpdator";
+import { getBrandNewName, getBrandNewIil } from "./model/iilManager";
+import { IilItemUpdator } from "./iilItemUpdator";
 import { contextMapping, PageContext } from "../type/pageContext";
-import { TascItemCreator } from "./tascItemCreator";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import update from 'immutability-helper'
-import { TascState } from "../type/tascState";
+import { IilDto, IilDtoStatusEnum } from "../models";
+import { IilControllerApi } from "../api/iil-controller-api";
+import { AxiosResponse } from "axios";
+import UseIilList from "../hooksComponent/useIilList";
+import { IilItemCreator } from "./iilItemCreator";
 
 export interface IPageRenderer {
   url: string;
@@ -36,16 +31,17 @@ export const PageRenderer = ({
 
   const [serviceStatus, setServiceStatus] = useState(0);
   const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
-  const [tascListOriginal, setTascListOriginal] = useState<Tasc[]>([]);
-  
+  const [iilListOriginal, setIilListOriginal] = useState<IilDto[]>([]);
+
+  const [newIil, setNewIil] = useState<IilDto>(getBrandNewIil(getBrandNewName(), ownerId, "", ownerId, "new"));
+  const apiHandler = new IilControllerApi();
+
   useEffect(() => {
     let mounted = true;
-    callGetAPI(url, ownerId, PageContext.Admin)
-      .then((response) => response.data)
-      .then((data: ITasc[]) => data.map((e) => new Tasc(e)))
-      .then((tascs) => {
+    getCall().then((response) => response.data)
+      .then((iils: IilDto[]) => {
         if (mounted){
-          setTascListOriginal(setTascListOrder(tascs));
+          setIilListOriginal(setIilListOrder(iils));
           updatePageContext(pageContext);
           setServiceStatus(1);
         }
@@ -55,38 +51,41 @@ export const PageRenderer = ({
       return () => {mounted = false;}
   }, [serviceStatus, url, ownerId]);
 
-  const createCall = (tasc : Tasc): Promise<any> => {
-    return callCreateAPI(url, ownerId, tasc);
+  const getCall = (): Promise<AxiosResponse<IilDto[]>> => {
+    return apiHandler.getIils();
+  }
+
+  const createCall = (iilDto : IilDto): Promise<any> => {
+    return apiHandler.createIil(iilDto);
   }
   
-  const updateCall = (partialTasc : Partial<Tasc>): Promise<any> => {
-    return callUpdateAPI(url, ownerId, partialTasc);
+  const updateCall = (partialIilDto : IilDto, id: string): Promise<any> => {
+    return apiHandler.updateIil(partialIilDto, id);
   }
 
-  const deleteCall = (partialTasc: Partial<Tasc>): Promise<any> => {
-    return callDeleteAPI(url, ownerId, partialTasc.id!);
+  const deleteCall = (id: string): Promise<any> => {
+    return apiHandler.deleteIil(id);
   }
 
 
-  let initialTascList: Tasc[] = [];
-  const { tascList, onTascListChange, onTascListElemChange } = UseTascList([
-    ...initialTascList,
-    getBrandNewTasc(getBrandNewGoal(), ownerId, ownerId, initialTascList.length),
-  ]);
+  let initialiilList: IilDto[] = [];
+  const { iilList, onIilListChange, onIilListElemChange } = UseIilList(initialiilList);
 
-  const removeAllFocused = async (ptascList: Partial<Tasc>[]) => {
-    return await callUpdateBatchAPI(url, ownerId, ptascList)
-        .then((res: any) => { onTascListChange([]); return res;})
+  const removeAllFocused = async (piilList: IilDto[]) => {
+    /*
+    return await callUpdateBatchAPI(url, ownerId, piilList)
+        .then((res: any) => { oniilListChange([]); return res;})
         .catch((error) => alert(error));
+        */
   }
 
-  const setTascListOrder = (tascList: Tasc[]): Tasc[] => {
-    return tascList.reverse();
+  const setIilListOrder = (iilList: IilDto[]): IilDto[] => {
+    return iilList.reverse();
   }
 
-  const getChildIndices = (tascList: Tasc[]): string[] => {
+  const getChildIndices = (iilList: IilDto[]): string[] => {
     let indiceSet = new Set<string>();
-    tascList.forEach((element) => {
+    iilList.forEach((element) => {
       if (Array.isArray(element.act)) {
         element.act.forEach((subElement) => {
           indiceSet.add(subElement);
@@ -96,19 +95,19 @@ export const PageRenderer = ({
     return Array.from(indiceSet);
   };
 
-  const getSolidTascs = (tascList: Tasc[], indices: string[]) => {
-    return tascList.filter((tasc: Tasc) => !indices.includes(tasc.id));
+  const getIilsNotIncluded = (iilList: IilDto[], indices: string[]) => {
+    return iilList.filter((iilDto: IilDto) => !indices.includes(iilDto.id!));
   };
 
-  const updatePageContext = (givenContext: PageContext, goal?: string) => {
-    if (givenContext === PageContext.Organizing && goal) {
-      onTascListChange(tascListOriginal.filter((t) => contextMapping[givenContext].includes(t.state) && t.goal === goal));
+  const updatePageContext = (givenContext: PageContext, name?: string) => {
+    if (givenContext === PageContext.Organizing && name) {
+      onIilListChange(iilListOriginal.filter((t) => contextMapping[givenContext].includes(t.status!) && t.name === name));
     }
     else if (givenContext === PageContext.Focusing) {
-      onTascListChange(tascListOriginal.filter((t) => contextMapping[givenContext].includes(t.state)).sort((a,b) => a.order - b.order));
+      onIilListChange(iilListOriginal.filter((t) => contextMapping[givenContext].includes(t.status!)));
     }
     else {
-      onTascListChange(tascListOriginal.filter((t) => contextMapping[givenContext].includes(t.state)));
+      onIilListChange(iilListOriginal.filter((t) => contextMapping[givenContext].includes(t.status!)));
     }
     setPageContext(givenContext);
   }
@@ -122,17 +121,17 @@ export const PageRenderer = ({
   }
 
   const drawFrame = (): void => {
-    const nextState = update(tascList, pendingUpdateFn);
-    onTascListChange(nextState);
+    const nextState = update(iilList, pendingUpdateFn);
+    onIilListChange(nextState);
 
     pendingUpdateFn = undefined;
     requestedFrame = undefined;
   }
 
   const moveCard = (id: string, afterId: string): void => {
-    const cardIndex = tascList.findIndex((t) => t.id === id);
-    const afterIndex = tascList.findIndex((t) => t.id === afterId);
-    const card = tascList[cardIndex];
+    const cardIndex = iilList.findIndex((t: IilDto) => t.id === id);
+    const afterIndex = iilList.findIndex((t: IilDto) => t.id === afterId);
+    const card = iilList[cardIndex];
 
     scheduleUpdate({
       $splice: [
@@ -143,9 +142,9 @@ export const PageRenderer = ({
   }
 
   const updateOrderOfList = async () => {
-    const partials = tascList.map((t, i) => {return {id: t.id, order: i}});
+    const partials = iilList.map((t: IilDto, i: number) => {return {id: t.id, order: i}});
     // TODO: hold the page until the update being settled
-    return callUpdateBatchAPI(url, ownerId, partials);
+    //return callUpdateBatchAPI(url, ownerId, partials);
   }
 
   return serviceStatus > 0 ? (
@@ -172,23 +171,25 @@ export const PageRenderer = ({
         </button>
       </div>
       <div className="menu">{pageContext === PageContext.Focusing 
-        && <button onClick={() => removeAllFocused(tascList.filter(t => t.state === TascState.Focused).map((t) => {t.setState(TascState.Active); return t;}))}>Remove all</button>}
+        && <button onClick={() => removeAllFocused(iilList.filter((t: IilDto) => t.status === IilDtoStatusEnum.FOCUSED).map((t: IilDto) => {t.status = IilDtoStatusEnum.ACTIVE; return t;}))}>Remove all</button>}
       </div>
       <div className="item_container">
         <DndProvider backend={HTML5Backend}>
           <ConfirmProvider>
             <br />
-            {pageContext === PageContext.Incoming ? <TascItemCreator tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall}/> : <></>
+            {pageContext === PageContext.Incoming ?
+              <IilItemCreator iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall}
+              ownerId={ownerId} givenIil={newIil}/> : <></>
             }
-            {getSolidTascs(
-              tascList,
-              getChildIndices(tascList)
-            ).map((tasc: Tasc, i: number) =>
-            tasc.act.length ?
-              <TascItemUpdator key={tasc.id} givenTasc={tasc} 
-                                onTascListElemChange={onTascListElemChange}
-                                tascList={tascList}
-                                onTascListChange={onTascListChange}
+            {getIilsNotIncluded(
+              iilList,
+              getChildIndices(iilList)
+            ).map((iil: IilDto, i: number) =>
+            iil.act!.length ?
+              <IilItemUpdator key={iil.id} givenIil={iil} 
+                                onIilListElemChange={onIilListElemChange}
+                                iilList={iilList}
+                                onIilListChange={onIilListChange}
                                 pageContext={pageContext}
                                 updatePageContext={updatePageContext}
                                 createCall={createCall}
@@ -198,7 +199,8 @@ export const PageRenderer = ({
                                 updateOrderOfList={updateOrderOfList}
                                 />
               :
-              <TascItemCreator key={tasc.id} tascList={tascList} onTascListChange={onTascListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall} givenTasc={tasc}/>
+              <IilItemCreator key={iil.id} iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall}
+              ownerId={ownerId} givenIil={iil}/>
             )}
           </ConfirmProvider>
         </DndProvider>

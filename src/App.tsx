@@ -5,16 +5,13 @@ import { PageRenderer } from './element/pageRenderer';
 import { PageContext } from './type/pageContext';
 import useKeycloak from './keycloak/useKeycloak';
 
-const testURL = "http://localhost:12500/tasc";
+const testURL = "http://localhost:12500/iil";
 const keycloakJsonFilePath = '../json/keycloak.json';
 
 export const OperationContext = React.createContext({});
 
-function App() {
-  const {keycloak, authenticated, userId } = useKeycloak(keycloakJsonFilePath);
-  return (
-    <div className="App">
-      <OperationContext.Provider value={{backEndUrl: testURL, ownerId: userId}}>
+/*
+<OperationContext.Provider value={{backEndUrl: testURL, ownerId: userId}}>
         {
         keycloak ? 
           authenticated ?
@@ -28,6 +25,14 @@ function App() {
         <div>There is a problem in Keycloak configuration.</div>
         }
       </OperationContext.Provider>
+      */
+
+function App() {
+  //const {keycloak, authenticated, userId } = useKeycloak(keycloakJsonFilePath); keycloak.logout()
+  const userId = "64ee39b9-1682-4794-b747-9d1dbdf2398a"
+  return (
+    <div className="App">
+      <PageRenderer url={testURL} ownerId={userId} givenPageContext={PageContext.Incoming} onLogOut={(e) => console.log()}/>
     </div>
   );
 }
