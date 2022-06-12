@@ -8,9 +8,10 @@ import { getValuesFromInputElement } from "./util/elemToIil";
 import Picker from "emoji-picker-react";
 import UseIil from "../hooksComponent/useIil";
 import { isOrganizeMode, PageContext } from "../type/pageContext";
-import { renderAddButton, renderAddButtonForNewField, renderDeleteButton } from "./util/iilButtons";
+import { getDraggableButton, renderAddButton, renderAddButtonForNewField, renderDeleteButton } from "./util/iilButtons";
 import { IilDto } from "../models";
 import { validateIil } from "./util/iilValidator";
+import { Button, Col, Row } from "react-bootstrap";
 
 interface IIilItemCreatorProp {
   iilList: IilDto[];
@@ -33,7 +34,7 @@ export const IilItemCreator = ({
 }: IIilItemCreatorProp) => {
   const param = useContext(OperationContext) as IOperationParam;
 
-  const {iilItem, onIilItemChange} = UseIil(givenIil!);
+  const {iilItem, onIilItemChange} = UseIil(givenIil!, validateIil);
 
   const createIil = (iil: IilDto) => {
     createCall!({...iil, id: undefined})
@@ -57,17 +58,6 @@ export const IilItemCreator = ({
       :
       onIilListChange(iilList.filter((t:any)=> t.id !== iil.id))
   }
-
-  const renderAddForNewItem = (
-    iil: IilDto
-  ) => {
-    return (
-      <div className="item_options button_container">
-        <div>{renderAddButton(iil, createIil)}</div>
-        { givenIil && <div>{renderDeleteButton(iil, deleteIil)}</div> }
-      </div>
-    );
-  };
 
   const getInputForAct = (
     iil: IilDto,
@@ -107,10 +97,11 @@ export const IilItemCreator = ({
         id={iilItem.id}
         onKeyUp={handleEnterKey}
       >
-        <div className="item_division item_dragbtn">
-          <button className="item_btn_draggable"></button>
-        </div>
-        <div className="item_division item_check">
+        <Row>
+          <Col className="item_division item_dragbtn">
+          {getDraggableButton()}
+          </Col>
+          <Col>
           <input hidden name={`${iilItem.id}==name`} defaultValue={iilItem.name} readOnly />
             <Popup
               onClose={() =>
@@ -119,7 +110,7 @@ export const IilItemCreator = ({
                 }
               }
               trigger={
-                <button className="item_btn">
+                <Button className="item_btn">
                   {iilItem.name ? (
                     <span className="emoji_span">
                       {iilItem.name}
@@ -127,7 +118,7 @@ export const IilItemCreator = ({
                   ) : (
                     <span>{}</span>
                   )}
-                </button>
+                </Button>
               }
               position="right top"
             >
@@ -141,13 +132,13 @@ export const IilItemCreator = ({
                 }}
               />
             </Popup>
-        </div>
-        <div className={`item_division item_act`}>
+          </Col>
+          <Col>
           {
             getInputForAct(iilItem, onIilItemChange)
           }
-
-          <br />
+          </Col>
+          <Col>
           <input
             type="text"
             name={`${iilItem.id}==endWhen`}
@@ -158,8 +149,12 @@ export const IilItemCreator = ({
             }}
             className="item_content_end_when"
           />
-        </div>
-        {renderAddForNewItem(iilItem)}
+          </Col>
+          <Col>
+          {renderAddButton(iilItem, createIil)}
+          {/*renderAddButtonForNewField(iilList!, onIilListChange!, param, iilItem.name!)*/}
+          </Col>
+        </Row>
       </section>
       {isOrganizeMode(pageContext) ? (
         <div className="separator">
@@ -167,13 +162,6 @@ export const IilItemCreator = ({
         </div>
       ) : (
         <hr className="dashed"></hr>
-      )}
-      {isOrganizeMode(pageContext) ? (
-        <div className="button_container">{
-        renderAddButtonForNewField(iilList!, onIilListChange!, param, iilItem.name!)
-        }</div>
-      ) : (
-        <></>
       )}
     </div>
   );

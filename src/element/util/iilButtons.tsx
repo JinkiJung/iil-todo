@@ -6,13 +6,14 @@ import { getBrandNewIil } from "../model/iilManager";
 import { FlowButton } from "./flowButton";
 import { IilDto } from "../../models";
 import { validateIil } from "./iilValidator";
+import { Button } from "react-bootstrap";
 
 export const renderAddButton = (
   iilDto: IilDto,
   createIil: Function,
 ) => {
   return (
-    <button
+    <Button
       className="item_btn highlighted"
       onClick={() => {
         if(validateIil(iilDto)) {
@@ -23,8 +24,8 @@ export const renderAddButton = (
         }
       }}
     >
-      +
-    </button>
+      Add new
+    </Button>
   );
 };
 
@@ -33,11 +34,7 @@ export const renderDeleteButton = (
   deleteIil: Function,
 ) => {
   return (
-    <Popup
-          trigger={<button className="item_btn warning">-</button>}
-          position="left center"
-        >
-          <DeleteButton
+    <DeleteButton
             open={false}
             title={`Are you sure to delete this?`}
             message={`${iilDto.act}`}
@@ -46,7 +43,6 @@ export const renderDeleteButton = (
             }
             onCancelCallback={() => console.log()}
           />
-        </Popup>
   );
 };
 
@@ -80,3 +76,6 @@ export const renderDragButton = (
     <FlowButton />
   );
 };
+
+export const getDraggableButton = () => 
+<Button className="item_btn_draggable"></Button>

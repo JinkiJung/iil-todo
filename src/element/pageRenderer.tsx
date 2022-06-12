@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useCallback, useEffect, useState } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 import UseiilList from "../hooksComponent/useIilList";
 import { ConfirmProvider } from "../hooksComponent/ConfirmContext";
 import { getBrandNewName, getBrandNewIil } from "./model/iilManager";
@@ -12,6 +12,7 @@ import { IilControllerApi } from "../api/iil-controller-api";
 import { AxiosResponse } from "axios";
 import UseIilList from "../hooksComponent/useIilList";
 import { IilItemCreator } from "./iilItemCreator";
+import { Button, ButtonGroup, Col, Container, Row } from "react-bootstrap";
 
 export interface IPageRenderer {
   url: string;
@@ -141,6 +142,47 @@ export const PageRenderer = ({
     })
   }
 
+  const provideIilInput = (givenContext: PageContext) => {
+    return givenContext === PageContext.Incoming ?
+              <IilItemCreator iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall}
+              ownerId={ownerId} givenIil={newIil}/> : <></>
+  }
+
+  const provideIilEditor = (givenContext: PageContext, iil: IilDto) => 
+    <IilItemUpdator key={iil.id} givenIil={iil} 
+    onIilListElemChange={onIilListElemChange}
+    iilList={iilList}
+    onIilListChange={onIilListChange}
+    pageContext={givenContext}
+    updatePageContext={updatePageContext}
+    createCall={createCall}
+    updateCall={updateCall}
+    deleteCall={deleteCall}
+    moveCard={moveCard}
+    updateOrderOfList={updateOrderOfList}
+    />
+  
+    //<button className="input-block-level" onClick={onLogOut}>logOut</button>
+  const getPageHeader = (givenContext: PageContext) => 
+    <Row className="mx-0 p-2" id="pageHeader">
+      <Col>
+        <ButtonGroup className="d-flex">
+          <Button variant="primary"
+            onClick={() => {updatePageContext(PageContext.Incoming); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}>
+              Incoming
+          </Button>
+          <Button variant="secondary" className="mx-2"
+            onClick={() => {updatePageContext(PageContext.Focusing); document.getElementById("background")?.classList.replace("bg_normal", "bg_focus");}}>
+              Focusing
+          </Button>
+          <Button variant="success"
+            onClick={() => {updatePageContext(PageContext.Admin); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}>
+              Admin
+          </Button>
+        </ButtonGroup>
+      </Col>
+    </Row>
+
   const updateOrderOfList = async () => {
     const partials = iilList.map((t: IilDto, i: number) => {return {id: t.id, order: i}});
     // TODO: hold the page until the update being settled
@@ -148,60 +190,22 @@ export const PageRenderer = ({
   }
 
   return serviceStatus > 0 ? (
-    <div className="bg bg_normal" id="background">
-      <div className="pageHeader" id="pageHeader"><button onClick={onLogOut}>logOut</button></div>
-      <div className="equalHWrap eqWrap">
-        <button
-          className="equalHW eq"
-          onClick={() => {updatePageContext(PageContext.Incoming); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}
-        >
-          incoming
-        </button>
-        <button
-          className="equalHW eq"
-          onClick={() => {updatePageContext(PageContext.Focusing); document.getElementById("background")?.classList.replace("bg_normal", "bg_focus");}}
-        >
-          focusing
-        </button>
-        <button
-          className="equalHW eq"
-          onClick={() => {updatePageContext(PageContext.Admin); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}
-        >
-          admin
-        </button>
-      </div>
+    <div className="row" id="background">
+      {getPageHeader(pageContext)}
       <div className="menu">{pageContext === PageContext.Focusing 
         && <button onClick={() => removeAllFocused(iilList.filter((t: IilDto) => t.status === IilDtoStatusEnum.FOCUSED).map((t: IilDto) => {t.status = IilDtoStatusEnum.ACTIVE; return t;}))}>Remove all</button>}
       </div>
       <div className="item_container">
         <DndProvider backend={HTML5Backend}>
           <ConfirmProvider>
-            <br />
-            {pageContext === PageContext.Incoming ?
-              <IilItemCreator iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall}
-              ownerId={ownerId} givenIil={newIil}/> : <></>
-            }
-            {getIilsNotIncluded(
-              iilList,
-              getChildIndices(iilList)
-            ).map((iil: IilDto, i: number) =>
-            iil.act!.length ?
-              <IilItemUpdator key={iil.id} givenIil={iil} 
-                                onIilListElemChange={onIilListElemChange}
-                                iilList={iilList}
-                                onIilListChange={onIilListChange}
-                                pageContext={pageContext}
-                                updatePageContext={updatePageContext}
-                                createCall={createCall}
-                                updateCall={updateCall}
-                                deleteCall={deleteCall}
-                                moveCard={moveCard}
-                                updateOrderOfList={updateOrderOfList}
-                                />
-              :
-              <IilItemCreator key={iil.id} iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall}
-              ownerId={ownerId} givenIil={iil}/>
-            )}
+            <Container>
+              {provideIilInput(pageContext)}
+              {getIilsNotIncluded(
+                iilList,
+                getChildIndices(iilList)
+              ).map((iil: IilDto, i: number) =>
+                provideIilEditor(pageContext, iil))}
+            </Container>
           </ConfirmProvider>
         </DndProvider>
       </div>

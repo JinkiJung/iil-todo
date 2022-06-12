@@ -15,16 +15,15 @@ export const getStateSelectMenu = (pageContext: PageContext, iilDto: IilDto, upd
     states.push(value.toString());
   }
   return pageContext !== PageContext.Focusing ? (
-    <form noValidate>
       <FormControl>
         <Select
           value={iilDto.status}
           onChange={(e) => {
             let newIilDto: IilDto = {
               id: iilDto.id,
-              name: iilDto.id + "==status",
               status: e.target.value as IilDtoStatusEnum,
             };
+            console.log(newIilDto);
             updateIilStatus(newIilDto);
           }}
           inputProps={{
@@ -33,13 +32,12 @@ export const getStateSelectMenu = (pageContext: PageContext, iilDto: IilDto, upd
           }}
         >
           {contextMapping[PageContext.Managing].map((k: any) => (
-            <MenuItem key={iilDto.id + "==" + k} value={k}>
+            <MenuItem key={iilDto.id + k} value={k}>
               {k}
             </MenuItem>
           ))}
         </Select>
       </FormControl>
-    </form>
   ) : (
     <input hidden={true} name={iilDto.id + "==status"} value={iilDto.status} readOnly/>
   );
