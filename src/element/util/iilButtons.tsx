@@ -6,18 +6,21 @@ import { getBrandNewIil } from "../model/iilManager";
 import { FlowButton } from "./flowButton";
 import { IilDto } from "../../models";
 import { validateIil } from "./iilValidator";
-import { Button } from "react-bootstrap";
+import { Button, ButtonGroup } from "react-bootstrap";
 
 export const renderAddButton = (
-  iilDto: IilDto,
+  iil: IilDto,
+  isDirty: boolean,
   createIil: Function,
 ) => {
   return (
-    <Button
+    <ButtonGroup className="d-flex">
+      <Button
+      disabled={!isDirty}
       className="item_btn highlighted"
       onClick={() => {
-        if(validateIil(iilDto)) {
-          createIil(iilDto);
+        if(validateIil(iil)) {
+          createIil(iil);
         }
         else{
           alert("You have empty field!");
@@ -26,23 +29,27 @@ export const renderAddButton = (
     >
       Add new
     </Button>
+    </ButtonGroup>
+    
   );
 };
 
 export const renderDeleteButton = (
-  iilDto: IilDto,
+  iil: IilDto,
   deleteIil: Function,
 ) => {
   return (
-    <DeleteButton
-            open={false}
-            title={`Are you sure to delete this?`}
-            message={`${iilDto.act}`}
-            onConfirmCallback={() =>
-              deleteIil(iilDto)
-            }
-            onCancelCallback={() => console.log()}
-          />
+    <ButtonGroup className="d-flex">
+      <DeleteButton
+              open={false}
+              title={`Are you sure to delete this?`}
+              message={`${iil.act}`}
+              onConfirmCallback={() =>
+                deleteIil(iil)
+              }
+              onCancelCallback={() => console.log()}
+            />
+     </ButtonGroup>
   );
 };
 
@@ -70,7 +77,7 @@ export const renderAddButtonForNewField = (
 };
 
 export const renderDragButton = (
-  iilDto: IilDto
+  iil: IilDto
 ) => {
   return (
     <FlowButton />
@@ -78,4 +85,13 @@ export const renderDragButton = (
 };
 
 export const getDraggableButton = () => 
-<Button className="item_btn_draggable"></Button>
+<ButtonGroup className="d-flex">
+  <Button className="item_btn_draggable">drag</Button>
+</ButtonGroup>
+
+export const getButtonWithEmoji = (iil: IilDto) => 
+<ButtonGroup className="d-flex">
+  <Button>
+  {iil.name ? iil.name : ''}
+  </Button>
+</ButtonGroup>

@@ -15,6 +15,6 @@ export const contextMapping: { [id: number] : string[]; } = {};
 // context for editing
 contextMapping[PageContext.Incoming] = [IilDtoStatusEnum.NOTINITIATED, IilDtoStatusEnum.ACTIVE, IilDtoStatusEnum.FOCUSED, IilDtoStatusEnum.PENDING];
 contextMapping[PageContext.Organizing] = [IilDtoStatusEnum.NOTINITIATED, IilDtoStatusEnum.ACTIVE, IilDtoStatusEnum.FOCUSED, IilDtoStatusEnum.PENDING];
-contextMapping[PageContext.Focusing] = [IilDtoStatusEnum.NOTINITIATED, IilDtoStatusEnum.FOCUSED];
+contextMapping[PageContext.Focusing] = [IilDtoStatusEnum.FOCUSED];
 contextMapping[PageContext.Managing] = [IilDtoStatusEnum.NOTINITIATED, IilDtoStatusEnum.ACTIVE, IilDtoStatusEnum.FOCUSED, IilDtoStatusEnum.PENDING, IilDtoStatusEnum.SETTLED, ];
 contextMapping[PageContext.Admin] = [IilDtoStatusEnum.NOTINITIATED, IilDtoStatusEnum.ACTIVE, IilDtoStatusEnum.FOCUSED, IilDtoStatusEnum.PENDING, IilDtoStatusEnum.SETTLED, ];

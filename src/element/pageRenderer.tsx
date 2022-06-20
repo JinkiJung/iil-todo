@@ -3,7 +3,7 @@ import UseiilList from "../hooksComponent/useIilList";
 import { ConfirmProvider } from "../hooksComponent/ConfirmContext";
 import { getBrandNewName, getBrandNewIil } from "./model/iilManager";
 import { IilItemUpdator } from "./iilItemUpdator";
-import { contextMapping, PageContext } from "../type/pageContext";
+import { PageContext } from "../type/pageContext";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import update from 'immutability-helper'
@@ -13,6 +13,7 @@ import { AxiosResponse } from "axios";
 import UseIilList from "../hooksComponent/useIilList";
 import { IilItemCreator } from "./iilItemCreator";
 import { Button, ButtonGroup, Col, Container, Row } from "react-bootstrap";
+import { isStatusFitToContext } from "./util/illFilterByContext";
 
 export interface IPageRenderer {
   url: string;
@@ -32,7 +33,9 @@ export const PageRenderer = ({
 
   const [serviceStatus, setServiceStatus] = useState(0);
   const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
-  const [iilListOriginal, setIilListOriginal] = useState<IilDto[]>([]);
+  const { iilList, onIilListChange, onIilListElemChange } = UseIilList([]);
+  const [ isLoading, setIsLoading ] = useState(false);
+  const [ isLoaded, setIsLoaded ] = useState(false);
 
   const [newIil, setNewIil] = useState<IilDto>(getBrandNewIil(getBrandNewName(), ownerId, "", ownerId, "new"));
   const apiHandler = new IilControllerApi();
@@ -42,8 +45,7 @@ export const PageRenderer = ({
     getCall().then((response) => response.data)
       .then((iils: IilDto[]) => {
         if (mounted){
-          setIilListOriginal(setIilListOrder(iils));
-          updatePageContext(pageContext);
+          onIilListChange(iils);
           setServiceStatus(1);
         }
       })
@@ -56,8 +58,8 @@ export const PageRenderer = ({
     return apiHandler.getIils();
   }
 
-  const createCall = (iilDto : IilDto): Promise<any> => {
-    return apiHandler.createIil(iilDto);
+  const createCall = (iil : IilDto): Promise<any> => {
+    return apiHandler.createIil(iil);
   }
   
   const updateCall = (partialIilDto : IilDto, id: string): Promise<any> => {
@@ -68,20 +70,12 @@ export const PageRenderer = ({
     return apiHandler.deleteIil(id);
   }
 
-
-  let initialiilList: IilDto[] = [];
-  const { iilList, onIilListChange, onIilListElemChange } = UseIilList(initialiilList);
-
   const removeAllFocused = async (piilList: IilDto[]) => {
     /*
     return await callUpdateBatchAPI(url, ownerId, piilList)
         .then((res: any) => { oniilListChange([]); return res;})
         .catch((error) => alert(error));
         */
-  }
-
-  const setIilListOrder = (iilList: IilDto[]): IilDto[] => {
-    return iilList.reverse();
   }
 
   const getChildIndices = (iilList: IilDto[]): string[] => {
@@ -97,22 +91,12 @@ export const PageRenderer = ({
   };
 
   const getIilsNotIncluded = (iilList: IilDto[], indices: string[]) => {
-    return iilList.filter((iilDto: IilDto) => !indices.includes(iilDto.id!));
+    return iilList.filter((iil: IilDto) => !indices.includes(iil.id!));
   };
 
-  const updatePageContext = (givenContext: PageContext, name?: string) => {
-    if (givenContext === PageContext.Organizing && name) {
-      onIilListChange(iilListOriginal.filter((t) => contextMapping[givenContext].includes(t.status!) && t.name === name));
-    }
-    else if (givenContext === PageContext.Focusing) {
-      onIilListChange(iilListOriginal.filter((t) => contextMapping[givenContext].includes(t.status!)));
-    }
-    else {
-      onIilListChange(iilListOriginal.filter((t) => contextMapping[givenContext].includes(t.status!)));
-    }
-    setPageContext(givenContext);
-  }
+  
 
+  /*
   const scheduleUpdate = (updateFn: any) => {
     pendingUpdateFn = updateFn;
 
@@ -141,24 +125,23 @@ export const PageRenderer = ({
       ],
     })
   }
+  */
 
-  const provideIilInput = (givenContext: PageContext) => {
-    return givenContext === PageContext.Incoming ?
-              <IilItemCreator iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext} createCall={createCall} deleteCall={deleteCall}
-              ownerId={ownerId} givenIil={newIil}/> : <></>
+  const provideIilCreator = () => {
+    return <IilItemCreator iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext} createCall={createCall}
+              ownerId={ownerId} givenIil={newIil}/>;
   }
 
-  const provideIilEditor = (givenContext: PageContext, iil: IilDto) => 
+  const provideIilEditor = (givenContext: PageContext, iil: IilDto, iilList: IilDto[]) => 
     <IilItemUpdator key={iil.id} givenIil={iil} 
     onIilListElemChange={onIilListElemChange}
     iilList={iilList}
     onIilListChange={onIilListChange}
     pageContext={givenContext}
-    updatePageContext={updatePageContext}
     createCall={createCall}
     updateCall={updateCall}
     deleteCall={deleteCall}
-    moveCard={moveCard}
+    moveCard={() => console.log("moveCard")}
     updateOrderOfList={updateOrderOfList}
     />
   
@@ -168,15 +151,15 @@ export const PageRenderer = ({
       <Col>
         <ButtonGroup className="d-flex">
           <Button variant="primary"
-            onClick={() => {updatePageContext(PageContext.Incoming); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}>
+            onClick={() => {setPageContext(PageContext.Incoming); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}>
               Incoming
           </Button>
           <Button variant="secondary" className="mx-2"
-            onClick={() => {updatePageContext(PageContext.Focusing); document.getElementById("background")?.classList.replace("bg_normal", "bg_focus");}}>
+            onClick={() => {setPageContext(PageContext.Focusing); document.getElementById("background")?.classList.replace("bg_normal", "bg_focus");}}>
               Focusing
           </Button>
           <Button variant="success"
-            onClick={() => {updatePageContext(PageContext.Admin); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}>
+            onClick={() => {setPageContext(PageContext.Admin); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}>
               Admin
           </Button>
         </ButtonGroup>
@@ -188,23 +171,20 @@ export const PageRenderer = ({
     // TODO: hold the page until the update being settled
     //return callUpdateBatchAPI(url, ownerId, partials);
   }
-
+  
   return serviceStatus > 0 ? (
     <div className="row" id="background">
       {getPageHeader(pageContext)}
-      <div className="menu">{pageContext === PageContext.Focusing 
-        && <button onClick={() => removeAllFocused(iilList.filter((t: IilDto) => t.status === IilDtoStatusEnum.FOCUSED).map((t: IilDto) => {t.status = IilDtoStatusEnum.ACTIVE; return t;}))}>Remove all</button>}
+      <div className="menu">
+        
       </div>
       <div className="item_container">
         <DndProvider backend={HTML5Backend}>
           <ConfirmProvider>
             <Container>
-              {provideIilInput(pageContext)}
-              {getIilsNotIncluded(
-                iilList,
-                getChildIndices(iilList)
-              ).map((iil: IilDto, i: number) =>
-                provideIilEditor(pageContext, iil))}
+              {pageContext === PageContext.Incoming ? provideIilCreator() : <></>}
+              {iilList.map((iil: IilDto) => isStatusFitToContext(pageContext, iil.status!) ?
+                provideIilEditor(pageContext, iil, iilList) : <></>)}
             </Container>
           </ConfirmProvider>
         </DndProvider>

@@ -1,24 +1,21 @@
 import { useState } from 'react';
 import { IilDto } from '../models';
 
+export const applyUpdateToIilList = (iil: IilDto, iilList: IilDto[]) => [...iilList.filter(x => x.id !== iil.id), iil]
+
 const UseIilList = (initialIilList: IilDto[], validator?: Function) => {
     const [ iilList, setIilList] = useState(initialIilList);
     const onIilListChange = (iils: IilDto[]) => {
       setIilList(iils);
     };
-    const onIilListElemChange = (fieldsToUpdate: IilDto) => {
+    const onIilListElemChange = (completeIil: IilDto) => {
       let willUpdate = true;
       if(typeof validator === "function"){
-          willUpdate = validator(fieldsToUpdate);
+          willUpdate = validator(completeIil);
       }
       if(willUpdate){
-        let itemToBeUpdated: IilDto = iilList.filter(x => x.id === fieldsToUpdate.id).pop()!;
-        if (itemToBeUpdated){
-          const updatedItem = { ...itemToBeUpdated, ...fieldsToUpdate };
-          //const updatedItem: Tasc = { ...itemToBeUpdated, ...fieldsToUpdate };
-          const appendedList = [...iilList.filter(x => x.id !== updatedItem.id), updatedItem];
-          onIilListChange(appendedList);
-        }    
+        const appendedList = applyUpdateToIilList(completeIil, iilList);
+        onIilListChange(appendedList);
       }
     };
     return { iilList, onIilListChange, onIilListElemChange };
