@@ -2,8 +2,6 @@ import { IilDtoStatusEnum } from './../../models/iil-dto';
 import { IilDto } from "../../models";
 import { getRandomEmoji } from "../../util/emojiGenerator";
 
-const shortid = require("shortid");
-
 export const getBrandNewIil = (
     name: string,
     actor: string,

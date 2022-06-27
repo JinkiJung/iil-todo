@@ -1,13 +1,11 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
-import UseiilList from "../hooksComponent/useIilList";
 import { ConfirmProvider } from "../hooksComponent/ConfirmContext";
 import { getBrandNewName, getBrandNewIil } from "./model/iilManager";
 import { IilItemUpdator } from "./iilItemUpdator";
 import { PageContext } from "../type/pageContext";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import update from 'immutability-helper'
-import { IilDto, IilDtoStatusEnum } from "../models";
+import { IilDto } from "../models";
 import { IilControllerApi } from "../api/iil-controller-api";
 import { AxiosResponse } from "axios";
 import UseIilList from "../hooksComponent/useIilList";
@@ -28,8 +26,6 @@ export const PageRenderer = ({
   givenPageContext,
   onLogOut,
 }: IPageRenderer) => {
-  let pendingUpdateFn: any;
-  let requestedFrame: number | undefined;
 
   const [serviceStatus, setServiceStatus] = useState(0);
   const [pageContext, setPageContext] = useState<PageContext>(givenPageContext);
@@ -44,6 +40,7 @@ export const PageRenderer = ({
     let mounted = true;
     getCall().then((response) => response.data)
       .then((iils: IilDto[]) => {
+        console.log(iils);
         if (mounted){
           onIilListChange(iils);
           setServiceStatus(1);

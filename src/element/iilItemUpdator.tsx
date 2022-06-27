@@ -80,19 +80,14 @@ export const IilItemUpdator = ({
       }
     },
     drop(item, monitor) {
-      updateOrderOfList().then((res) => onIilListChange(iilList.map((t, i) => { /*t.setOrder(i);*/ return t; })));
+      updateOrderOfList().then((res) => onIilListChange(iilList));
     }
   })
-
-  const sortIil = (a: IilDto, b: IilDto) => {
-    return (new Date(b.createdAt!)).getTime() - (new Date(a.createdAt!)).getTime();
-  }
 
   const sendDataToBackend = (iilItem: IilDto) => {
     iilList.filter(t => t.id === iilItem.id).length
         ? updateIil(iilItem).then(({data}) => {
           onIilListElemChange(data as IilDto);
-          //iilList.sort(sortIil);
         }) :
         console.log("Error! - no ID corresponding to");
   }
@@ -130,7 +125,6 @@ export const IilItemUpdator = ({
   };
 
   const handleBlur = (event: React.FocusEvent<HTMLElement>) => {
-    console.log(isDirty);
     if (isDirty && validateIil(iilItem)){
         sendDataToBackend(iilItem);
     }
@@ -213,14 +207,14 @@ const getIilItemEditor = () =>
             }`}>
         {validURL(iilItem.act!) ? (
               <a href={iilItem.act} target={"_blank"} rel="noreferrer">
-                {getInputForAct(iilItem, onIilItemChange, register)}
+                {getInputForAct(iilItem, onIilItemChange, register, handleEnterKey)}
               </a>
             ) : (
-              getInputForAct(iilItem, onIilItemChange, register)
+              getInputForAct(iilItem, onIilItemChange, register, handleEnterKey)
             )}
       </Col>
       <Col sm={2}>
-        {getInputForEndWhen(iilItem, onIilItemChange, register)}
+        {getInputForEndWhen(iilItem, onIilItemChange, register, handleEnterKey)}
       </Col>
       <Col sm={2}>
         {getStateSelectMenu( pageContext, iilItem, updateIilStatus)}
