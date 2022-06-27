@@ -110,7 +110,6 @@ export const IilItemUpdator = ({
 
   const updateIilStatus = (iil: IilDto) => {
     const updateIilDto = {...iilList.filter(e => e.id === iil.id).pop(), ...iil};
-    console.log(updateIilDto);
     updateIil(updateIilDto).then(({data}) => {
       onIilListElemChange(data as IilDto);
       });
@@ -232,7 +231,6 @@ const getIilItemEditor = () =>
     connectDrag(ref)
     connectDrop(ref)
   }
-  return (
-    isStatusFitToContext(pageContext, iilItem.status!) ? getIilItemEditor() : <></>    
-  );
+  
+  return getIilItemEditor();
 };

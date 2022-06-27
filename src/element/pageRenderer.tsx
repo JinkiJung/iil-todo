@@ -129,8 +129,8 @@ export const PageRenderer = ({
               ownerId={ownerId} givenIil={newIil}/>;
   }
 
-  const provideIilEditor = (givenContext: PageContext, iil: IilDto, iilList: IilDto[]) => 
-    <IilItemUpdator key={iil.id} givenIil={iil} 
+  const provideIilEditor = (key: number, givenContext: PageContext, iil: IilDto, iilList: IilDto[]) => 
+    <IilItemUpdator key={key} givenIil={iil} 
     onIilListElemChange={onIilListElemChange}
     iilList={iilList}
     onIilListChange={onIilListChange}
@@ -180,8 +180,8 @@ export const PageRenderer = ({
           <ConfirmProvider>
             <Container>
               {pageContext === PageContext.Incoming ? provideIilCreator() : <></>}
-              {iilList.map((iil: IilDto) => isStatusFitToContext(pageContext, iil.status!) ?
-                provideIilEditor(pageContext, iil, iilList) : <></>)}
+              {iilList.map((iil: IilDto, key) => isStatusFitToContext(pageContext, iil.status!) ?
+                provideIilEditor(key, pageContext, iil, iilList) : <></>)}
             </Container>
           </ConfirmProvider>
         </DndProvider>

@@ -60,9 +60,11 @@ export const IilItemCreator = ({
     onIilItemChange(getBrandNewIil(getBrandNewName(), actor, "", owner, "new"));
   }
 
-  const handleEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter" && validateIil(iilItem)) {
-      createIil(iilItem);
+  const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      if (validateIil(iilItem)){
+        createIil(iilItem);
+      }
     }
   };
 
@@ -111,11 +113,11 @@ export const IilItemCreator = ({
             </Col>
             <Col xs={6}>
             {
-              getInputForAct(iilItem, onIilItemChange, register)
+              getInputForAct(iilItem, onIilItemChange, register, handleEnterKey)
             }
             </Col>
             <Col xs={2}>
-            {getInputForEndWhen(iilItem, onIilItemChange, register)}
+            {getInputForEndWhen(iilItem, onIilItemChange, register, handleEnterKey)}
             </Col>
             <Col xs={2}>
             {renderAddButton(iilItem, isDirty, createIil)}
