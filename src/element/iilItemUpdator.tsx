@@ -27,7 +27,6 @@ interface IIilItemUpdatorProp {
   iilList: IilDto[];
   onIilListChange: Function;
   pageContext: PageContext;
-  createCall: Function;
   updateCall: Function;
   deleteCall: Function;
   moveCard: (draggedId: string, id: string) => void;
@@ -40,7 +39,6 @@ export const IilItemUpdator = ({
   iilList,
   onIilListChange,
   pageContext,
-  createCall,
   updateCall,
   deleteCall,
   moveCard,
@@ -181,10 +179,11 @@ const onChangeCheckBox = (iil: IilDto) => {
 }
 
 const getIilItemEditor = () => 
-  <div ref={ref} id={iilItem.id} key={iilItem.id} data-handler-id={handlerId}>
+  <div ref={ref} id={"item_"+iilItem.id} key={"item_"+iilItem.id} data-handler-id={handlerId}>
     <form
           className="item"
-          id={iilItem.id}
+          id={"form_"+iilItem.id}
+          key={"form_"+iilItem.id}
           onBlur={handleBlur}
         >
     <Row>

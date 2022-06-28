@@ -49,14 +49,14 @@ export const IilItemCreator = ({
     createCall!({...iil, id: undefined})
           .then(async (res: any) => {
             await onIilListChange(
-              [res.data, ...iilList.filter(t => t.id !== iil.id)]
+              [...iilList, res.data]
             );
-            renewIil(ownerId, ownerId);
+            resetNewIil(ownerId, ownerId);
           })
           .catch((error: any) => alert(error));
   }
 
-  const renewIil = (actor: string, owner: string) => {
+  const resetNewIil = (actor: string, owner: string) => {
     onIilItemChange(getBrandNewIil(getBrandNewName(), actor, "", owner, "new"));
   }
 

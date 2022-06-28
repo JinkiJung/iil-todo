@@ -129,13 +129,12 @@ export const PageRenderer = ({
               ownerId={ownerId} givenIil={newIil}/>;
   }
 
-  const provideIilEditor = (key: number, givenContext: PageContext, iil: IilDto, iilList: IilDto[]) => 
+  const provideIilUpdator = (key: string, givenContext: PageContext, iil: IilDto, iilList: IilDto[]) => 
     <IilItemUpdator key={key} givenIil={iil} 
     onIilListElemChange={onIilListElemChange}
     iilList={iilList}
     onIilListChange={onIilListChange}
     pageContext={givenContext}
-    createCall={createCall}
     updateCall={updateCall}
     deleteCall={deleteCall}
     moveCard={() => console.log("moveCard")}
@@ -168,20 +167,17 @@ export const PageRenderer = ({
     // TODO: hold the page until the update being settled
     //return callUpdateBatchAPI(url, ownerId, partials);
   }
-  
   return serviceStatus > 0 ? (
     <div className="row" id="background">
       {getPageHeader(pageContext)}
-      <div className="menu">
-        
-      </div>
       <div className="item_container">
         <DndProvider backend={HTML5Backend}>
           <ConfirmProvider>
             <Container>
               {pageContext === PageContext.Incoming ? provideIilCreator() : <></>}
-              {iilList.map((iil: IilDto, key) => isStatusFitToContext(pageContext, iil.status!) ?
-                provideIilEditor(key, pageContext, iil, iilList) : <></>)}
+              {iilList.map((iil: IilDto) => {
+                return isStatusFitToContext(pageContext, iil.status!) ?
+                provideIilUpdator(pageContext + "_" + iil.id!, pageContext, iil, iilList) : <></>;})}
             </Container>
           </ConfirmProvider>
         </DndProvider>
