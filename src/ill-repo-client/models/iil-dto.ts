@@ -11,7 +11,8 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { FlowDto } from './flow-dto';
+import { IilDto } from './iil-dto';
+import { NextFlowDto } from './next-flow-dto';
 /**
  * 
  * @export
@@ -26,28 +27,34 @@ export interface IilDto {
     id?: string;
     /**
      * 
-     * @type {string}
+     * @type {{ [key: string]: string; }}
      * @memberof IilDto
      */
-    name?: string;
+    describe?: { [key: string]: string; };
+    /**
+     * 
+     * @type {IilDto}
+     * @memberof IilDto
+     */
+    goal?: IilDto;
     /**
      * 
      * @type {string}
      * @memberof IilDto
      */
-    goal?: string;
+    input?: string;
     /**
      * 
      * @type {string}
      * @memberof IilDto
      */
-    given?: string;
+    namespace?: string;
     /**
      * 
      * @type {string}
      * @memberof IilDto
      */
-    startWhen?: string;
+    startIf?: string;
     /**
      * 
      * @type {string}
@@ -65,25 +72,19 @@ export interface IilDto {
      * @type {string}
      * @memberof IilDto
      */
-    endWhen?: string;
+    endIf?: string;
     /**
      * 
      * @type {string}
      * @memberof IilDto
      */
-    produce?: string;
+    output?: string;
     /**
      * 
      * @type {string}
      * @memberof IilDto
      */
-    createdBy?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof IilDto
-     */
-    ownedBy?: string;
+    owner?: string;
     /**
      * 
      * @type {string}
@@ -104,10 +105,10 @@ export interface IilDto {
     lastUpdatedAt?: Date;
     /**
      * 
-     * @type {Array<FlowDto>}
+     * @type {Array<NextFlowDto>}
      * @memberof IilDto
      */
-    leadTo?: Array<FlowDto>;
+    next?: Array<NextFlowDto>;
 }
 
 /**

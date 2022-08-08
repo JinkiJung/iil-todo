@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IilDto } from '../models';
+import { IilDto } from '../ill-repo-client';
 
 export const applyUpdateToIilList = (iil: IilDto, iilList: IilDto[]) => [...iilList.filter(x => x.id !== iil.id), iil]
 

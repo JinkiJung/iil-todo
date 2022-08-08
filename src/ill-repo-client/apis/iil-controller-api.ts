@@ -15,7 +15,7 @@ import globalAxios, { AxiosResponse, AxiosInstance, AxiosRequestConfig } from 'a
 import { Configuration } from '../configuration';
 // Some imports not used depending on template conditions
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from './base';
+import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../base';
 import { IilDto } from '../models';
 /**
  * IilControllerApi - axios parameter creator
@@ -370,8 +370,7 @@ export class IilControllerApi extends BaseAPI {
      * @memberof IilControllerApi
      */
     public async createIil(body: IilDto, options?: AxiosRequestConfig) : Promise<AxiosResponse<IilDto>> {
-        return IilControllerApiFp(this.configuration).createIil(body, options)
-            .then((request) => request(this.axios, this.basePath));
+        return IilControllerApiFp(this.configuration).createIil(body, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 

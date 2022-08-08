@@ -4,9 +4,9 @@ import DeleteButton from "../../hooksComponent/DeleteButton";
 import { IOperationParam } from "../model/operationParam";
 import { getBrandNewIil } from "../model/iilManager";
 import { FlowButton } from "./flowButton";
-import { IilDto } from "../../models";
 import { validateIil } from "./iilValidator";
 import { Button, ButtonGroup } from "react-bootstrap";
+import { IilDto } from "../../ill-repo-client";
 
 export const renderAddButton = (
   iil: IilDto,
@@ -92,6 +92,6 @@ export const getDraggableButton = () =>
 export const getButtonWithEmoji = (iil: IilDto) => 
 <ButtonGroup className="d-flex">
   <Button>
-  {iil.name ? iil.name : ''}
+  {iil.describe?.emoji ? iil.describe?.emoji : ''}
   </Button>
 </ButtonGroup>

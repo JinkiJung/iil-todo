@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import { Form } from "react-bootstrap";
-import { IilDto } from "../../models";
+import { IilDto } from '../../ill-repo-client';
 import { getValuesFromInputElement } from "./elemToIil";
+import { iilDescribeInput } from './iilDescribeInput';
+
+export interface IIndexable {
+  [key: string]: any;
+}
 
 const getInput = (
   name: string,
@@ -21,30 +26,22 @@ const getInput = (
         }}
         onKeyDown={handleEnterKey}/>
 
-export const getInputForAct = (
-    iil: IilDto,
-    onIilItemChange: Function,
-    register: Function,
-    handleEnterKey: Function,
+export const getInputForAttribute = (iil: IilDto,
+  attributeName: string,
+  onIilItemChange: Function,
+  register: Function,
+  handleEnterKey: Function,
   ) => getInput(
-    `${iil.id ? iil.id : 'new'}==act`,
-    "What do you want to achieve?",
-    iil.act,
+    `${iil.id ? iil.id : 'new'}==${attributeName}`,
+    'Enter ' + attributeName,
+    (iil as IIndexable)[attributeName],
     onIilItemChange,
     register,
     handleEnterKey,
   );
 
-export const getInputForEndWhen = (
-    iil: IilDto,
-    onIilItemChange: Function,
-    register: Function,
-    handleEnterKey: Function,
-  ) => getInput(
-    `${iil.id ? iil.id : 'new'}==endWhen`,
-    "When it is done?",
-    iil.endWhen,
-    onIilItemChange,
-    register,
-    handleEnterKey,
-  );
+export const getDescribeInput = (iil: IilDto,
+  onIilItemChange: Function,
+  register: Function,
+  handleEnterKey: Function,) =>
+  iilDescribeInput('emoji', '', '', onIilItemChange, register, handleEnterKey);

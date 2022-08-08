@@ -1,26 +1,25 @@
-import { IilDtoStatusEnum } from './../../models/iil-dto';
-import { IilDto } from "../../models";
-import { getRandomEmoji } from "../../util/emojiGenerator";
+import { IilDto, IilDtoStatusEnum } from '../../ill-repo-client';
 
 export const getBrandNewIil = (
-    name: string,
+    emoji: string,
     actor: string,
     act: string,
     ownerId: string,
     id?: string,
+    goal?: IilDto,
+    startIf?: string,
+    endIf?: string,
   ): IilDto => {
     return {
       id,
-      name,
-      startWhen: '',
-      endWhen: '',
+      goal,
+      describe: {'emoji': emoji},
+      startIf,
+      endIf,
       actor,
       act,
-      createdBy: ownerId,
       status: IilDtoStatusEnum.NOTINITIATED,
-      ownedBy: ownerId,
+      owner: ownerId,
     };
   };
-
-export const getBrandNewName = (): string => getRandomEmoji();
 

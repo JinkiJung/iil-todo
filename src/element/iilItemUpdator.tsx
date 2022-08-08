@@ -2,24 +2,20 @@ import { Checkbox } from "@material-ui/core";
 import React, { useContext, useRef, useState } from "react";
 import Popup from "reactjs-popup";
 import { OperationContext } from "../App";
-import { contextMapping, isOrganizeMode, PageContext } from "../type/pageContext";
+import { isOrganizeMode, PageContext } from "../type/pageContext";
 import { validURL } from "../util/urlStringCheck";
 import { IOperationParam } from "./model/operationParam";
 import Picker from "emoji-picker-react";
-import {
-  getValuesFromInputElement,
-} from "./util/elemToIil";
 import { getStateSelectMenu } from "./util/iilStatusSelect";
 import UseIil from "../hooksComponent/useIil";
 import { useDrag, useDrop } from "react-dnd";
 import { ItemTypes } from "./model/itemType";
 import { getButtonWithEmoji, getDraggableButton, renderDeleteButton } from "./util/iilButtons";
-import { IilDto, IilDtoStatusEnum } from "../models";
 import { validateIil } from "./util/iilValidator";
-import { Button, Col, Row } from "react-bootstrap";
-import { getInputForAct, getInputForEndWhen } from "./util/iilInputs";
-import { isStatusFitToContext } from "./util/illFilterByContext";
+import { Col, Row } from "react-bootstrap";
+import { getInputForAttribute } from "./util/iilInputs";
 import { useForm } from "react-hook-form";
+import { IilDto, IilDtoStatusEnum } from "../ill-repo-client";
 
 interface IIilItemUpdatorProp {
   givenIil: IilDto;
@@ -30,7 +26,6 @@ interface IIilItemUpdatorProp {
   updateCall: Function;
   deleteCall: Function;
   moveCard: (draggedId: string, id: string) => void;
-  updateOrderOfList: () => Promise<any>;
 }
 
 export const IilItemUpdator = ({
@@ -42,7 +37,6 @@ export const IilItemUpdator = ({
   updateCall,
   deleteCall,
   moveCard,
-  updateOrderOfList,
 }: IIilItemUpdatorProp) => {
   const ref = useRef<HTMLDivElement>(null);
   const param = useContext(OperationContext) as IOperationParam;
@@ -78,7 +72,7 @@ export const IilItemUpdator = ({
       }
     },
     drop(item, monitor) {
-      updateOrderOfList().then((res) => onIilListChange(iilList));
+      //updateOrderOfList().then((res) => onIilListChange(iilList));
     }
   })
 
@@ -160,7 +154,7 @@ const getEmojiPopup = () =>
       onEmojiClick={(e, emoji) => {
         const iil = {
           id: iilItem.id,
-          name: emoji.emoji,
+          describe: {emoji: emoji.emoji},
         };
         updateIil(iil).then((res: any) => {
           onIilListElemChange(res.data);
@@ -191,31 +185,31 @@ const getIilItemEditor = () =>
         {getDraggableButton()}
       </Col>
       <Col sm={1} className="item_division item_check">
-        <input hidden name={`${iilItem.id}==name`} defaultValue={iilItem.name} readOnly />
-        {pageContext === PageContext.Focusing ? 
+        <input hidden name={`${iilItem.id}==describe==emoji`} defaultValue={iilItem.describe?.emoji} readOnly />
+        {pageContext === PageContext.List ? 
           getCheckBox(iilItem, onChangeCheckBox):
           getEmojiPopup()
         }
       </Col>
       <Col sm={5} className={`item_division item_act ${
               iilItem.status === IilDtoStatusEnum.FOCUSED &&
-              pageContext === PageContext.Incoming
+              pageContext === PageContext.Graph
                 ? "item_focused"
                 : ""
             }`}>
         {validURL(iilItem.act!) ? (
               <a href={iilItem.act} target={"_blank"} rel="noreferrer">
-                {getInputForAct(iilItem, onIilItemChange, register, handleEnterKey)}
+                {getInputForAttribute(iilItem, 'act', onIilItemChange, register, handleEnterKey)}
               </a>
             ) : (
-              getInputForAct(iilItem, onIilItemChange, register, handleEnterKey)
+              getInputForAttribute(iilItem, 'act', onIilItemChange, register, handleEnterKey)
             )}
       </Col>
       <Col sm={2}>
-        {getInputForEndWhen(iilItem, onIilItemChange, register, handleEnterKey)}
+        {getInputForAttribute(iilItem, 'endIf', onIilItemChange, register, handleEnterKey)}
       </Col>
       <Col sm={2}>
-        {getStateSelectMenu( pageContext, iilItem, updateIilStatus)}
+        {getStateSelectMenu( iilItem, updateIilStatus)}
       </Col>
       <Col sm={1}>
         {renderDeleteButton(iilItem, deleteIil)}
@@ -225,7 +219,7 @@ const getIilItemEditor = () =>
     </form>
     </div>
 
-  if (pageContext === PageContext.Focusing)
+  if (pageContext === PageContext.List)
   {
     connectDrag(ref)
     connectDrop(ref)

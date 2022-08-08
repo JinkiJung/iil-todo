@@ -3,17 +3,18 @@ import { useContext } from "react";
 import Popup from "reactjs-popup";
 import { OperationContext } from "../App";
 import { IOperationParam } from "./model/operationParam";
-import { getBrandNewName, getBrandNewIil } from "./model/iilManager";
+import { getBrandNewIil } from "./model/iilManager";
 import { getValuesFromInputElement } from "./util/elemToIil";
 import Picker from "emoji-picker-react";
 import UseIil from "../hooksComponent/useIil";
 import { isOrganizeMode, PageContext } from "../type/pageContext";
 import { getButtonWithEmoji, getDraggableButton, renderAddButton, renderAddButtonForNewField, renderDeleteButton } from "./util/iilButtons";
-import { IilDto } from "../models";
 import { validateIil } from "./util/iilValidator";
-import { Button, Col, Form, Row } from "react-bootstrap";
-import { getInputForAct, getInputForEndWhen } from "./util/iilInputs";
+import { Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import { getRandomEmoji } from "../util/emojiGenerator";
+import { IilDto } from "../ill-repo-client";
+import { getInputForAttribute } from "./util/iilInputs";
 
 interface IIilItemCreatorProp {
   iilList: IilDto[];
@@ -57,7 +58,7 @@ export const IilItemCreator = ({
   }
 
   const resetNewIil = (actor: string, owner: string) => {
-    onIilItemChange(getBrandNewIil(getBrandNewName(), actor, "", owner, "new"));
+    onIilItemChange(getBrandNewIil(getRandomEmoji(), actor, "", owner, "new"));
   }
 
   const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -88,7 +89,8 @@ export const IilItemCreator = ({
             {getDraggableButton()}
             </Col>
             <Col xs={1}>
-            <input hidden name={`${iilItem.id}==name`} defaultValue={iilItem.name} readOnly />
+              {console.log(iilItem.describe)}
+            <input hidden name={`${iilItem.id}==describe==emoji`} defaultValue={iilItem.describe?.emoji} readOnly />
               <Popup
                 onClose={() =>
                   {
@@ -104,7 +106,7 @@ export const IilItemCreator = ({
                   onEmojiClick={(e, emoji) => {
                     const partialIilDto = {
                       id: iilItem.id,
-                      name: emoji.emoji,
+                      describe: {emoji: emoji.emoji},
                     };
                     onIilItemChange(partialIilDto);
                   }}
@@ -113,11 +115,11 @@ export const IilItemCreator = ({
             </Col>
             <Col xs={6}>
             {
-              getInputForAct(iilItem, onIilItemChange, register, handleEnterKey)
+              getInputForAttribute(iilItem, 'act', onIilItemChange, register, handleEnterKey)
             }
             </Col>
             <Col xs={2}>
-            {getInputForEndWhen(iilItem, onIilItemChange, register, handleEnterKey)}
+            {getInputForAttribute(iilItem, 'endIf', onIilItemChange, register, handleEnterKey)}
             </Col>
             <Col xs={2}>
             {renderAddButton(iilItem, isDirty, createIil)}
