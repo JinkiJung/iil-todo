@@ -1,19 +1,19 @@
 import React, { MouseEventHandler, useEffect, useState } from "react";
-import { ConfirmProvider } from "../hooksComponent/ConfirmContext";
-import { getBrandNewIil } from "./model/iilManager";
-import { IilItemUpdator } from "./iilItemUpdator";
-import { PageContext } from "../type/pageContext";
+import { ConfirmProvider } from "../../hooksComponent/ConfirmContext";
+import { getBrandNewIil } from "../model/iilManager";
+import { PageContext } from "../../type/pageContext";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import UseIilList from "../hooksComponent/useIilList";
-import { IilItemCreator } from "./iilItemCreator";
+import UseIilList from "../../hooksComponent/useIilList";
+import { IilItemCreator } from "./iilList/iilItemCreator";
 import { Button, ButtonGroup, Col, Container, Row } from "react-bootstrap";
-import { isStatusFitToContext } from "./util/illFilterByContext";
-import { IilControllerApi, IilDto } from "../ill-repo-client";
-import { getRandomEmoji } from "../util/emojiGenerator";
+import { isStatusFitToContext } from "../util/illFilterByContext";
+import { IilControllerApi, IilDto } from "../../ill-repo-client";
+import { getRandomEmoji } from "../../util/emojiGenerator";
 import { IilDetailView } from "./iilDetailView";
-import { PageHeader } from "./component/PageHeader";
+import { PageHeader } from "./PageHeader";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
+import { IilItemUpdator } from "./iilList/iilItemUpdator";
 
 export interface IIilListViewProp {
   ownerId: string;
@@ -45,7 +45,6 @@ export const IilListView = ({
 
     getAllCall().then((response) => response.data)
       .then((iils: IilDto[]) => {
-        console.log(iils);
         if (mounted){
           onIilListChange(iils);
           setServiceStatus(1);
@@ -115,8 +114,8 @@ export const IilListView = ({
   return (
     serviceStatus > 0 ? 
     <Container>
-      {pageContext === PageContext.Admin ? provideIilItemCreator() : <></>}
-      {(pageContext === PageContext.Admin || pageContext === PageContext.List) &&
+      {pageContext === PageContext.List ? provideIilItemCreator() : <></>}
+      {(pageContext === PageContext.List) &&
         iilList.map((iil: IilDto) => {
         return isStatusFitToContext(pageContext, iil.status!) ?
         provideIilItemUpdator(pageContext + "_" + iil.id!, pageContext, iil, iilList) : <></>;})}

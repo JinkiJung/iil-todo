@@ -20,7 +20,7 @@ const getInput = (
     {...register(name)}
       name={name}
         placeholder={placeholder}
-        value={initialValue}
+        value={initialValue ? initialValue : ""}
         onChange={(e: any) => {
           onIilItemChange(getValuesFromInputElement(e.currentTarget));
         }}

@@ -1,21 +1,21 @@
 import { Checkbox } from "@material-ui/core";
 import React, { useContext, useRef, useState } from "react";
 import Popup from "reactjs-popup";
-import { OperationContext } from "../App";
-import { isOrganizeMode, PageContext } from "../type/pageContext";
-import { validURL } from "../util/urlStringCheck";
-import { IOperationParam } from "./model/operationParam";
 import Picker from "emoji-picker-react";
-import { getStateSelectMenu } from "./util/iilStatusSelect";
-import UseIil from "../hooksComponent/useIil";
 import { useDrag, useDrop } from "react-dnd";
-import { ItemTypes } from "./model/itemType";
-import { getButtonWithEmoji, getDraggableButton, renderDeleteButton } from "./util/iilButtons";
-import { validateIil } from "./util/iilValidator";
 import { Col, Row } from "react-bootstrap";
-import { getInputForAttribute } from "./util/iilInputs";
 import { useForm } from "react-hook-form";
-import { IilDto, IilDtoStatusEnum } from "../ill-repo-client";
+import { IilDto, IilDtoStatusEnum } from "../../../ill-repo-client";
+import { isOrganizeMode, PageContext } from "../../../type/pageContext";
+import { OperationContext } from "../../../App";
+import { IOperationParam } from "../../model/operationParam";
+import UseIil from "../../../hooksComponent/useIil";
+import { validateIil } from "../../util/iilValidator";
+import { ItemTypes } from "../../model/itemType";
+import { getButtonWithEmoji, getDraggableButton, renderDeleteButton } from "../../util/iilButtons";
+import { validURL } from "../../../util/urlStringCheck";
+import { getInputForAttribute } from "../../util/iilInputs";
+import { getStateSelectMenu } from "../../util/iilStatusSelect";
 
 interface IIilItemUpdatorProp {
   givenIil: IilDto;

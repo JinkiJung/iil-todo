@@ -9,6 +9,8 @@ export const getBrandNewIil = (
     goal?: IilDto,
     startIf?: string,
     endIf?: string,
+    input?: string,
+    output?: string,
   ): IilDto => {
     return {
       id,
@@ -20,6 +22,8 @@ export const getBrandNewIil = (
       act,
       status: IilDtoStatusEnum.NOTINITIATED,
       owner: ownerId,
+      input,
+      output,
     };
   };
 

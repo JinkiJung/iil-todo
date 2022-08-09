@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import './App.css';
 import 'reflect-metadata';
-import { PageContext } from './type/pageContext';
 import useKeycloak from './keycloak/useKeycloak';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { IilDetailPage } from './element/component/IilDetailPage';
 import { Page } from './element/component/Page';
 
 const testURL = "http://localhost:12500/iil";

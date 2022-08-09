@@ -1,20 +1,20 @@
 import React, { useEffect } from "react";
 import { useContext } from "react";
 import Popup from "reactjs-popup";
-import { OperationContext } from "../App";
-import { IOperationParam } from "./model/operationParam";
-import { getBrandNewIil } from "./model/iilManager";
-import { getValuesFromInputElement } from "./util/elemToIil";
+import { OperationContext } from "../../../App";
+import { IOperationParam } from "../../model/operationParam";
+import { getBrandNewIil } from "../../model/iilManager";
+import { getValuesFromInputElement } from "../../util/elemToIil";
 import Picker from "emoji-picker-react";
-import UseIil from "../hooksComponent/useIil";
-import { isOrganizeMode, PageContext } from "../type/pageContext";
-import { getButtonWithEmoji, getDraggableButton, renderAddButton, renderAddButtonForNewField, renderDeleteButton } from "./util/iilButtons";
-import { validateIil } from "./util/iilValidator";
+import UseIil from "../../../hooksComponent/useIil";
+import { isOrganizeMode, PageContext } from "../../../type/pageContext";
+import { getButtonWithEmoji, getDraggableButton, renderAddButton, renderAddButtonForNewField, renderDeleteButton } from "../../util/iilButtons";
+import { validateIil } from "../../util/iilValidator";
 import { Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { getRandomEmoji } from "../util/emojiGenerator";
-import { IilDto } from "../ill-repo-client";
-import { getInputForAttribute } from "./util/iilInputs";
+import { getRandomEmoji } from "../../../util/emojiGenerator";
+import { IilDto } from "../../../ill-repo-client";
+import { getInputForAttribute } from "../../util/iilInputs";
 
 interface IIilItemCreatorProp {
   iilList: IilDto[];
@@ -89,7 +89,6 @@ export const IilItemCreator = ({
             {getDraggableButton()}
             </Col>
             <Col xs={1}>
-              {console.log(iilItem.describe)}
             <input hidden name={`${iilItem.id}==describe==emoji`} defaultValue={iilItem.describe?.emoji} readOnly />
               <Popup
                 onClose={() =>

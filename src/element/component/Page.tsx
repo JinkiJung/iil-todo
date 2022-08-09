@@ -7,8 +7,8 @@ import { ConfirmProvider } from "../../hooksComponent/ConfirmContext";
 import { IilControllerApi, IilDto } from "../../ill-repo-client";
 import { PageContext } from "../../type/pageContext";
 import { getRandomEmoji } from "../../util/emojiGenerator";
-import { IilDetailView } from "../iilDetailView";
-import { IilListView } from "../iilListView";
+import { IilDetailView } from "./iilDetailView";
+import { IilListView } from "./iilListView";
 import { getBrandNewIil } from "../model/iilManager";
 import { PageHeader } from "./PageHeader";
 

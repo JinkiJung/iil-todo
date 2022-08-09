@@ -4,16 +4,16 @@ import { Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import Popup from "reactjs-popup";
 import Picker from "emoji-picker-react";
-import UseIil from "../hooksComponent/useIil";
-import { IilDto } from "../ill-repo-client";
-import { getRandomEmoji } from "../util/emojiGenerator";
-import { getBrandNewIil } from "./model/iilManager";
-import { getButtonWithEmoji, renderAddButton } from "./util/iilButtons";
-import { getDescribeInput, getInputForAttribute } from "./util/iilInputs";
-import { validateIil } from "./util/iilValidator";
-import { getStateSelectMenu } from "./util/iilStatusSelect";
-import { iilButton } from "./buttons/iilButton";
-import { iilAddButton } from "./buttons/iilAddButton";
+import UseIil from "../../hooksComponent/useIil";
+import { IilDto } from "../../ill-repo-client";
+import { getRandomEmoji } from "../../util/emojiGenerator";
+import { getBrandNewIil } from "../model/iilManager";
+import { getButtonWithEmoji, renderAddButton } from "../util/iilButtons";
+import { getDescribeInput, getInputForAttribute } from "../util/iilInputs";
+import { validateIil } from "../util/iilValidator";
+import { getStateSelectMenu } from "../util/iilStatusSelect";
+import { iilButton } from "../buttons/iilButton";
+import { iilAddButton } from "../buttons/iilAddButton";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 
 export interface IIilDetailViewProp {
@@ -31,7 +31,7 @@ export const IilDetailView = ({
     updateCall,
     deleteCall,
   }: IIilDetailViewProp) => {
-    const [newIil, setNewIil] = useState<IilDto>(iil);
+    const { iilItem, onIilItemChange } = UseIil(iil);
   
     const {
       register,
@@ -39,7 +39,7 @@ export const IilDetailView = ({
       // Read the formState before render to subscribe the form state through the Proxy
       formState: { errors, isDirty, isSubmitting, touchedFields, submitCount },
     } = useForm({
-      defaultValues: newIil
+      defaultValues: iilItem
     });
   
     const createIil = (iil: IilDto) => {
@@ -52,16 +52,23 @@ export const IilDetailView = ({
     }
   
     const resetNewIil = (actor: string, owner: string) => {
-        setNewIil(getBrandNewIil(getRandomEmoji(), ownerId, "", ownerId, "new"));
+        onIilItemChange(getBrandNewIil(getRandomEmoji(), ownerId, "", ownerId, "new"));
     }
   
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
-        if (validateIil(newIil)){
-          createIil(newIil);
+        if (validateIil(iilItem)){
+          createIil(iilItem);
         }
       }
     };
+
+    const submit = (e: any) => {
+        e.preventDefault();
+        if (validateIil(iilItem)){
+            createIil(iilItem);
+        }
+    }
   
     useEffect( () => {
       let mounted = true;
@@ -69,10 +76,9 @@ export const IilDetailView = ({
       }
       return () => {mounted = false;}
     }, [])
-  
-    console.log(newIil);
+
     return (
-        <>
+        <Form onSubmit={submit}>
         <Row xs="2">
             <Col xs="2">
 
@@ -83,7 +89,7 @@ export const IilDetailView = ({
                         Goal
                     </Card.Header>
                     <Card.Body>
-                        { newIil.goal ? iilButton(newIil.goal, ()=>console.log("!!")) : iilAddButton() }
+                        { iilItem.goal ? iilButton(iilItem.goal, ()=>console.log("!!")) : iilAddButton() }
                     </Card.Body>
                 </Card>
             </Col>
@@ -117,7 +123,7 @@ export const IilDetailView = ({
                                                     Start if
                                                 </Col>
                                                 <Col xs={10}>
-                                                { getInputForAttribute(newIil, 'startIf', setNewIil, register, handleEnterKey) }
+                                                { getInputForAttribute(iilItem, 'startIf', onIilItemChange, register, handleEnterKey) }
                                                 </Col>
                                             </Row>
                                             <Row xs="auto">
@@ -125,7 +131,7 @@ export const IilDetailView = ({
                                                     Input
                                                 </Col>
                                                 <Col xs={10}>
-                                                { getInputForAttribute(newIil, 'input', setNewIil, register, handleEnterKey) }
+                                                { getInputForAttribute(iilItem, 'input', onIilItemChange, register, handleEnterKey) }
                                                 </Col>
                                             </Row>
                                         </Card>
@@ -139,7 +145,7 @@ export const IilDetailView = ({
                                                     Who
                                                 </Col>
                                                 <Col xs={10}>
-                                                { getInputForAttribute(newIil, 'actor', setNewIil, register, handleEnterKey) }
+                                                { getInputForAttribute(iilItem, 'actor', onIilItemChange, register, handleEnterKey) }
                                                 </Col>
                                             </Row>
                                             <Row xs="auto">
@@ -147,7 +153,7 @@ export const IilDetailView = ({
                                                     Doing What
                                                 </Col>
                                                 <Col xs={10}>
-                                                { getInputForAttribute(newIil, 'act', setNewIil, register, handleEnterKey) }
+                                                { getInputForAttribute(iilItem, 'act', onIilItemChange, register, handleEnterKey) }
                                                 </Col>
                                             </Row>
                                         </Card>
@@ -161,7 +167,7 @@ export const IilDetailView = ({
                                                     End if
                                                 </Col>
                                                 <Col xs={10}>
-                                                { getInputForAttribute(newIil, 'endIf', setNewIil, register, handleEnterKey) }
+                                                { getInputForAttribute(iilItem, 'endIf', onIilItemChange, register, handleEnterKey) }
                                                 </Col>
                                             </Row>
                                             <Row xs="auto">
@@ -169,7 +175,7 @@ export const IilDetailView = ({
                                                     Output
                                                 </Col>
                                                 <Col xs={10}>
-                                                { getInputForAttribute(newIil, 'output', setNewIil, register, handleEnterKey) }
+                                                { getInputForAttribute(iilItem, 'output', onIilItemChange, register, handleEnterKey) }
                                                 </Col>
                                             </Row>
                                         </Card>
@@ -180,10 +186,18 @@ export const IilDetailView = ({
                                 <Card>
                                     <Row xs="auto">
                                         <Col xs={2} className="align-self-center">
+                                            ID
+                                        </Col>
+                                        <Col xs={10}>
+                                            {iilItem.id === 'new' ? '' : iilItem.id}
+                                        </Col>
+                                    </Row>
+                                    <Row xs="auto">
+                                        <Col xs={2} className="align-self-center">
                                             Describe
                                         </Col>
                                         <Col xs={10}>
-                                        {/* getDescribeInput(newIil, setNewIil, register, handleEnterKey) */}
+                                        {/* getDescribeInput(iilItem, onIilItemChange, register, handleEnterKey) */}
                                         </Col>
                                     </Row>
                                     <Row xs="auto">
@@ -191,7 +205,7 @@ export const IilDetailView = ({
                                             Owner
                                         </Col>
                                         <Col xs={10}>
-                                        { getInputForAttribute(newIil, 'owner', setNewIil, register, handleEnterKey) }
+                                        { getInputForAttribute(iilItem, 'owner', onIilItemChange, register, handleEnterKey) }
                                         </Col>
                                     </Row>
                                     <Row xs="auto">
@@ -199,7 +213,7 @@ export const IilDetailView = ({
                                             Status
                                         </Col>
                                         <Col xs={10}>
-                                        { getStateSelectMenu( newIil, setNewIil) }
+                                        { getStateSelectMenu( iilItem, onIilItemChange) }
                                         </Col>
                                     </Row>
                                 </Card>
@@ -208,7 +222,7 @@ export const IilDetailView = ({
                         <Row>
                             <Col>
                                 <ButtonGroup className="d-flex">
-                                    <Button variant="primary">Save</Button>
+                                    <Button variant="primary" type="submit">Save</Button>
                                 </ButtonGroup>
                             </Col>
                             <Col>
@@ -249,6 +263,6 @@ export const IilDetailView = ({
 
             </Col>
         </Row>
-        </>
+        </Form>
     );
   }
