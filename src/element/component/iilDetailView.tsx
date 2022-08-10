@@ -1,6 +1,6 @@
 import React from "react";
 import { useContext, useEffect, useState } from "react";
-import { Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
+import { Accordion, Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import Popup from "reactjs-popup";
 import Picker from "emoji-picker-react";
@@ -113,111 +113,116 @@ export const IilDetailView = ({
             <Col xs="8">
                 <Card style={{ width: '100%' }}>
                     <Card.Body>
-                        <Row>
-                            <Col xs="8">
-                                <Row style={{padding: '10px'}}>
-                                    <Col>
-                                        <Card>
-                                            <Row xs="auto">
-                                                <Col xs={2} className="align-self-center">
-                                                    Start if
-                                                </Col>
-                                                <Col xs={10}>
-                                                { getInputForAttribute(iilItem, 'startIf', onIilItemChange, register, handleEnterKey) }
-                                                </Col>
-                                            </Row>
-                                            <Row xs="auto">
-                                                <Col xs={2} className="align-self-center">
-                                                    Input
-                                                </Col>
-                                                <Col xs={10}>
-                                                { getInputForAttribute(iilItem, 'input', onIilItemChange, register, handleEnterKey) }
-                                                </Col>
-                                            </Row>
-                                        </Card>
-                                    </Col>
-                                </Row>
-                                <Row style={{padding: '10px'}}>
-                                    <Col>
-                                        <Card>
-                                            <Row xs="auto">
-                                                <Col xs={2} className="align-self-center">
-                                                    Who
-                                                </Col>
-                                                <Col xs={10}>
-                                                { getInputForAttribute(iilItem, 'actor', onIilItemChange, register, handleEnterKey) }
-                                                </Col>
-                                            </Row>
-                                            <Row xs="auto">
-                                                <Col xs={2} className="align-self-center">
-                                                    Doing What
-                                                </Col>
-                                                <Col xs={10}>
-                                                { getInputForAttribute(iilItem, 'act', onIilItemChange, register, handleEnterKey) }
-                                                </Col>
-                                            </Row>
-                                        </Card>
-                                    </Col>
-                                </Row>
-                                <Row style={{padding: '10px'}}>
-                                    <Col>
-                                        <Card>
-                                            <Row xs="auto">
-                                                <Col xs={2} className="align-self-center">
-                                                    End if
-                                                </Col>
-                                                <Col xs={10}>
-                                                { getInputForAttribute(iilItem, 'endIf', onIilItemChange, register, handleEnterKey) }
-                                                </Col>
-                                            </Row>
-                                            <Row xs="auto">
-                                                <Col xs={2} className="align-self-center">
-                                                    Output
-                                                </Col>
-                                                <Col xs={10}>
-                                                { getInputForAttribute(iilItem, 'output', onIilItemChange, register, handleEnterKey) }
-                                                </Col>
-                                            </Row>
-                                        </Card>
-                                    </Col>
-                                </Row>
-                            </Col>
-                            <Col xs="4" style={{padding: '10px'}}>
+                        <Row style={{padding: '10px'}}>
+                            <Col>
                                 <Card>
                                     <Row xs="auto">
                                         <Col xs={2} className="align-self-center">
-                                            ID
+                                            Start if
                                         </Col>
                                         <Col xs={10}>
-                                            {iilItem.id === 'new' ? '' : iilItem.id}
+                                        { getInputForAttribute(iilItem, 'startIf', onIilItemChange, register, handleEnterKey) }
                                         </Col>
                                     </Row>
                                     <Row xs="auto">
                                         <Col xs={2} className="align-self-center">
-                                            Describe
+                                            Input
                                         </Col>
                                         <Col xs={10}>
-                                        {/* getDescribeInput(iilItem, onIilItemChange, register, handleEnterKey) */}
-                                        </Col>
-                                    </Row>
-                                    <Row xs="auto">
-                                        <Col xs={2} className="align-self-center">
-                                            Owner
-                                        </Col>
-                                        <Col xs={10}>
-                                        { getInputForAttribute(iilItem, 'owner', onIilItemChange, register, handleEnterKey) }
-                                        </Col>
-                                    </Row>
-                                    <Row xs="auto">
-                                        <Col xs={2} className="align-self-center">
-                                            Status
-                                        </Col>
-                                        <Col xs={10}>
-                                        { getStateSelectMenu( iilItem, onIilItemChange) }
+                                        { getInputForAttribute(iilItem, 'input', onIilItemChange, register, handleEnterKey) }
                                         </Col>
                                     </Row>
                                 </Card>
                             </Col>
+                        </Row>
+                        <Row style={{padding: '10px'}}>
+                            <Col>
+                                <Card>
+                                    <Row xs="auto">
+                                        <Col xs={2} className="align-self-center">
+                                            Who
+                                        </Col>
+                                        <Col xs={10}>
+                                        { getInputForAttribute(iilItem, 'actor', onIilItemChange, register, handleEnterKey) }
+                                        </Col>
+                                    </Row>
+                                    <Row xs="auto">
+                                        <Col xs={2} className="align-self-center">
+                                            Doing What
+                                        </Col>
+                                        <Col xs={10}>
+                                        { getInputForAttribute(iilItem, 'act', onIilItemChange, register, handleEnterKey) }
+                                        </Col>
+                                    </Row>
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row style={{padding: '10px'}}>
+                            <Col>
+                                <Card>
+                                    <Row xs="auto">
+                                        <Col xs={2} className="align-self-center">
+                                            End if
+                                        </Col>
+                                        <Col xs={10}>
+                                        { getInputForAttribute(iilItem, 'endIf', onIilItemChange, register, handleEnterKey) }
+                                        </Col>
+                                    </Row>
+                                    <Row xs="auto">
+                                        <Col xs={2} className="align-self-center">
+                                            Output
+                                        </Col>
+                                        <Col xs={10}>
+                                        { getInputForAttribute(iilItem, 'output', onIilItemChange, register, handleEnterKey) }
+                                        </Col>
+                                    </Row>
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row>
+                        <Accordion>
+                                <Accordion.Item eventKey="0">
+                                    <Accordion.Header>Advanced</Accordion.Header>
+                                    <Accordion.Body>
+                                    <Card>
+                                        <Row xs="auto">
+                                            <Col xs={2} className="align-self-center">
+                                                ID
+                                            </Col>
+                                            <Col xs={10}>
+                                                {iilItem.id === 'new' ? '' : iilItem.id}
+                                            </Col>
+                                        </Row>
+                                        <Row xs="auto">
+                                            <Col xs={2} className="align-self-center">
+                                                Describe
+                                            </Col>
+                                            <Col xs={10}>
+                                            {
+                                                getDescribeInput(iilItem, onIilItemChange, register, handleEnterKey)
+                                            }
+                                            </Col>
+                                        </Row>
+                                        <Row xs="auto">
+                                            <Col xs={2} className="align-self-center">
+                                                Owner
+                                            </Col>
+                                            <Col xs={10}>
+                                            { getInputForAttribute(iilItem, 'owner', onIilItemChange, register, handleEnterKey) }
+                                            </Col>
+                                        </Row>
+                                        <Row xs="auto">
+                                            <Col xs={2} className="align-self-center">
+                                                Status
+                                            </Col>
+                                            <Col xs={10}>
+                                            { getStateSelectMenu( iilItem, onIilItemChange) }
+                                            </Col>
+                                        </Row>
+                                    </Card>
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                            </Accordion>
                         </Row>
                         <Row>
                             <Col>

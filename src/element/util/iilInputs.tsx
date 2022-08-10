@@ -44,4 +44,4 @@ export const getDescribeInput = (iil: IilDto,
   onIilItemChange: Function,
   register: Function,
   handleEnterKey: Function,) =>
-  iilDescribeInput('emoji', '', '', onIilItemChange, register, handleEnterKey);
+  iilDescribeInput('emoji', '', iil.describe!, onIilItemChange, register, handleEnterKey);
