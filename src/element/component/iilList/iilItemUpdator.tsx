@@ -16,6 +16,7 @@ import { getButtonWithEmoji, getDraggableButton, renderDeleteButton } from "../.
 import { validURL } from "../../../util/urlStringCheck";
 import { getInputForAttribute } from "../../util/iilInputs";
 import { getStateSelectMenu } from "../../util/iilStatusSelect";
+import { getSummary } from "../../util/iilSummary";
 
 interface IIilItemUpdatorProp {
   givenIil: IilDto;
@@ -191,22 +192,8 @@ const getIilItemEditor = () =>
           getEmojiPopup()
         }
       </Col>
-      <Col sm={5} className={`item_division item_act ${
-              iilItem.status === IilDtoStatusEnum.FOCUSED &&
-              pageContext === PageContext.Graph
-                ? "item_focused"
-                : ""
-            }`}>
-        {validURL(iilItem.act!) ? (
-              <a href={iilItem.act} target={"_blank"} rel="noreferrer">
-                {getInputForAttribute(iilItem, 'act', onIilItemChange, register, handleEnterKey)}
-              </a>
-            ) : (
-              getInputForAttribute(iilItem, 'act', onIilItemChange, register, handleEnterKey)
-            )}
-      </Col>
-      <Col sm={2}>
-        {getInputForAttribute(iilItem, 'endIf', onIilItemChange, register, handleEnterKey)}
+      <Col sm={7}>
+        {getSummary(iilItem)}
       </Col>
       <Col sm={2}>
         {getStateSelectMenu( iilItem, updateIilStatus)}
