@@ -23,15 +23,22 @@ export const Page = ({
   onLogOut,
 }: IPageProp) => {
     const [pageContext, setPageContext] = useState<PageContext>(defaultPageContext);
+    const [iils, setIils] = useState<IilDto[]>([]);
     const apiHandler = new IilControllerApi();
 
+    useEffect(() => {
+        apiHandler.getIils().then((response) => response.data)
+        .then((iilsFromBackend: IilDto[]) => {
+            setIils(iilsFromBackend);
+        })
+    }, []);
     return (
         <div className="row" id="background">
             <PageHeader setPageContext={setPageContext} />
             <div className="item_container">
                 <DndProvider backend={HTML5Backend}>
                     <ConfirmProvider>
-                        <IilDetailView iil={getBrandNewIil(getRandomEmoji(), ownerId, "", ownerId, "new")} ownerId={ownerId}
+                        <IilDetailView iils={iils} selectedIil={getBrandNewIil(getRandomEmoji(), ownerId, "", ownerId, "new")} ownerId={ownerId}
                             createCall={(iil:IilDto) => apiHandler.createIil(iil)}
                             updateCall={(partialIilDto : IilDto, id: string) => apiHandler.updateIil(partialIilDto, id)}
                             deleteCall={(id: string) => apiHandler.deleteIil(id)} />

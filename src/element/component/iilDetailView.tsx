@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useContext, useEffect, useState } from "react";
 import { Accordion, Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
@@ -12,12 +12,14 @@ import { getButtonWithEmoji, renderAddButton } from "../util/iilButtons";
 import { getDescribeInput, getInputForAttribute } from "../util/iilInputs";
 import { validateIil } from "../util/iilValidator";
 import { getStateSelectMenu } from "../util/iilStatusSelect";
-import { iilButton } from "../buttons/iilButton";
 import { iilAddButton } from "../buttons/iilAddButton";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
+import { Typeahead } from 'react-bootstrap-typeahead';
+import { IilSelector } from "../util/iilSelector";
 
 export interface IIilDetailViewProp {
-    iil: IilDto;
+    iils: IilDto[];
+    selectedIil: IilDto;
     ownerId: string;
     createCall: (body: IilDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
     updateCall: (body: IilDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
@@ -25,14 +27,15 @@ export interface IIilDetailViewProp {
 }
 
 export const IilDetailView = ({
-    iil,
+    iils,
+    selectedIil,
     ownerId,
     createCall,
     updateCall,
     deleteCall,
   }: IIilDetailViewProp) => {
-    const { iilItem, onIilItemChange } = UseIil(iil);
-  
+    const { iilItem, onIilItemChange } = UseIil(selectedIil);
+    const goalRef = useRef(null);
     const {
       register,
       handleSubmit,
@@ -52,7 +55,13 @@ export const IilDetailView = ({
     }
   
     const resetNewIil = (actor: string, owner: string) => {
+        goalRef.current.clear();
         onIilItemChange(getBrandNewIil(getRandomEmoji(), ownerId, "", ownerId, "new"));
+
+    }
+
+    const onGoalChanged = (iils: IilDto[]) => {
+        onIilItemChange({id: selectedIil.id, goal: iils.pop()});
     }
   
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -75,7 +84,7 @@ export const IilDetailView = ({
       if (mounted){
       }
       return () => {mounted = false;}
-    }, [])
+    }, [iilItem])
 
     return (
         <Form onSubmit={submit}>
@@ -89,7 +98,7 @@ export const IilDetailView = ({
                         Goal
                     </Card.Header>
                     <Card.Body>
-                        { iilItem.goal ? iilButton(iilItem.goal, ()=>console.log("!!")) : iilAddButton() }
+                        {IilSelector(iils, onGoalChanged, goalRef)}
                     </Card.Body>
                 </Card>
             </Col>
@@ -190,7 +199,7 @@ export const IilDetailView = ({
                                                 ID
                                             </Col>
                                             <Col xs={10}>
-                                                {iilItem.id === 'new' ? '' : iilItem.id}
+                                                {iilItem.id}
                                             </Col>
                                         </Row>
                                         <Row xs="auto">
@@ -232,7 +241,7 @@ export const IilDetailView = ({
                             </Col>
                             <Col>
                                 <ButtonGroup className="d-flex">
-                                    <Button variant="danger">Delete</Button>
+                                    <Button variant="danger" onClick={() => resetNewIil()}>Delete</Button>
                                 </ButtonGroup>
                             </Col>
                         </Row>
