@@ -1,5 +1,5 @@
 import { Checkbox } from "@material-ui/core";
-import React, { useContext, useRef } from "react";
+import React, { MouseEventHandler, useContext, useRef } from "react";
 import Popup from "reactjs-popup";
 import Picker from "emoji-picker-react";
 import { useDrag, useDrop } from "react-dnd";
@@ -12,7 +12,7 @@ import { IOperationParam } from "../../model/operationParam";
 import UseIil from "../../../hooksComponent/useIil";
 import { validateIil } from "../../util/iilValidator";
 import { ItemTypes } from "../../model/itemType";
-import { getButtonWithEmoji, getDraggableButton, renderDeleteButton } from "../../util/iilButtons";
+import { getButtonWithEmoji, getModalButton, renderDeleteButton } from "../../util/iilButtons";
 import { getStateSelectMenu } from "../../util/iilStatusSelect";
 import { getSummary } from "../../util/iilSummary";
 
@@ -24,7 +24,7 @@ interface IIilItemUpdatorProp {
   pageContext: PageContext;
   updateCall: Function;
   deleteCall: Function;
-  moveCard: (draggedId: string, id: string) => void;
+  onModalShow: MouseEventHandler<HTMLButtonElement>;
 }
 
 export const IilItemUpdator = ({
@@ -35,7 +35,7 @@ export const IilItemUpdator = ({
   pageContext,
   updateCall,
   deleteCall,
-  moveCard,
+  onModalShow,
 }: IIilItemUpdatorProp) => {
   const ref = useRef<HTMLDivElement>(null);
   const param = useContext(OperationContext) as IOperationParam;
@@ -67,7 +67,7 @@ export const IilItemUpdator = ({
     accept: ItemTypes.IIL,
     hover({ id: draggedId }: { id: string; type: string }) {
       if (draggedId !== givenIil.id) {
-        moveCard(draggedId, givenIil.id!)
+        //moveCard(draggedId, givenIil.id!)
       }
     },
     drop(item, monitor) {
@@ -173,7 +173,8 @@ const getIilItemEditor = () =>
         >
     <Row>
       <Col sm={1} className="item_division item_dragbtn">
-        {getDraggableButton()}
+        {getModalButton(onModalShow, iilItem.id!)}
+        {/*<div>{React.cloneElement(this.props.children, {...this.props})}</div>*/}
       </Col>
       <Col sm={1} className="item_division item_check">
         <input hidden name={`${iilItem.id}==describe==emoji`} defaultValue={iilItem.describe?.emoji} readOnly />

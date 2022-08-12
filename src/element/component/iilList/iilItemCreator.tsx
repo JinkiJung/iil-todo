@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { MouseEventHandler, useEffect } from "react";
 import { useContext } from "react";
 import Popup from "reactjs-popup";
 import { OperationContext } from "../../../App";
@@ -7,7 +7,7 @@ import { getBrandNewIil } from "../../model/iilManager";
 import Picker from "emoji-picker-react";
 import UseIil from "../../../hooksComponent/useIil";
 import { PageContext } from "../../../type/pageContext";
-import { getButtonWithEmoji, getDraggableButton, renderAddButton } from "../../util/iilButtons";
+import { getButtonWithEmoji, getModalButton, renderAddButton } from "../../util/iilButtons";
 import { validateIil } from "../../util/iilValidator";
 import { Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
@@ -22,6 +22,7 @@ interface IIilItemCreatorProp {
   ownerId: string;
   createCall: Function;
   givenIil: IilDto;
+  onModalShow: MouseEventHandler<HTMLButtonElement>;
 }
   
 export const IilItemCreator = ({
@@ -31,10 +32,11 @@ export const IilItemCreator = ({
   ownerId,
   createCall,
   givenIil,
+  onModalShow,
 }: IIilItemCreatorProp) => {
   const param = useContext(OperationContext) as IOperationParam;
 
-  const {iilItem, onIilItemChange} = UseIil(givenIil!, validateIil);
+  const {iilItem, setIilItem, onIilItemUpdate} = UseIil(givenIil!, validateIil);
 
   const {
     register,
@@ -57,7 +59,7 @@ export const IilItemCreator = ({
   }
 
   const resetNewIil = (actor: string, owner: string) => {
-    onIilItemChange(getBrandNewIil(getRandomEmoji(), actor, "", owner, "new"));
+    onIilItemUpdate(getBrandNewIil(getRandomEmoji(), actor, "", owner, "new"));
   }
 
   const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -85,7 +87,7 @@ export const IilItemCreator = ({
         <Form>
           <Row xs="auto">
             <Col xs={1} className="item_division item_dragbtn">
-            {getDraggableButton()}
+            {getModalButton(onModalShow, 'new')}
             </Col>
             <Col xs={1}>
             <input hidden name={`${iilItem.id}==describe==emoji`} defaultValue={iilItem.describe?.emoji} readOnly />
@@ -106,18 +108,18 @@ export const IilItemCreator = ({
                       id: iilItem.id,
                       describe: {emoji: emoji.emoji},
                     };
-                    onIilItemChange(partialIilDto);
+                    onIilItemUpdate(partialIilDto);
                   }}
                 />
               </Popup>
             </Col>
             <Col xs={6}>
             {
-              getInputForAttribute(iilItem, 'act', onIilItemChange, register, handleEnterKey)
+              getInputForAttribute(iilItem, 'act', onIilItemUpdate, register, handleEnterKey)
             }
             </Col>
             <Col xs={2}>
-            {getInputForAttribute(iilItem, 'endIf', onIilItemChange, register, handleEnterKey)}
+            {getInputForAttribute(iilItem, 'endIf', onIilItemUpdate, register, handleEnterKey)}
             </Col>
             <Col xs={2}>
             {renderAddButton(iilItem, isDirty, createIil)}

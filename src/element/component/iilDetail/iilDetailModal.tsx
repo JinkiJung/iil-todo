@@ -8,9 +8,12 @@ import { IilDetailView } from "./iilDetailView";
 export interface IilDetailModalProp {
     show: boolean;
     onHide: () => void;
+    iilItem: IilDto;
+    onIilItemChange: Function;
     iils: IilDto[];
     ownerId: string;
     apiHandler: IilControllerApi;
+    
 }
 
 export const IilDetailModal = ({
@@ -18,7 +21,9 @@ export const IilDetailModal = ({
     onHide,
     iils,
     ownerId,
-    apiHandler
+    apiHandler,
+    iilItem,
+    onIilItemChange,
 }: IilDetailModalProp ) => {
     return (
       <Modal
@@ -31,10 +36,13 @@ export const IilDetailModal = ({
         <Modal.Header closeButton>
         </Modal.Header>
         <Modal.Body>
-            <IilDetailView iils={iils} selectedIil={getBrandNewIil(getRandomEmoji(), ownerId, "", ownerId, "new")} ownerId={ownerId}
-                                createCall={(iil:IilDto) => apiHandler.createIil(iil)}
-                                updateCall={(partialIilDto : IilDto, id: string) => apiHandler.updateIil(partialIilDto, id)}
-                                deleteCall={(id: string) => apiHandler.deleteIil(id)} />
+            <IilDetailView iils={iils}
+              iilItem={ iilItem}
+              onIilItemChange={onIilItemChange}
+              ownerId={ownerId}
+              createCall={(iil:IilDto) => apiHandler.createIil(iil)}
+              updateCall={(partialIilDto : IilDto, id: string) => apiHandler.updateIil(partialIilDto, id)}
+              deleteCall={(id: string) => apiHandler.deleteIil(id)} />
         </Modal.Body>
       </Modal>
     );

@@ -18,6 +18,7 @@ export interface IIilListViewProp {
   createCall: (body: IilDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
   updateCall: (body: IilDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
   deleteCall: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
+  onModalShow: MouseEventHandler<HTMLButtonElement>;
   children: any;
   onLogOut?: MouseEventHandler<HTMLButtonElement>;
 }
@@ -30,6 +31,7 @@ export const IilListView = ({
   createCall,
   updateCall,
   deleteCall,
+  onModalShow,
   onLogOut,
 }: IIilListViewProp) => {
   const { iilList, onIilListChange, onIilListElemChange } = UseIilList(iils);
@@ -78,7 +80,9 @@ export const IilListView = ({
   const provideIilItemCreator = () => {
     return <IilItemCreator iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext}
               createCall={createCall}
-              ownerId={ownerId} givenIil={newIil}/>;
+              ownerId={ownerId} givenIil={newIil}
+              onModalShow={onModalShow}
+            />;
   }
 
   const provideIilItemUpdator = (key: string, givenContext: PageContext, iil: IilDto, iilList: IilDto[]) => 
@@ -89,7 +93,7 @@ export const IilListView = ({
     pageContext={givenContext}
     updateCall={updateCall}
     deleteCall={deleteCall}
-    moveCard={() => console.log("moveCard")}
+    onModalShow={onModalShow}
     />
 
   return (

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import DeleteButton from "../../hooksComponent/DeleteButton";
 import { IOperationParam } from "../model/operationParam";
 import { FlowButton } from "./flowButton";
@@ -82,9 +82,9 @@ export const renderDragButton = (
   );
 };
 
-export const getDraggableButton = () => 
+export const getModalButton = (onClick: MouseEventHandler<HTMLButtonElement>, id: string) => 
 <ButtonGroup className="d-flex">
-  <Button className="item_btn_draggable">drag</Button>
+  <Button id={id} className="item_btn_draggable" onClick={onClick}>Edit</Button>
 </ButtonGroup>
 
 export const getButtonWithEmoji = (iil: IilDto) => 

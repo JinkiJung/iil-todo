@@ -15,7 +15,8 @@ import { IilSelector } from "../../util/iilSelector";
 
 export interface IIilDetailViewProp {
     iils: IilDto[];
-    selectedIil: IilDto;
+    iilItem: IilDto;
+    onIilItemChange: Function;
     ownerId: string;
     createCall: (body: IilDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
     updateCall: (body: IilDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
@@ -24,13 +25,13 @@ export interface IIilDetailViewProp {
 
 export const IilDetailView = ({
     iils,
-    selectedIil,
+    iilItem,
+    onIilItemChange,
     ownerId,
     createCall,
     updateCall,
     deleteCall,
   }: IIilDetailViewProp) => {
-    const { iilItem, onIilItemChange } = UseIil(selectedIil);
     const goalRef = useRef<any>(null);
     const {
       register,
@@ -56,34 +57,32 @@ export const IilDetailView = ({
             actor? actor : ownerId, "", 
             owner? owner : ownerId, "new"
         ));
-
     }
 
     const onGoalChanged = (iils: IilDto[]) => {
-        onIilItemChange({id: selectedIil.id, goal: iils.pop()});
+        onIilItemChange({id: iilItem.id, goal: iils.pop()});
+    }
+
+    const sendDataToBackend = (iilItem: IilDto) => {
+        if (validateIil(iilItem)){
+            if (iilItem.id === 'new') {
+                createIil(iilItem);
+            } else {
+                updateCall(iilItem, iilItem.id!);
+            }
+        }
     }
   
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
-        if (validateIil(iilItem)){
-          createIil(iilItem);
-        }
+        sendDataToBackend(iilItem);
       }
     };
 
     const submit = (e: any) => {
         e.preventDefault();
-        if (validateIil(iilItem)){
-            createIil(iilItem);
-        }
+        sendDataToBackend(iilItem);
     }
-  
-    useEffect( () => {
-      let mounted = true;
-      if (mounted){
-      }
-      return () => {mounted = false;}
-    }, [iilItem])
 
     return (
         <Form onSubmit={submit}>

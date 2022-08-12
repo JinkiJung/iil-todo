@@ -12,6 +12,7 @@ import { IilListView } from "./iilListView";
 import { getBrandNewIil } from "../model/iilManager";
 import { PageHeader } from "./PageHeader";
 import { IilDetailModal } from "./iilDetail/iilDetailModal";
+import UseIil from "../../hooksComponent/useIil";
 
 const defaultPageContext = PageContext.Graph;
 export interface IPageProp {
@@ -28,6 +29,9 @@ export const Page = ({
     const [iils, setIils] = useState<IilDto[]>([]);
     const [modalShow, setModalShow] = useState(false);
     const apiHandler = new IilControllerApi();
+    const [selectedIil, setSelectedIil] = useState<IilDto>();
+    const { iilItem, setIilItem, onIilItemUpdate } = UseIil(getBrandNewIil(getRandomEmoji(),
+    ownerId, "", ownerId, "new"));
 
     useEffect(() => {
         apiHandler.getIils().then((response) => response.data)
@@ -37,7 +41,7 @@ export const Page = ({
         })
         .catch((err) => setServiceStatus(-1));
 
-    }, [serviceStatus, ownerId]);
+    }, [serviceStatus, selectedIil, ownerId]);
     return (
         <div>
         {
@@ -58,6 +62,8 @@ export const Page = ({
                                     <IilDetailModal
                                         show={modalShow}
                                         onHide={() => setModalShow(false)}
+                                        iilItem={iilItem}
+                                        onIilItemChange={onIilItemUpdate}
                                         iils={iils}
                                         ownerId={ownerId}
                                         apiHandler={apiHandler}
@@ -70,11 +76,20 @@ export const Page = ({
                                     createCall={(iil:IilDto) => apiHandler.createIil(iil)}
                                     updateCall={(partialIilDto : IilDto, id: string) => apiHandler.updateIil(partialIilDto, id)}
                                     deleteCall={(id: string) => apiHandler.deleteIil(id)}
-                                    ownerId={ownerId} pageContext={pageContext}>
+                                    ownerId={ownerId} pageContext={pageContext}
+                                    onModalShow={(e) => {
+                                        const selected = iils.filter(i => i.id === e.currentTarget.id).pop();
+                                        if (selected) {
+                                            setIilItem(selected)
+                                            setModalShow(true);
+                                        }
+                                        }}>
                                     <IilDetailModal
                                         show={modalShow}
                                         onHide={() => setModalShow(false)}
                                         iils={iils}
+                                        iilItem={iilItem}
+                                        onIilItemChange={onIilItemUpdate}
                                         ownerId={ownerId}
                                         apiHandler={apiHandler}
                                     />
