@@ -1,31 +1,29 @@
-import React, { MouseEventHandler, useEffect, useState } from "react";
-import { ConfirmProvider } from "../../hooksComponent/ConfirmContext";
+import React, { MouseEventHandler, ReactElement, useEffect, useState } from "react";
 import { getBrandNewIil } from "../model/iilManager";
 import { PageContext } from "../../type/pageContext";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import UseIilList from "../../hooksComponent/useIilList";
 import { IilItemCreator } from "./iilList/iilItemCreator";
-import { Button, ButtonGroup, Col, Container, Row } from "react-bootstrap";
 import { isStatusFitToContext } from "../util/illFilterByContext";
-import { IilControllerApi, IilDto } from "../../ill-repo-client";
+import { IilDto } from "../../ill-repo-client";
 import { getRandomEmoji } from "../../util/emojiGenerator";
-import { IilDetailView } from "./iilDetailView";
-import { PageHeader } from "./PageHeader";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IilItemUpdator } from "./iilList/iilItemUpdator";
+import { IilDetailModal } from "./iilDetail/iilDetailModal";
 
 export interface IIilListViewProp {
+  iils: IilDto[];
   ownerId: string;
   pageContext: PageContext;
   getAllCall: () => Promise<AxiosResponse<IilDto[]>>;
   createCall: (body: IilDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
   updateCall: (body: IilDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
   deleteCall: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
+  children: any;
   onLogOut?: MouseEventHandler<HTMLButtonElement>;
 }
 
 export const IilListView = ({
+  iils,
   ownerId,
   pageContext,
   getAllCall,
@@ -34,26 +32,9 @@ export const IilListView = ({
   deleteCall,
   onLogOut,
 }: IIilListViewProp) => {
-  const { iilList, onIilListChange, onIilListElemChange } = UseIilList([]);
-  const [serviceStatus, setServiceStatus] = useState(0);
+  const { iilList, onIilListChange, onIilListElemChange } = UseIilList(iils);
 
   const [newIil, setNewIil] = useState<IilDto>(getBrandNewIil(getRandomEmoji(), ownerId, "", ownerId, "new"));
-  
-
-  useEffect(() => {
-    let mounted = true;
-
-    getAllCall().then((response) => response.data)
-      .then((iils: IilDto[]) => {
-        if (mounted){
-          onIilListChange(iils);
-          setServiceStatus(1);
-        }
-      })
-      .catch((err) => setServiceStatus(-1));
-
-      return () => {mounted = false;}
-  }, [serviceStatus, ownerId]);  
 
   const removeAllFocused = async (piilList: IilDto[]) => {
     /*
@@ -112,17 +93,15 @@ export const IilListView = ({
     />
 
   return (
-    serviceStatus > 0 ? 
-    <Container>
-      {pageContext === PageContext.List ? provideIilItemCreator() : <></>}
-      {(pageContext === PageContext.List) &&
-        iilList.map((iil: IilDto) => {
+    <>
+      {/*pageContext === PageContext.List ? provideIilItemCreator() : <></>*/}
+      {(pageContext === PageContext.List || pageContext === PageContext.FocusedList) &&
+        iilList.map((iil: IilDto, index) => {
         return isStatusFitToContext(pageContext, iil.status!) ?
-        provideIilItemUpdator(pageContext + "_" + iil.id!, pageContext, iil, iilList) : <></>;})}
-    </Container>
-    : serviceStatus < 0 ? (
-      <div>Something went wrong with server.</div>
-    ) : (
-      <div>Loading........</div>
-    ));
+            <div key={pageContext + "_" + index + "_" + iil.id!}>
+            {provideIilItemUpdator(pageContext + "_" + index + "_" + iil.id!, pageContext, iil, iilList)}</div> : <></>;
+          })
+      }
+    </>
+  );
 };

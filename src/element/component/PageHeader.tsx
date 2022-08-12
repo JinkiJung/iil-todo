@@ -18,7 +18,7 @@ export const PageHeader = ({
             </Button>
             <Button variant="primary" className="mx-1"
             onClick={() => {setPageContext(PageContext.FocusedList); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}>
-                Focus
+                Focused
             </Button>
             <Button variant="success" className="mx-1"
             onClick={() => {setPageContext(PageContext.List); document.getElementById("background")?.classList.replace("bg_focus", "bg_normal");}}>

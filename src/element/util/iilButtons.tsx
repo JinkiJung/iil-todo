@@ -1,8 +1,6 @@
 import React from "react";
-import Popup from "reactjs-popup";
 import DeleteButton from "../../hooksComponent/DeleteButton";
 import { IOperationParam } from "../model/operationParam";
-import { getBrandNewIil } from "../model/iilManager";
 import { FlowButton } from "./flowButton";
 import { validateIil } from "./iilValidator";
 import { Button, ButtonGroup } from "react-bootstrap";

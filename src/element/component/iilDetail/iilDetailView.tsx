@@ -1,21 +1,17 @@
 import React, { useRef } from "react";
-import { useContext, useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Accordion, Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import Popup from "reactjs-popup";
-import Picker from "emoji-picker-react";
-import UseIil from "../../hooksComponent/useIil";
-import { IilDto } from "../../ill-repo-client";
-import { getRandomEmoji } from "../../util/emojiGenerator";
-import { getBrandNewIil } from "../model/iilManager";
-import { getButtonWithEmoji, renderAddButton } from "../util/iilButtons";
-import { getDescribeInput, getInputForAttribute } from "../util/iilInputs";
-import { validateIil } from "../util/iilValidator";
-import { getStateSelectMenu } from "../util/iilStatusSelect";
-import { iilAddButton } from "../buttons/iilAddButton";
+import UseIil from "../../../hooksComponent/useIil";
+import { IilDto } from "../../../ill-repo-client";
+import { getRandomEmoji } from "../../../util/emojiGenerator";
+import { getBrandNewIil } from "../../model/iilManager";
+import { getDescribeInput, getInputForAttribute } from "../../util/iilInputs";
+import { validateIil } from "../../util/iilValidator";
+import { getStateSelectMenu } from "../../util/iilStatusSelect";
+import { iilAddButton } from "../../buttons/iilAddButton";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
-import { Typeahead } from 'react-bootstrap-typeahead';
-import { IilSelector } from "../util/iilSelector";
+import { IilSelector } from "../../util/iilSelector";
 
 export interface IIilDetailViewProp {
     iils: IilDto[];
@@ -35,7 +31,7 @@ export const IilDetailView = ({
     deleteCall,
   }: IIilDetailViewProp) => {
     const { iilItem, onIilItemChange } = UseIil(selectedIil);
-    const goalRef = useRef(null);
+    const goalRef = useRef<any>(null);
     const {
       register,
       handleSubmit,
@@ -54,9 +50,12 @@ export const IilDetailView = ({
             .catch((error: any) => alert(error));
     }
   
-    const resetNewIil = (actor: string, owner: string) => {
+    const resetNewIil = (actor?: string, owner?: string) => {
         goalRef.current.clear();
-        onIilItemChange(getBrandNewIil(getRandomEmoji(), ownerId, "", ownerId, "new"));
+        onIilItemChange(getBrandNewIil(getRandomEmoji(),
+            actor? actor : ownerId, "", 
+            owner? owner : ownerId, "new"
+        ));
 
     }
 

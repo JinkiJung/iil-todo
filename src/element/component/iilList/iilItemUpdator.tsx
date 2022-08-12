@@ -1,20 +1,18 @@
 import { Checkbox } from "@material-ui/core";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useRef } from "react";
 import Popup from "reactjs-popup";
 import Picker from "emoji-picker-react";
 import { useDrag, useDrop } from "react-dnd";
 import { Col, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { IilDto, IilDtoStatusEnum } from "../../../ill-repo-client";
-import { isOrganizeMode, PageContext } from "../../../type/pageContext";
+import { PageContext } from "../../../type/pageContext";
 import { OperationContext } from "../../../App";
 import { IOperationParam } from "../../model/operationParam";
 import UseIil from "../../../hooksComponent/useIil";
 import { validateIil } from "../../util/iilValidator";
 import { ItemTypes } from "../../model/itemType";
 import { getButtonWithEmoji, getDraggableButton, renderDeleteButton } from "../../util/iilButtons";
-import { validURL } from "../../../util/urlStringCheck";
-import { getInputForAttribute } from "../../util/iilInputs";
 import { getStateSelectMenu } from "../../util/iilStatusSelect";
 import { getSummary } from "../../util/iilSummary";
 
@@ -94,11 +92,8 @@ export const IilItemUpdator = ({
   }
 
   const deleteIil = (iil: IilDto) => {
-    !isOrganizeMode(pageContext) ?
-      deleteCall(iil.id).then(() =>
-                onIilListChange(iilList.filter((t:any)=> t.id !== iil.id)))
-      :
-      onIilListChange(iilList.filter((t:any)=> t.id !== iil.id))
+    deleteCall(iil.id).then(() =>
+      onIilListChange(iilList.filter((t:any)=> t.id !== iil.id)))
   }
 
   const updateIilStatus = (iil: IilDto) => {
@@ -123,20 +118,15 @@ export const IilItemUpdator = ({
   };
 
   const getSeperator = () => {
-    return isOrganizeMode(pageContext) ? (
-        <div className="separator">
-          <input type="text"></input>
-        </div>
-      ) : (
-        <hr className="dashed"></hr>
-      )}
+    return <hr className="dashed"></hr>;
+  }
 
 const getCheckBox = (iil: IilDto, onChangeCheckBox: Function) =>
 <Checkbox
-checked={iil.status === IilDtoStatusEnum.SETTLED}
-onChange={(e) => onChangeCheckBox(iil)}
-name={`${iil.id}==status==checkbox`}
-color="primary"
+  checked={iil.status === IilDtoStatusEnum.SETTLED}
+  onChange={(e) => onChangeCheckBox(iil)}
+  name={`${iil.id}==status==checkbox`}
+  color="primary"
 />
 
 const getEmojiPopup = () => 

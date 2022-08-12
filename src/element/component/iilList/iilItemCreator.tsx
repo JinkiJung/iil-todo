@@ -4,11 +4,10 @@ import Popup from "reactjs-popup";
 import { OperationContext } from "../../../App";
 import { IOperationParam } from "../../model/operationParam";
 import { getBrandNewIil } from "../../model/iilManager";
-import { getValuesFromInputElement } from "../../util/elemToIil";
 import Picker from "emoji-picker-react";
 import UseIil from "../../../hooksComponent/useIil";
-import { isOrganizeMode, PageContext } from "../../../type/pageContext";
-import { getButtonWithEmoji, getDraggableButton, renderAddButton, renderAddButtonForNewField, renderDeleteButton } from "../../util/iilButtons";
+import { PageContext } from "../../../type/pageContext";
+import { getButtonWithEmoji, getDraggableButton, renderAddButton } from "../../util/iilButtons";
 import { validateIil } from "../../util/iilValidator";
 import { Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
@@ -127,13 +126,7 @@ export const IilItemCreator = ({
           </Row>
         </Form>
       </section>
-      {isOrganizeMode(pageContext) ? (
-        <div className="separator">
-          <input type="text"></input>
-        </div>
-      ) : (
-        <hr className="dashed"></hr>
-      )}
+      <hr className="dashed"></hr>
     </div>
   );
 }
