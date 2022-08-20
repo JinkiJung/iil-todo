@@ -14,7 +14,7 @@ export const IilAttribute = ({iil, name, color, bgColor}: IiilAttributeProp) => 
             <div style={{ fontSize: "14px", color: "#313131", padding: "2px"}}>
                 {name}
             </div>
-            <div style={{ fontSize: "18px", color: color, padding: "2px"}}>
+            <div style={{ fontSize: "16px", color: color, padding: "2px"}}>
                 {(iil as any)[name]}
             </div>
         </div>

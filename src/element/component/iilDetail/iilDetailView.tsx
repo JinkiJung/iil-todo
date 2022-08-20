@@ -9,6 +9,7 @@ import { getStateSelectMenu } from "../../util/iilStatusSelect";
 import { iilAddButton } from "../../buttons/iilAddButton";
 import { AxiosResponse } from "axios";
 import { IilSelector } from "../../util/iilSelector";
+import { IilSummaryList } from "../iilSummary/iilSummaryList";
 
 export interface IIilDetailViewProp {
     iils: IilDto[];
@@ -253,6 +254,7 @@ export const IilDetailView = ({
                         Children
                     </Card.Header>
                     <Card.Body>
+                        <IilSummaryList iils={iils.filter(iil => iil.id === iilItem.goal)}/>
                         { iilAddButton() }
                     </Card.Body>
                 </Card>

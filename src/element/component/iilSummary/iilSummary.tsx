@@ -3,8 +3,12 @@ import { Badge, Col, Container, Row } from "react-bootstrap";
 import { IilDto } from "../../../ill-repo-client";
 import { IilAttribute } from "./iilAttribute";
 
-export const getSummary = (
-    iil: IilDto,
+export interface IiilSummaryProp {
+    iil: IilDto;
+}
+
+export const IilSummary = (
+    {iil}: IiilSummaryProp
     ) =>
     <Container>
         <Row>

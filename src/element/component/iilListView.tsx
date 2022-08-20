@@ -4,7 +4,7 @@ import { PageContext } from "../../type/pageContext";
 import UseIilList from "../../hooksComponent/useIilList";
 import { IilItemCreator } from "./iilList/iilItemCreator";
 import { isStatusFitToContext } from "../util/illFilterByContext";
-import { IilDto } from "../../ill-repo-client";
+import { IilDto, IilDtoStatusEnum } from "../../ill-repo-client";
 import { getRandomEmoji } from "../../util/emojiGenerator";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IilItemUpdator } from "./iilList/iilItemUpdator";
@@ -89,6 +89,9 @@ export const IilListView = ({
       {/*pageContext === PageContext.List ? provideIilItemCreator() : <></>*/}
       {(pageContext === PageContext.List || pageContext === PageContext.FocusedList) &&
         iilList.map((iil: IilDto, index) => 
+        pageContext === PageContext.List ||
+        (pageContext === PageContext.FocusedList &&
+        iil.status === IilDtoStatusEnum.FOCUSED) ?
           <IilItemUpdator key={index} givenIil={iil} 
             onIilListElemChange={onIilListElemChange}
             iilList={iilList}
@@ -97,7 +100,8 @@ export const IilListView = ({
             updateCall={updateCall}
             deleteCall={deleteCall}
             onModalShow={onModalShow}
-          />
+          /> :
+          <div key={index}></div>
         )
       }
     </>
