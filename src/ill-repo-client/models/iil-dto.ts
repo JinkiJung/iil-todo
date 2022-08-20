@@ -11,7 +11,6 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { IilDto } from './iil-dto';
 import { NextFlowDto } from './next-flow-dto';
 /**
  * 
@@ -33,10 +32,10 @@ export interface IilDto {
     describe?: { [key: string]: string; };
     /**
      * 
-     * @type {IilDto}
+     * @type {string}
      * @memberof IilDto
      */
-    goal?: IilDto;
+    goal?: string;
     /**
      * 
      * @type {string}
@@ -116,10 +115,11 @@ export interface IilDto {
     * @enum {string}
     */
 export enum IilDtoStatusEnum {
-    NOTINITIATED = 'NOTINITIATED',
+    NOTSTARTED = 'NOTSTARTED',
     ACTIVE = 'ACTIVE',
     FOCUSED = 'FOCUSED',
     PENDING = 'PENDING',
-    SETTLED = 'SETTLED'
+    DONE = 'DONE',
+    ACHIEVED = 'ACHIEVED'
 }
 

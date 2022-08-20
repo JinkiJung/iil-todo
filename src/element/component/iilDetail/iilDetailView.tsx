@@ -1,16 +1,13 @@
 import React, { useRef } from "react";
-import { useEffect } from "react";
 import { Accordion, Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import UseIil from "../../../hooksComponent/useIil";
 import { IilDto } from "../../../ill-repo-client";
 import { getRandomEmoji } from "../../../util/emojiGenerator";
 import { getBrandNewIil } from "../../model/iilManager";
 import { getDescribeInput, getInputForAttribute } from "../../util/iilInputs";
-import { validateIil } from "../../util/iilValidator";
 import { getStateSelectMenu } from "../../util/iilStatusSelect";
 import { iilAddButton } from "../../buttons/iilAddButton";
-import { AxiosRequestConfig, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { IilSelector } from "../../util/iilSelector";
 
 export interface IIilDetailViewProp {
@@ -18,9 +15,8 @@ export interface IIilDetailViewProp {
     iilItem: IilDto;
     onIilItemChange: Function;
     ownerId: string;
-    createCall: (body: IilDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
-    updateCall: (body: IilDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
-    deleteCall: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
+    onSubmit: (iil: IilDto) => Promise<AxiosResponse<IilDto> | undefined>;
+    onDelete: (id: string) => Promise<AxiosResponse<void> | undefined>;
 }
 
 export const IilDetailView = ({
@@ -28,9 +24,8 @@ export const IilDetailView = ({
     iilItem,
     onIilItemChange,
     ownerId,
-    createCall,
-    updateCall,
-    deleteCall,
+    onSubmit,
+    onDelete,
   }: IIilDetailViewProp) => {
     const goalRef = useRef<any>(null);
     const {
@@ -42,15 +37,6 @@ export const IilDetailView = ({
       defaultValues: iilItem
     });
   
-    const createIil = (iil: IilDto) => {
-      createCall!({...iil, id: undefined})
-            .then(async (res: any) => {
-              // close window?
-              resetNewIil(ownerId, ownerId);
-            })
-            .catch((error: any) => alert(error));
-    }
-  
     const resetNewIil = (actor?: string, owner?: string) => {
         goalRef.current.clear();
         onIilItemChange(getBrandNewIil(getRandomEmoji(),
@@ -59,29 +45,29 @@ export const IilDetailView = ({
         ));
     }
 
-    const onGoalChanged = (iils: IilDto[]) => {
-        onIilItemChange({id: iilItem.id, goal: iils.pop()});
-    }
-
-    const sendDataToBackend = (iilItem: IilDto) => {
-        if (validateIil(iilItem)){
-            if (iilItem.id === 'new') {
-                createIil(iilItem);
+    const onGoalChanged = (chosenIils: IilDto[]) => {
+        if (chosenIils.length) {
+            if (iilItem.id === chosenIils[0].id) {
+                alert("Goal and task should not be identical");
             } else {
-                updateCall(iilItem, iilItem.id!);
+                onIilItemChange({id: iilItem.id, goal: chosenIils[0].id});
             }
         }
     }
   
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
-        sendDataToBackend(iilItem);
+        onSubmit(iilItem);
       }
     };
 
     const submit = (e: any) => {
         e.preventDefault();
-        sendDataToBackend(iilItem);
+        onSubmit(iilItem).then(async (res: any) => {
+            // close window?
+            resetNewIil(ownerId, ownerId);
+          })
+          .catch((error: any) => alert(error));
     }
 
     return (
@@ -96,7 +82,7 @@ export const IilDetailView = ({
                         Goal
                     </Card.Header>
                     <Card.Body>
-                        {IilSelector(iils, onGoalChanged, goalRef)}
+                        {IilSelector(iils, onGoalChanged, goalRef, iils.filter(i => i.id === iilItem.goal))}
                     </Card.Body>
                 </Card>
             </Col>

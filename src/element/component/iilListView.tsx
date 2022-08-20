@@ -35,7 +35,6 @@ export const IilListView = ({
   onLogOut,
 }: IIilListViewProp) => {
   const { iilList, onIilListChange, onIilListElemChange } = UseIilList(iils);
-
   const [newIil, setNewIil] = useState<IilDto>(getBrandNewIil(getRandomEmoji(), ownerId, "", ownerId, "new"));
 
   const removeAllFocused = async (piilList: IilDto[]) => {
@@ -85,26 +84,21 @@ export const IilListView = ({
             />;
   }
 
-  const provideIilItemUpdator = (key: string, givenContext: PageContext, iil: IilDto, iilList: IilDto[]) => 
-    <IilItemUpdator key={key} givenIil={iil} 
-    onIilListElemChange={onIilListElemChange}
-    iilList={iilList}
-    onIilListChange={onIilListChange}
-    pageContext={givenContext}
-    updateCall={updateCall}
-    deleteCall={deleteCall}
-    onModalShow={onModalShow}
-    />
-
   return (
     <>
       {/*pageContext === PageContext.List ? provideIilItemCreator() : <></>*/}
       {(pageContext === PageContext.List || pageContext === PageContext.FocusedList) &&
-        iilList.map((iil: IilDto, index) => {
-        return isStatusFitToContext(pageContext, iil.status!) ?
-            <div key={pageContext + "_" + index + "_" + iil.id!}>
-            {provideIilItemUpdator(pageContext + "_" + index + "_" + iil.id!, pageContext, iil, iilList)}</div> : <></>;
-          })
+        iilList.map((iil: IilDto, index) => 
+          <IilItemUpdator key={index} givenIil={iil} 
+            onIilListElemChange={onIilListElemChange}
+            iilList={iilList}
+            onIilListChange={onIilListChange}
+            pageContext={pageContext}
+            updateCall={updateCall}
+            deleteCall={deleteCall}
+            onModalShow={onModalShow}
+          />
+        )
       }
     </>
   );

@@ -5,7 +5,11 @@ const UseIil = (initialItem: IilDto, validator?: Function) => {
     const [ iilItem, setIilItem ] = useState(initialItem);
     const onIilItemUpdate = (item: IilDto) => {
         if (item.id === iilItem.id){
-            setIilItem({...iilItem, ...item});
+            if (item.goal) {
+                iilItem.goal = item.goal;
+            } else {
+                setIilItem({...iilItem, ...item});
+            }
         }
     };
     return { iilItem, setIilItem, onIilItemUpdate };

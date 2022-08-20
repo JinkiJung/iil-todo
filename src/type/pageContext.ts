@@ -8,6 +8,6 @@ export enum PageContext {
 
 export const contextMapping: { [id: number] : string[]; } = {};
 // context for editing
-contextMapping[PageContext.Graph] = [IilDtoStatusEnum.NOTINITIATED, IilDtoStatusEnum.ACTIVE, IilDtoStatusEnum.FOCUSED, IilDtoStatusEnum.PENDING];
+contextMapping[PageContext.Graph] = [IilDtoStatusEnum.NOTSTARTED, IilDtoStatusEnum.ACTIVE, IilDtoStatusEnum.FOCUSED, IilDtoStatusEnum.PENDING];
 contextMapping[PageContext.FocusedList] = [IilDtoStatusEnum.FOCUSED];
-contextMapping[PageContext.List] = [IilDtoStatusEnum.NOTINITIATED, IilDtoStatusEnum.ACTIVE, IilDtoStatusEnum.FOCUSED, IilDtoStatusEnum.PENDING, IilDtoStatusEnum.SETTLED, ];
+contextMapping[PageContext.List] = [IilDtoStatusEnum.NOTSTARTED, IilDtoStatusEnum.ACTIVE, IilDtoStatusEnum.FOCUSED, IilDtoStatusEnum.PENDING, IilDtoStatusEnum.DONE, IilDtoStatusEnum.ACHIEVED ];

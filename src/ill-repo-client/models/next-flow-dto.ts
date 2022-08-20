@@ -29,4 +29,46 @@ export interface NextFlowDto {
      * @memberof NextFlowDto
      */
     describe?: { [key: string]: string; };
+    /**
+     * 
+     * @type {string}
+     * @memberof NextFlowDto
+     */
+    namespace?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof NextFlowDto
+     */
+    input?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof NextFlowDto
+     */
+    condition?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof NextFlowDto
+     */
+    creator?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof NextFlowDto
+     */
+    owner?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof NextFlowDto
+     */
+    from?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof NextFlowDto
+     */
+    to?: string;
 }

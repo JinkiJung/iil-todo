@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import React from "react";
 import { Modal } from "react-bootstrap";
 import { IilControllerApi, IilDto } from "../../../ill-repo-client";
@@ -12,8 +13,8 @@ export interface IilDetailModalProp {
     onIilItemChange: Function;
     iils: IilDto[];
     ownerId: string;
-    apiHandler: IilControllerApi;
-    
+    onSubmit: (iil: IilDto) => Promise<AxiosResponse<IilDto> | undefined>;
+    onDelete: (id: string) => Promise<AxiosResponse<void> | undefined>;
 }
 
 export const IilDetailModal = ({
@@ -21,9 +22,10 @@ export const IilDetailModal = ({
     onHide,
     iils,
     ownerId,
-    apiHandler,
     iilItem,
     onIilItemChange,
+    onSubmit,
+    onDelete,
 }: IilDetailModalProp ) => {
     return (
       <Modal
@@ -40,9 +42,9 @@ export const IilDetailModal = ({
               iilItem={ iilItem}
               onIilItemChange={onIilItemChange}
               ownerId={ownerId}
-              createCall={(iil:IilDto) => apiHandler.createIil(iil)}
-              updateCall={(partialIilDto : IilDto, id: string) => apiHandler.updateIil(partialIilDto, id)}
-              deleteCall={(id: string) => apiHandler.deleteIil(id)} />
+              onSubmit={onSubmit}
+              onDelete={onDelete}
+              />
         </Modal.Body>
       </Modal>
     );

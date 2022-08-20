@@ -14,7 +14,7 @@ import { validateIil } from "../../util/iilValidator";
 import { ItemTypes } from "../../model/itemType";
 import { getButtonWithEmoji, getModalButton, renderDeleteButton } from "../../util/iilButtons";
 import { getStateSelectMenu } from "../../util/iilStatusSelect";
-import { getSummary } from "../../util/iilSummary";
+import { getSummary } from "../iilSummary/iilSummary";
 
 interface IIilItemUpdatorProp {
   givenIil: IilDto;
@@ -40,7 +40,7 @@ export const IilItemUpdator = ({
   const ref = useRef<HTMLDivElement>(null);
   const param = useContext(OperationContext) as IOperationParam;
 
-  const {iilItem, onIilItemChange} = UseIil(givenIil, validateIil);
+  const {iilItem, setIilItem, onIilItemUpdate} = UseIil(givenIil, validateIil);
 
   const {
     register,
@@ -123,7 +123,7 @@ export const IilItemUpdator = ({
 
 const getCheckBox = (iil: IilDto, onChangeCheckBox: Function) =>
 <Checkbox
-  checked={iil.status === IilDtoStatusEnum.SETTLED}
+  checked={iil.status === IilDtoStatusEnum.DONE}
   onChange={(e) => onChangeCheckBox(iil)}
   name={`${iil.id}==status==checkbox`}
   color="primary"
@@ -149,7 +149,7 @@ const getEmojiPopup = () =>
         };
         updateIil(iil).then((res: any) => {
           onIilListElemChange(res.data);
-          onIilItemChange(res.data);
+          onIilItemUpdate(res.data);
         });
       }}
     />

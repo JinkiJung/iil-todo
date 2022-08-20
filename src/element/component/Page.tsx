@@ -7,12 +7,12 @@ import { ConfirmProvider } from "../../hooksComponent/ConfirmContext";
 import { IilControllerApi, IilDto } from "../../ill-repo-client";
 import { PageContext } from "../../type/pageContext";
 import { getRandomEmoji } from "../../util/emojiGenerator";
-import { IilDetailView } from "./iilDetail/iilDetailView";
 import { IilListView } from "./iilListView";
 import { getBrandNewIil } from "../model/iilManager";
 import { PageHeader } from "./PageHeader";
 import { IilDetailModal } from "./iilDetail/iilDetailModal";
 import UseIil from "../../hooksComponent/useIil";
+import { validateIil } from "../util/iilValidator";
 
 const defaultPageContext = PageContext.Graph;
 export interface IPageProp {
@@ -33,6 +33,20 @@ export const Page = ({
     const { iilItem, setIilItem, onIilItemUpdate } = UseIil(getBrandNewIil(getRandomEmoji(),
     ownerId, "", ownerId, "new"));
 
+    const onSubmit = async (iilItem: IilDto) => {
+        if (validateIil(iilItem)){
+            if (iilItem.id === 'new') {
+                return await apiHandler.createIil({ ...iilItem, id: undefined });
+            } else {
+                return await apiHandler.updateIil(iilItem, iilItem.id!);
+            }
+        }
+    }
+
+    const onDelete = async (id: string) => {
+        return await apiHandler.deleteIil(id);
+    }
+
     useEffect(() => {
         apiHandler.getIils().then((response) => response.data)
         .then((iilsFromBackend: IilDto[]) => {
@@ -40,8 +54,7 @@ export const Page = ({
             setServiceStatus(1);
         })
         .catch((err) => setServiceStatus(-1));
-
-    }, [serviceStatus, selectedIil, ownerId]);
+    }, [serviceStatus, selectedIil, pageContext, ownerId]);
     return (
         <div>
         {
@@ -66,7 +79,8 @@ export const Page = ({
                                         onIilItemChange={onIilItemUpdate}
                                         iils={iils}
                                         ownerId={ownerId}
-                                        apiHandler={apiHandler}
+                                        onSubmit={onSubmit}
+                                        onDelete={onDelete}
                                     />
                                     <hr className="dashed"></hr>
                                 </div>
@@ -91,7 +105,8 @@ export const Page = ({
                                         iilItem={iilItem}
                                         onIilItemChange={onIilItemUpdate}
                                         ownerId={ownerId}
-                                        apiHandler={apiHandler}
+                                        onSubmit={onSubmit}
+                                        onDelete={onDelete}
                                     />
                                 </IilListView>
                             </Container>
