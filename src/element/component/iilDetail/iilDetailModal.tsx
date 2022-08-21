@@ -31,7 +31,7 @@ export const IilDetailModal = ({
       <Modal
         show={show}
         onHide={onHide}
-        size="lg"
+        size="xl"
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >

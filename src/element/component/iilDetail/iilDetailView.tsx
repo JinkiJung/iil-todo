@@ -9,7 +9,7 @@ import { getStateSelectMenu } from "../../util/iilStatusSelect";
 import { iilAddButton } from "../../buttons/iilAddButton";
 import { AxiosResponse } from "axios";
 import { IilSelector } from "../../util/iilSelector";
-import { IilSummaryList } from "../iilSummary/iilSummaryList";
+import { IilCardList } from "../iilCard/iilCardList";
 
 export interface IIilDetailViewProp {
     iils: IilDto[];
@@ -64,10 +64,8 @@ export const IilDetailView = ({
 
     const submit = (e: any) => {
         e.preventDefault();
-        onSubmit(iilItem).then(async (res: any) => {
-            // close window?
-            resetNewIil(ownerId, ownerId);
-          })
+        onSubmit(iilItem).then(async (res: any) => 
+            resetNewIil(ownerId, ownerId))
           .catch((error: any) => alert(error));
     }
 
@@ -226,7 +224,10 @@ export const IilDetailView = ({
                             </Col>
                             <Col>
                                 <ButtonGroup className="d-flex">
-                                    <Button variant="danger" onClick={() => resetNewIil()}>Delete</Button>
+                                    {iilItem.id === 'new' ?
+                                        <Button variant="danger" onClick={() => resetNewIil()}>Reset</Button>:
+                                        <Button variant="danger" onClick={() => resetNewIil()}>Delete</Button>
+                                    }
                                 </ButtonGroup>
                             </Col>
                         </Row>
@@ -253,10 +254,10 @@ export const IilDetailView = ({
                     <Col xs="8">
                         <Card style={{ width: '100%' }}>
                             <Card.Header>
-                                Children
+                                Tasks
                             </Card.Header>
                             <Card.Body>
-                                <IilSummaryList iils={iils.filter(iil => iil.goal === iilItem.id)}/>
+                                <IilCardList iils={iils.filter(iil => iil.goal === iilItem.id)}/>
                             </Card.Body>
                         </Card>
                     </Col>

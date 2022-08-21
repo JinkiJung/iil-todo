@@ -14,7 +14,7 @@ import { IilDetailModal } from "./iilDetail/iilDetailModal";
 import UseIil from "../../hooksComponent/useIil";
 import { validateIil } from "../util/iilValidator";
 
-const defaultPageContext = PageContext.Graph;
+const defaultPageContext = PageContext.List;
 export interface IPageProp {
     ownerId: string;
     onLogOut?: MouseEventHandler<HTMLButtonElement>;
@@ -36,7 +36,12 @@ export const Page = ({
     const onSubmit = async (iilItem: IilDto) => {
         if (validateIil(iilItem)){
             if (iilItem.id === 'new') {
-                return await apiHandler.createIil({ ...iilItem, id: undefined });
+                const res = await apiHandler.createIil({ ...iilItem, id: undefined });
+                if (res.status === 200) {
+                    setIils([...iils, res.data as IilDto]);
+                    setModalShow(false);
+                }
+                return res;
             } else {
                 return await apiHandler.updateIil(iilItem, iilItem.id!);
             }

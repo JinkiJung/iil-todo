@@ -14,7 +14,7 @@ import { validateIil } from "../../util/iilValidator";
 import { ItemTypes } from "../../model/itemType";
 import { getButtonWithEmoji, getModalButton, renderDeleteButton } from "../../util/iilButtons";
 import { getStateSelectMenu } from "../../util/iilStatusSelect";
-import { IilSummary } from "../iilSummary/iilSummary";
+import { IilCard } from "../iilCard/iilCard";
 
 interface IIilItemUpdatorProp {
   givenIil: IilDto;
@@ -184,7 +184,7 @@ const getIilItemEditor = () =>
         }
       </Col>
       <Col sm={7}>
-        <IilSummary iil={iilItem} compact={false} />
+        <IilCard iil={iilItem} compact={false} />
       </Col>
       <Col sm={2}>
         {getStateSelectMenu( iilItem, updateIilStatus)}
