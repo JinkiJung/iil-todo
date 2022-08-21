@@ -67,7 +67,11 @@ export const Page = ({
                             <Container>
                                 <div className="item">
                                     <ButtonGroup className="d-flex">
-                                        <Button variant="primary" onClick={() => setModalShow(true)}>
+                                        <Button variant="primary" onClick={() => {
+                                            setIilItem(getBrandNewIil(getRandomEmoji(),
+                                                ownerId, "", ownerId, "new"));
+                                            setModalShow(true);
+                                            }}>
                                             Add new
                                         </Button>
                                     </ButtonGroup>
