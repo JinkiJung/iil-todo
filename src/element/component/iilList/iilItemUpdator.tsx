@@ -184,7 +184,7 @@ const getIilItemEditor = () =>
         }
       </Col>
       <Col sm={7}>
-        <IilSummary iil={iilItem} />
+        <IilSummary iil={iilItem} compact={false} />
       </Col>
       <Col sm={2}>
         {getStateSelectMenu( iilItem, updateIilStatus)}

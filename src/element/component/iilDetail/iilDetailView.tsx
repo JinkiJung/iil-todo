@@ -244,25 +244,27 @@ export const IilDetailView = ({
                 </Card>
             </Col>
         </Row>
-        <Row xs="2">
-            <Col xs="2">
+            {
+                iilItem.id !== 'new' &&
+                <Row xs="2">
+                    <Col xs="2">
 
-            </Col>
-            <Col xs="8">
-                <Card style={{ width: '100%' }}>
-                    <Card.Header>
-                        Children
-                    </Card.Header>
-                    <Card.Body>
-                        <IilSummaryList iils={iils.filter(iil => iil.id === iilItem.goal)}/>
-                        { iilAddButton() }
-                    </Card.Body>
-                </Card>
-            </Col>
-            <Col xs="2">
+                    </Col>
+                    <Col xs="8">
+                        <Card style={{ width: '100%' }}>
+                            <Card.Header>
+                                Children
+                            </Card.Header>
+                            <Card.Body>
+                                <IilSummaryList iils={iils.filter(iil => iil.goal === iilItem.id)}/>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                    <Col xs="2">
 
-            </Col>
-        </Row>
+                    </Col>
+                </Row>
+            }
         </Form>
     );
   }

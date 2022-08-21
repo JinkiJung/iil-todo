@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import { IilDto } from "../../../ill-repo-client";
 import { IilSummary } from "./iilSummary";
 
@@ -14,7 +14,7 @@ export const IilSummaryList = (
         <Row>
             {
                 iils.map((iil) => <Col>
-                                    <IilSummary iil={iil} />
+                                    <IilSummary iil={iil} compact={true} />
                                 </Col>
                 )
             }
