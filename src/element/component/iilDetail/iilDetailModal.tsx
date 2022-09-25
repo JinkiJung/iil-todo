@@ -15,6 +15,7 @@ export interface IilDetailModalProp {
     ownerId: string;
     onSubmit: (iil: IilDto) => Promise<AxiosResponse<IilDto> | undefined>;
     onDelete: (id: string) => Promise<AxiosResponse<void> | undefined>;
+    onReset: (goalId?: string) => void;
 }
 
 export const IilDetailModal = ({
@@ -26,6 +27,7 @@ export const IilDetailModal = ({
     onIilItemChange,
     onSubmit,
     onDelete,
+    onReset,
 }: IilDetailModalProp ) => {
     return (
       <Modal
@@ -39,11 +41,12 @@ export const IilDetailModal = ({
         </Modal.Header>
         <Modal.Body>
             <IilDetailView iils={iils}
-              iilItem={ iilItem}
+              selectedIil={ iilItem}
               onIilItemChange={onIilItemChange}
               ownerId={ownerId}
               onSubmit={onSubmit}
               onDelete={onDelete}
+              onReset={onReset}
               />
         </Modal.Body>
       </Modal>

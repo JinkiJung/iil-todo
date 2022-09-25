@@ -12,11 +12,13 @@ import { IilAddCard } from "./iilAddCard";
 type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
 export interface IiilSummaryListProp {
     iils: IilDto[];
+    goalIil: IilDto;
+    onAddTask: (goalId: string) => void;
 }
 
 
 export const IilCardList = (
-    {iils}: IiilSummaryListProp
+    {iils, goalIil, onAddTask}: IiilSummaryListProp
     ) => {
     const { disableScroll, enableScroll } = usePreventBodyScroll();
     
@@ -41,9 +43,9 @@ export const IilCardList = (
             RightArrow={RightArrow}
             onWheel={onWheel}
         >
-            <IilAddCard />
+            <IilAddCard onAddCard={() => onAddTask(goalIil.id)}/>
             {
-                iils.map((iil) => <IilCard iil={iil} compact={true} />)
+                iils.map((iil) => <IilCard key={iil.id} iil={iil} compact={true} />)
             }
           </ScrollMenu>
         </div>}

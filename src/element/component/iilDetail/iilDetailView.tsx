@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Accordion, Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { IilDto } from "../../../ill-repo-client";
@@ -8,66 +8,70 @@ import { getDescribeInput, getInputForAttribute } from "../../util/iilInputs";
 import { getStateSelectMenu } from "../../util/iilStatusSelect";
 import { iilAddButton } from "../../buttons/iilAddButton";
 import { AxiosResponse } from "axios";
-import { IilSelector } from "../../util/iilSelector";
+import { IilGoalSelector } from "../../util/iilGoalSelector";
 import { IilCardList } from "../iilCard/iilCardList";
 
 export interface IIilDetailViewProp {
     iils: IilDto[];
-    iilItem: IilDto;
+    selectedIil: IilDto;
     onIilItemChange: Function;
     ownerId: string;
     onSubmit: (iil: IilDto) => Promise<AxiosResponse<IilDto> | undefined>;
     onDelete: (id: string) => Promise<AxiosResponse<void> | undefined>;
+    onReset: (goalId?: string) => void;
 }
 
 export const IilDetailView = ({
     iils,
-    iilItem,
+    selectedIil,
     onIilItemChange,
     ownerId,
     onSubmit,
     onDelete,
+    onReset,
   }: IIilDetailViewProp) => {
     const goalRef = useRef<any>(null);
+    const [ selectedGoal, setSelectedGoal ] = useState<string | undefined>(selectedIil?.goal);
+
     const {
       register,
       handleSubmit,
       // Read the formState before render to subscribe the form state through the Proxy
       formState: { errors, isDirty, isSubmitting, touchedFields, submitCount },
     } = useForm({
-      defaultValues: iilItem
+      defaultValues: selectedIil
     });
-  
-    const resetNewIil = (actor?: string, owner?: string) => {
-        goalRef.current.clear();
-        onIilItemChange(getBrandNewIil(getRandomEmoji(),
-            actor? actor : ownerId, "", 
-            owner? owner : ownerId, "new"
-        ));
-    }
 
     const onGoalChanged = (chosenIils: IilDto[]) => {
         if (chosenIils.length) {
-            if (iilItem.id === chosenIils[0].id) {
+            if (selectedIil.id === chosenIils[0].id) {
                 alert("Goal and task should not be identical");
             } else {
-                onIilItemChange({id: iilItem.id, goal: chosenIils[0].id});
+                onIilItemChange({id: selectedIil.id, goal: chosenIils[0].id});
             }
         }
     }
   
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter") {
-        onSubmit(iilItem);
+        onSubmit(selectedIil);
       }
     };
 
     const submit = (e: any) => {
         e.preventDefault();
-        onSubmit(iilItem).then(async (res: any) => 
+        onSubmit(selectedIil).then(async (res: any) => 
             resetNewIil(ownerId, ownerId))
           .catch((error: any) => alert(error));
     }
+
+    useEffect(() => {
+        if (selectedIil.goal) {
+            setSelectedGoal(selectedIil.goal);
+        } else {
+            goalRef.current.clear();
+        }
+    },[selectedIil]);
 
     return (
         <Form onSubmit={submit}>
@@ -81,7 +85,7 @@ export const IilDetailView = ({
                         Goal
                     </Card.Header>
                     <Card.Body>
-                        {IilSelector(iils, onGoalChanged, goalRef, iils.filter(i => i.id === iilItem.goal))}
+                        <IilGoalSelector iils={iils} onGoalChanged={onGoalChanged} goalRef={goalRef} selectedGoal={selectedGoal} />
                     </Card.Body>
                 </Card>
             </Col>
@@ -113,7 +117,7 @@ export const IilDetailView = ({
                                             Start if
                                         </Col>
                                         <Col xs={10}>
-                                        { getInputForAttribute(iilItem, 'startIf', onIilItemChange, register, handleEnterKey) }
+                                        { getInputForAttribute(selectedIil, 'startIf', onIilItemChange, register, handleEnterKey) }
                                         </Col>
                                     </Row>
                                     <Row xs="auto">
@@ -121,7 +125,7 @@ export const IilDetailView = ({
                                             Input
                                         </Col>
                                         <Col xs={10}>
-                                        { getInputForAttribute(iilItem, 'input', onIilItemChange, register, handleEnterKey) }
+                                        { getInputForAttribute(selectedIil, 'input', onIilItemChange, register, handleEnterKey) }
                                         </Col>
                                     </Row>
                                 </Card>
@@ -135,7 +139,7 @@ export const IilDetailView = ({
                                             Who
                                         </Col>
                                         <Col xs={10}>
-                                        { getInputForAttribute(iilItem, 'actor', onIilItemChange, register, handleEnterKey) }
+                                        { getInputForAttribute(selectedIil, 'actor', onIilItemChange, register, handleEnterKey) }
                                         </Col>
                                     </Row>
                                     <Row xs="auto">
@@ -143,7 +147,7 @@ export const IilDetailView = ({
                                             Doing What
                                         </Col>
                                         <Col xs={10}>
-                                        { getInputForAttribute(iilItem, 'act', onIilItemChange, register, handleEnterKey) }
+                                        { getInputForAttribute(selectedIil, 'act', onIilItemChange, register, handleEnterKey) }
                                         </Col>
                                     </Row>
                                 </Card>
@@ -157,7 +161,7 @@ export const IilDetailView = ({
                                             End if
                                         </Col>
                                         <Col xs={10}>
-                                        { getInputForAttribute(iilItem, 'endIf', onIilItemChange, register, handleEnterKey) }
+                                        { getInputForAttribute(selectedIil, 'endIf', onIilItemChange, register, handleEnterKey) }
                                         </Col>
                                     </Row>
                                     <Row xs="auto">
@@ -165,7 +169,7 @@ export const IilDetailView = ({
                                             Output
                                         </Col>
                                         <Col xs={10}>
-                                        { getInputForAttribute(iilItem, 'output', onIilItemChange, register, handleEnterKey) }
+                                        { getInputForAttribute(selectedIil, 'output', onIilItemChange, register, handleEnterKey) }
                                         </Col>
                                     </Row>
                                 </Card>
@@ -182,7 +186,7 @@ export const IilDetailView = ({
                                                 ID
                                             </Col>
                                             <Col xs={10}>
-                                                {iilItem.id}
+                                                {selectedIil.id}
                                             </Col>
                                         </Row>
                                         <Row xs="auto">
@@ -191,7 +195,7 @@ export const IilDetailView = ({
                                             </Col>
                                             <Col xs={10}>
                                             {
-                                                getDescribeInput(iilItem, onIilItemChange, register, handleEnterKey)
+                                                getDescribeInput(selectedIil, onIilItemChange, register, handleEnterKey)
                                             }
                                             </Col>
                                         </Row>
@@ -200,7 +204,7 @@ export const IilDetailView = ({
                                                 Owner
                                             </Col>
                                             <Col xs={10}>
-                                            { getInputForAttribute(iilItem, 'owner', onIilItemChange, register, handleEnterKey) }
+                                            { getInputForAttribute(selectedIil, 'owner', onIilItemChange, register, handleEnterKey) }
                                             </Col>
                                         </Row>
                                         <Row xs="auto">
@@ -208,7 +212,7 @@ export const IilDetailView = ({
                                                 Status
                                             </Col>
                                             <Col xs={10}>
-                                            { getStateSelectMenu( iilItem, onIilItemChange) }
+                                            { getStateSelectMenu( selectedIil, onIilItemChange) }
                                             </Col>
                                         </Row>
                                     </Card>
@@ -224,9 +228,9 @@ export const IilDetailView = ({
                             </Col>
                             <Col>
                                 <ButtonGroup className="d-flex">
-                                    {iilItem.id === 'new' ?
-                                        <Button variant="danger" onClick={() => resetNewIil()}>Reset</Button>:
-                                        <Button variant="danger" onClick={() => resetNewIil()}>Delete</Button>
+                                    {selectedIil.id === 'new' ?
+                                        <Button variant="danger" onClick={() => onReset()}>Reset</Button>:
+                                        <Button variant="danger" onClick={() => onReset()}>Delete</Button>
                                     }
                                 </ButtonGroup>
                             </Col>
@@ -246,7 +250,7 @@ export const IilDetailView = ({
             </Col>
         </Row>
             {
-                iilItem.id !== 'new' &&
+                selectedIil.id !== 'new' &&
                 <Row xs="2">
                     <Col xs="2">
 
@@ -257,7 +261,11 @@ export const IilDetailView = ({
                                 Tasks
                             </Card.Header>
                             <Card.Body>
-                                <IilCardList iils={iils.filter(iil => iil.goal === iilItem.id)}/>
+                                <IilCardList
+                                    iils={iils.filter(iil => iil.goal === selectedIil.id)}
+                                    goalIil={selectedIil}
+                                    onAddTask={onReset}
+                                />
                             </Card.Body>
                         </Card>
                     </Col>

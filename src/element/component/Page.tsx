@@ -29,9 +29,8 @@ export const Page = ({
     const [iils, setIils] = useState<IilDto[]>([]);
     const [modalShow, setModalShow] = useState(false);
     const apiHandler = new IilControllerApi();
-    const [selectedIil, setSelectedIil] = useState<IilDto>();
     const { iilItem, setIilItem, onIilItemUpdate } = UseIil(getBrandNewIil(getRandomEmoji(),
-    ownerId, "", ownerId, "new"));
+        ownerId, "", ownerId, "new"));
 
     const onSubmit = async (iilItem: IilDto) => {
         if (validateIil(iilItem)){
@@ -52,6 +51,11 @@ export const Page = ({
         return await apiHandler.deleteIil(id);
     }
 
+    const onResetIilItem = (goalId?: string) => {
+        setIilItem(getBrandNewIil(getRandomEmoji(),
+            ownerId, "", ownerId, "new", goalId!));
+    }
+
     useEffect(() => {
         apiHandler.getIils().then((response) => response.data)
         .then((iilsFromBackend: IilDto[]) => {
@@ -59,7 +63,7 @@ export const Page = ({
             setServiceStatus(1);
         })
         .catch((err) => setServiceStatus(-1));
-    }, [serviceStatus, selectedIil, pageContext, ownerId]);
+    }, [serviceStatus, pageContext, ownerId]);
     return (
         <div>
         {
@@ -90,6 +94,7 @@ export const Page = ({
                                         ownerId={ownerId}
                                         onSubmit={onSubmit}
                                         onDelete={onDelete}
+                                        onReset={onResetIilItem}
                                     />
                                     <hr className="dashed"></hr>
                                 </div>
@@ -116,6 +121,7 @@ export const Page = ({
                                         ownerId={ownerId}
                                         onSubmit={onSubmit}
                                         onDelete={onDelete}
+                                        onReset={onResetIilItem}
                                     />
                                 </IilListView>
                             </Container>

@@ -1,6 +1,9 @@
 import React from "react";
 
-export const IilAddCard = () => <div 
+export interface IiilAddCardProp {
+    onAddCard: () => void;
+}
+export const IilAddCard = ({onAddCard}: IiilAddCardProp) => <div 
     role="button"
     style={{
     border: "1px solid",
@@ -16,6 +19,7 @@ export const IilAddCard = () => <div
     alignItems: "center",
     }}
     tabIndex={0}
-    className="card">
+    className="card"
+    onClick={onAddCard}>
         <h1>+</h1>
 </div>
