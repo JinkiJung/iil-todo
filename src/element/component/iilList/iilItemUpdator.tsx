@@ -14,7 +14,7 @@ import { validateIil } from "../../util/iilValidator";
 import { ItemTypes } from "../../model/itemType";
 import { getButtonWithEmoji, getModalButton, renderDeleteButton } from "../../util/iilButtons";
 import { getStateSelectMenu } from "../../util/iilStatusSelect";
-import { IilCard } from "../iilCard/iilCard";
+import { IilCard } from "../iil/iilCard";
 
 interface IIilItemUpdatorProp {
   givenIil: IilDto;
@@ -155,17 +155,9 @@ const getEmojiPopup = () =>
     />
   </Popup>
 
-const onChangeCheckBox = (iil: IilDto) => {
-  /*
-  const partialIil = { id: iil.id, status: IilDtoStatusEnum.ACTIVE };
-  onIilListElemChange(partialIil);
-  updateIil(partialIil).then((t:any) => onIilListChange(iilList.filter((t) => contextMapping[pageContext].includes(t.status!.toString()))));
-  */
-}
-
 const getIilItemEditor = () => 
   <div ref={ref} id={"item_"+iilItem.id} key={"item_"+iilItem.id} data-handler-id={handlerId}>
-    <form
+    <section
           className="item"
           id={"form_"+iilItem.id}
           key={"form_"+iilItem.id}
@@ -176,14 +168,7 @@ const getIilItemEditor = () =>
         {getModalButton(onModalShow, iilItem.id!)}
         {/*<div>{React.cloneElement(this.props.children, {...this.props})}</div>*/}
       </Col>
-      <Col sm={1} className="item_division item_check">
-        <input hidden name={`${iilItem.id}==describe==emoji`} defaultValue={iilItem.describe?.emoji} readOnly />
-        {pageContext === PageContext.List ? 
-          getCheckBox(iilItem, onChangeCheckBox):
-          getEmojiPopup()
-        }
-      </Col>
-      <Col sm={7}>
+      <Col sm={8}>
         <IilCard iil={iilItem} compact={false} />
       </Col>
       <Col sm={2}>
@@ -194,7 +179,7 @@ const getIilItemEditor = () =>
       </Col>
     </Row>
     {getSeperator()}
-    </form>
+    </section>
     </div>
 
   if (pageContext === PageContext.List)

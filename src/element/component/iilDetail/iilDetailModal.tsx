@@ -4,7 +4,7 @@ import { Modal } from "react-bootstrap";
 import { IilControllerApi, IilDto } from "../../../ill-repo-client";
 import { getRandomEmoji } from "../../../util/emojiGenerator";
 import { getBrandNewIil } from "../../model/iilManager";
-import { IilDetailView } from "./iilDetailView";
+import { IilUpdator } from "../iil/updator/iilUpdator";
 
 export interface IilDetailModalProp {
     show: boolean;
@@ -40,7 +40,7 @@ export const IilDetailModal = ({
         <Modal.Header closeButton>
         </Modal.Header>
         <Modal.Body>
-            <IilDetailView iils={iils}
+            <IilUpdator iils={iils}
               selectedIil={ iilItem}
               onIilItemChange={onIilItemChange}
               ownerId={ownerId}

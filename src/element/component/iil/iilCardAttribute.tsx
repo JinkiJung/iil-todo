@@ -4,18 +4,21 @@ import { IilDto } from "../../../ill-repo-client"
 
 export interface IiilCardAttributeProp {
     iil:IilDto;
-    name: string;
+    type: string;
     color: string;
     bgColor: string;
 }
 
-export const IilCardAttribute = ({iil, name, color, bgColor}: IiilCardAttributeProp) => {
+export const IilCardAttribute = ({iil, type, color, bgColor}: IiilCardAttributeProp) => {
+    const type2icon: any = {
+        startIf: "💡",
+        actor: "👤",
+        act: "💪",
+        endIf: "🏁"
+    }
     return <div style={{ width: "100%", height: "100%", backgroundColor: bgColor }}>
-            <div style={{ fontSize: "13px", color: "#666666", padding: "2px"}}>
-                {name}
-            </div>
             <div style={{ fontSize: "16px", color: color, padding: "2px"}}>
-                {(iil as any)[name]}
+                {type2icon[type]} {(iil as any)[type]}
             </div>
         </div>
 }

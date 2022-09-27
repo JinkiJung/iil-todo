@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Accordion, Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { IilDto } from "../../../ill-repo-client";
-import { getRandomEmoji } from "../../../util/emojiGenerator";
-import { getBrandNewIil } from "../../model/iilManager";
-import { getDescribeInput, getInputForAttribute } from "../../util/iilInputs";
-import { getStateSelectMenu } from "../../util/iilStatusSelect";
-import { iilAddButton } from "../../buttons/iilAddButton";
+import { IilDto, NextFlowDto } from "../../../../ill-repo-client";
+import { getRandomEmoji } from "../../../../util/emojiGenerator";
+import { getBrandNewIil } from "../../../model/iilManager";
+import { getDescribeInput, getInputForAttribute } from "../../../util/iilInputs";
+import { getStateSelectMenu } from "../../../util/iilStatusSelect";
+import { iilAddButton } from "../../../buttons/iilAddButton";
 import { AxiosResponse } from "axios";
-import { IilGoalSelector } from "../../util/iilGoalSelector";
-import { IilCardList } from "../iilCard/iilCardList";
+import { IilGoalSelector } from "../../../util/iilGoalSelector";
+import { IilCardList } from "../iilCardList";
+import { NextFlowUpdator } from "../../NextFlow/NextFlowUpdator";
 
-export interface IIilDetailViewProp {
+export interface IIilUpdatorProp {
     iils: IilDto[];
     selectedIil: IilDto;
     onIilItemChange: Function;
@@ -21,7 +22,7 @@ export interface IIilDetailViewProp {
     onReset: (goalId?: string) => void;
 }
 
-export const IilDetailView = ({
+export const IilUpdator = ({
     iils,
     selectedIil,
     onIilItemChange,
@@ -29,7 +30,7 @@ export const IilDetailView = ({
     onSubmit,
     onDelete,
     onReset,
-  }: IIilDetailViewProp) => {
+  }: IIilUpdatorProp) => {
     const goalRef = useRef<any>(null);
     const [ selectedGoal, setSelectedGoal ] = useState<string | undefined>(selectedIil?.goal);
 
@@ -61,7 +62,7 @@ export const IilDetailView = ({
     const submit = (e: any) => {
         e.preventDefault();
         onSubmit(selectedIil).then(async (res: any) => 
-            resetNewIil(ownerId, ownerId))
+            onReset())
           .catch((error: any) => alert(error));
     }
 
@@ -74,7 +75,7 @@ export const IilDetailView = ({
     },[selectedIil]);
 
     return (
-        <Form onSubmit={submit}>
+        <>
         <Row xs="2">
             <Col xs="2">
 
@@ -107,6 +108,7 @@ export const IilDetailView = ({
                 </Card>
             </Col>
             <Col xs="8">
+                <Form onSubmit={submit}>
                 <Card style={{ width: '100%' }}>
                     <Card.Body>
                         <Row style={{padding: '10px'}}>
@@ -237,6 +239,7 @@ export const IilDetailView = ({
                         </Row>
                     </Card.Body>
                 </Card>
+                </Form>
             </Col>
             <Col xs="2">
                 <Card style={{ width: '100%' }}>
@@ -244,7 +247,11 @@ export const IilDetailView = ({
                         Next
                     </Card.Header>
                     <Card.Body>
-                        { iilAddButton() }
+                        <NextFlowUpdator fromId={selectedIil.id!} onSubmit={(data: NextFlowDto) => {}} onDelete={function (id: string): Promise<AxiosResponse<void> | undefined> {
+                            throw new Error("Function not implemented.");
+                        } } onReset={function (): void {
+                            throw new Error("Function not implemented.");
+                        } }  />
                     </Card.Body>
                 </Card>
             </Col>
@@ -274,6 +281,7 @@ export const IilDetailView = ({
                     </Col>
                 </Row>
             }
-        </Form>
+        
+        </>
     );
   }
