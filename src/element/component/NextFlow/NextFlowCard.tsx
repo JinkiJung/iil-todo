@@ -1,27 +1,22 @@
 import React from "react";
-import { Container } from "react-bootstrap";
-import { NextFlowDto } from "../../../ill-repo-client"
+import { Container, Row } from "react-bootstrap";
+import { IilDto, NextFlowDto } from "../../../ill-repo-client"
+import { IilCard } from "../iil/iilCard";
 import { NextFlowCardAttribute } from "./NextFlowCardAttribute";
 
 export interface NextFlowCardProp{
     nextFlow: NextFlowDto;
+    toIil?: IilDto;
 }
 
 export const NextFlowCard = (
-    {nextFlow}: NextFlowCardProp
+    {nextFlow, toIil}: NextFlowCardProp
     ) =>
     <Container className="p-0">
-        {
-            <div className="d-flex">
-                <div>
-                    {nextFlow.condition && <NextFlowCardAttribute nextFlow={nextFlow} type={'condition'} color="#161616" bgColor="#CBD4C2" />}
-                </div>
-                <div>
-                    {nextFlow.input && <NextFlowCardAttribute nextFlow={nextFlow} type={'input'} color="#161616" bgColor="#247BA0" />}
-                </div>
-                <div>
-                    {nextFlow.to && <NextFlowCardAttribute nextFlow={nextFlow} type={'to'} color="#161616" bgColor="#FFFCFF" />}
-                </div>
-            </div>
-        }
+        <Row>
+            {nextFlow.condition && <NextFlowCardAttribute nextFlow={nextFlow} type={'condition'} color="#161616" bgColor="#CBD4C2" />}
+        </Row>
+        <Row>
+            { toIil && <IilCard iil={toIil} compact={true} /> }
+        </Row>
     </Container>

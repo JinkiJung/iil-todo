@@ -4,7 +4,7 @@ import { Button, ButtonGroup, Container, Modal } from "react-bootstrap";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { ConfirmProvider } from "../../hooksComponent/ConfirmContext";
-import { IilControllerApi, IilDto } from "../../ill-repo-client";
+import { IilControllerApi, IilDto, NextFlowControllerApi, NextFlowDto } from "../../ill-repo-client";
 import { PageContext } from "../../type/pageContext";
 import { getRandomEmoji } from "../../util/emojiGenerator";
 import { IilListView } from "./iilListView";
@@ -27,28 +27,30 @@ export const Page = ({
     const [pageContext, setPageContext] = useState<PageContext>(defaultPageContext);
     const [serviceStatus, setServiceStatus] = useState(0);
     const [iils, setIils] = useState<IilDto[]>([]);
+    const [nextFlows, setNextFlows] = useState<NextFlowDto[]>([]);
     const [modalShow, setModalShow] = useState(false);
-    const apiHandler = new IilControllerApi();
+    const iilApiHandler = new IilControllerApi();
+    const nextFlowApiHandler = new NextFlowControllerApi();
     const { iilItem, setIilItem, onIilItemUpdate } = UseIil(getBrandNewIil(getRandomEmoji(),
         ownerId, "", ownerId, "new"));
 
     const onSubmit = async (iilItem: IilDto) => {
         if (validateIil(iilItem)){
             if (iilItem.id === 'new') {
-                const res = await apiHandler.createIil({ ...iilItem, id: undefined });
+                const res = await iilApiHandler.createIil({ ...iilItem, id: undefined });
                 if (res.status === 200) {
                     setIils([...iils, res.data as IilDto]);
                     setModalShow(false);
                 }
                 return res;
             } else {
-                return await apiHandler.updateIil(iilItem, iilItem.id!);
+                return await iilApiHandler.updateIil(iilItem, iilItem.id!);
             }
         }
     }
 
     const onDelete = async (id: string) => {
-        return await apiHandler.deleteIil(id);
+        return await iilApiHandler.deleteIil(id);
     }
 
     const onResetIilItem = (goalId?: string) => {
@@ -57,13 +59,16 @@ export const Page = ({
     }
 
     useEffect(() => {
-        apiHandler.getIils().then((response) => response.data)
+        iilApiHandler.getIils().then((response) => response.data)
         .then((iilsFromBackend: IilDto[]) => {
             setIils(iilsFromBackend);
             setServiceStatus(1);
         })
         .catch((err) => setServiceStatus(-1));
+        nextFlowApiHandler.getNextFlows().then((response) => response.data)
+        .then((nf) => setNextFlows(nf));
     }, [serviceStatus, pageContext, ownerId]);
+    console.log(nextFlows);
     return (
         <div>
         {
@@ -91,19 +96,22 @@ export const Page = ({
                                         iilItem={iilItem}
                                         onIilItemChange={onIilItemUpdate}
                                         iils={iils}
+                                        nextFlows={nextFlows}
                                         ownerId={ownerId}
                                         onSubmit={onSubmit}
                                         onDelete={onDelete}
                                         onReset={onResetIilItem}
+                                        createNextFlowCall={(nextFlow: NextFlowDto) => nextFlowApiHandler.createNextFlow(nextFlow)}
+                                        updateNextFlowCall={(partialNextFlow: NextFlowDto, id: string) => nextFlowApiHandler.updateNextFlow(partialNextFlow, id)}
+                                        deleteNextFlowCall={(id: string) => nextFlowApiHandler.deleteNextFlow(id)}
                                     />
                                     <hr className="dashed"></hr>
                                 </div>
                                 <IilListView 
                                     iils={iils}
-                                    getAllCall={() => apiHandler.getIils()}
-                                    createCall={(iil:IilDto) => apiHandler.createIil(iil)}
-                                    updateCall={(partialIilDto : IilDto, id: string) => apiHandler.updateIil(partialIilDto, id)}
-                                    deleteCall={(id: string) => apiHandler.deleteIil(id)}
+                                    createIilCall={(iil: IilDto) => iilApiHandler.createIil(iil)}
+                                    updateIilCall={(partialIilDto: IilDto, id: string) => iilApiHandler.updateIil(partialIilDto, id)}
+                                    deleteIilCall={(id: string) => iilApiHandler.deleteIil(id)}
                                     ownerId={ownerId} pageContext={pageContext}
                                     onModalShow={(e) => {
                                         const selected = iils.filter(i => i.id === e.currentTarget.id).pop();
@@ -116,12 +124,16 @@ export const Page = ({
                                         show={modalShow}
                                         onHide={() => setModalShow(false)}
                                         iils={iils}
+                                        nextFlows={nextFlows}
                                         iilItem={iilItem}
                                         onIilItemChange={onIilItemUpdate}
                                         ownerId={ownerId}
                                         onSubmit={onSubmit}
                                         onDelete={onDelete}
                                         onReset={onResetIilItem}
+                                        createNextFlowCall={(nextFlow: NextFlowDto) => nextFlowApiHandler.createNextFlow(nextFlow)}
+                                        updateNextFlowCall={(partialNextFlow: NextFlowDto, id: string) => nextFlowApiHandler.updateNextFlow(partialNextFlow, id)}
+                                        deleteNextFlowCall={(id: string) => nextFlowApiHandler.deleteNextFlow(id)}
                                     />
                                 </IilListView>
                             </Container>

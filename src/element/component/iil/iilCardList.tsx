@@ -43,9 +43,11 @@ export const IilCardList = (
             RightArrow={RightArrow}
             onWheel={onWheel}
         >
-            <IilAddCard onAddCard={() => onAddTask(goalIil.id)}/>
+          <IilAddCard onAddCard={() => onAddTask(goalIil.id!)}/>
+            <div className="d-flex">
             {
                 iils.map((iil) => <IilCard key={iil.id} iil={iil} compact={true} />)
             }
+            </div>
           </ScrollMenu>
         </div>}

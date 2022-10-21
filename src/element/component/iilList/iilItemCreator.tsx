@@ -7,7 +7,7 @@ import { getBrandNewIil } from "../../model/iilManager";
 import Picker from "emoji-picker-react";
 import UseIil from "../../../hooksComponent/useIil";
 import { PageContext } from "../../../type/pageContext";
-import { getButtonWithEmoji, getModalButton, renderAddButton } from "../../util/iilButtons";
+import { getButtonWithEmoji, renderAddButton } from "../../util/iilButtons";
 import { validateIil } from "../../util/iilValidator";
 import { Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
@@ -86,9 +86,6 @@ export const IilItemCreator = ({
       >
         <Form>
           <Row xs="auto">
-            <Col xs={1} className="item_division item_dragbtn">
-            {getModalButton(onModalShow, 'new')}
-            </Col>
             <Col xs={1}>
             <input hidden name={`${iilItem.id}==describe==emoji`} defaultValue={iilItem.describe?.emoji} readOnly />
               <Popup

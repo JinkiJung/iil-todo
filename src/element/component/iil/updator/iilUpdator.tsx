@@ -7,33 +7,43 @@ import { getBrandNewIil } from "../../../model/iilManager";
 import { getDescribeInput, getInputForAttribute } from "../../../util/iilInputs";
 import { getStateSelectMenu } from "../../../util/iilStatusSelect";
 import { iilAddButton } from "../../../buttons/iilAddButton";
-import { AxiosResponse } from "axios";
-import { IilGoalSelector } from "../../../util/iilGoalSelector";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
+import { IilSelector } from "../../../util/iilSelector";
 import { IilCardList } from "../iilCardList";
 import { NextFlowUpdator } from "../../NextFlow/NextFlowUpdator";
+import { NextFlowList } from "../../NextFlow/NextFlowList";
 
 export interface IIilUpdatorProp {
     iils: IilDto[];
+    nextFlows: NextFlowDto[];
     selectedIil: IilDto;
     onIilItemChange: Function;
     ownerId: string;
     onSubmit: (iil: IilDto) => Promise<AxiosResponse<IilDto> | undefined>;
     onDelete: (id: string) => Promise<AxiosResponse<void> | undefined>;
     onReset: (goalId?: string) => void;
+    onNextFlowCreate: (body: NextFlowDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
+    onNextFlowUpdate: (body: NextFlowDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
+    onNextFlowDelete: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
 }
 
 export const IilUpdator = ({
     iils,
+    nextFlows,
     selectedIil,
     onIilItemChange,
     ownerId,
     onSubmit,
     onDelete,
     onReset,
+    onNextFlowCreate,
+    onNextFlowUpdate,
+    onNextFlowDelete,
   }: IIilUpdatorProp) => {
     const goalRef = useRef<any>(null);
     const [ selectedGoal, setSelectedGoal ] = useState<string | undefined>(selectedIil?.goal);
-
+    const [previousFlows, setPreviousFlows] = useState<NextFlowDto[]>([]);
+    const [incomingFlows, setIncomingFlows] = useState<NextFlowDto[]>([]);
     const {
       register,
       handleSubmit,
@@ -66,11 +76,23 @@ export const IilUpdator = ({
           .catch((error: any) => alert(error));
     }
 
+    const getPreviousFlows = (): NextFlowDto[] => {
+        return nextFlows.filter(f => f.to === selectedIil.id);
+    }
+
+    const getNextFlows = (): NextFlowDto[] => {
+        return nextFlows.filter(f => f.from === selectedIil.id);
+    }
+
     useEffect(() => {
         if (selectedIil.goal) {
             setSelectedGoal(selectedIil.goal);
         } else {
             goalRef.current.clear();
+        }
+        if (nextFlows) {
+            setIncomingFlows(getNextFlows());
+            setPreviousFlows(getPreviousFlows());
         }
     },[selectedIil]);
 
@@ -86,7 +108,7 @@ export const IilUpdator = ({
                         Goal
                     </Card.Header>
                     <Card.Body>
-                        <IilGoalSelector iils={iils} onGoalChanged={onGoalChanged} goalRef={goalRef} selectedGoal={selectedGoal} />
+                        <IilSelector iils={iils} onIilChange={onGoalChanged} inputRef={goalRef} selectedIilId={selectedGoal} />
                     </Card.Body>
                 </Card>
             </Col>
@@ -247,11 +269,10 @@ export const IilUpdator = ({
                         Next
                     </Card.Header>
                     <Card.Body>
-                        <NextFlowUpdator fromId={selectedIil.id!} onSubmit={(data: NextFlowDto) => {}} onDelete={function (id: string): Promise<AxiosResponse<void> | undefined> {
-                            throw new Error("Function not implemented.");
-                        } } onReset={function (): void {
-                            throw new Error("Function not implemented.");
-                        } }  />
+                        {console.log(nextFlows)}
+                        <NextFlowList nextFlowList={nextFlows.filter(i => i.to === selectedIil.id)} iilList={iils} />
+                        <NextFlowUpdator fromId={selectedIil.id!} iils={iils} 
+                        onSubmit={(data: NextFlowDto) => onNextFlowCreate(data)} onDelete={onNextFlowDelete} onReset={() => {}} />
                     </Card.Body>
                 </Card>
             </Col>

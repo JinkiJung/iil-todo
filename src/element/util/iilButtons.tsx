@@ -82,11 +82,6 @@ export const renderDragButton = (
   );
 };
 
-export const getModalButton = (onClick: MouseEventHandler<HTMLButtonElement>, id: string) => 
-<ButtonGroup className="d-flex">
-  <Button id={id} className="item_btn_draggable" onClick={onClick}>Edit</Button>
-</ButtonGroup>
-
 export const getButtonWithEmoji = (iil: IilDto) => 
 <ButtonGroup className="d-flex">
   <Button>

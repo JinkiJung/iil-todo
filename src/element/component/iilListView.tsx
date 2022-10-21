@@ -4,7 +4,7 @@ import { PageContext } from "../../type/pageContext";
 import UseIilList from "../../hooksComponent/useIilList";
 import { IilItemCreator } from "./iilList/iilItemCreator";
 import { isStatusFitToContext } from "../util/illFilterByContext";
-import { IilDto, IilDtoStatusEnum } from "../../ill-repo-client";
+import { IilDto, IilDtoStatusEnum, NextFlowDto } from "../../ill-repo-client";
 import { getRandomEmoji } from "../../util/emojiGenerator";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IilItemUpdator } from "./iilList/iilItemUpdator";
@@ -14,10 +14,9 @@ export interface IIilListViewProp {
   iils: IilDto[];
   ownerId: string;
   pageContext: PageContext;
-  getAllCall: () => Promise<AxiosResponse<IilDto[]>>;
-  createCall: (body: IilDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
-  updateCall: (body: IilDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
-  deleteCall: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
+  createIilCall: (body: IilDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
+  updateIilCall: (body: IilDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
+  deleteIilCall: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
   onModalShow: MouseEventHandler<HTMLButtonElement>;
   children: any;
   onLogOut?: MouseEventHandler<HTMLButtonElement>;
@@ -27,10 +26,9 @@ export const IilListView = ({
   iils,
   ownerId,
   pageContext,
-  getAllCall,
-  createCall,
-  updateCall,
-  deleteCall,
+  createIilCall,
+  updateIilCall,
+  deleteIilCall,
   onModalShow,
   onLogOut,
 }: IIilListViewProp) => {
@@ -78,7 +76,7 @@ export const IilListView = ({
 
   const provideIilItemCreator = () => {
     return <IilItemCreator iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext}
-              createCall={createCall}
+              createCall={createIilCall}
               ownerId={ownerId} givenIil={newIil}
               onModalShow={onModalShow}
             />;
@@ -97,8 +95,8 @@ export const IilListView = ({
             iilList={iilList}
             onIilListChange={onIilListChange}
             pageContext={pageContext}
-            updateCall={updateCall}
-            deleteCall={deleteCall}
+            updateCall={updateIilCall}
+            deleteCall={deleteIilCall}
             onModalShow={onModalShow}
           /> :
           <div key={index}></div>

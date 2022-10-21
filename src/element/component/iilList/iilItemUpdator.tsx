@@ -12,7 +12,7 @@ import { IOperationParam } from "../../model/operationParam";
 import UseIil from "../../../hooksComponent/useIil";
 import { validateIil } from "../../util/iilValidator";
 import { ItemTypes } from "../../model/itemType";
-import { getButtonWithEmoji, getModalButton, renderDeleteButton } from "../../util/iilButtons";
+import { getButtonWithEmoji, renderDeleteButton } from "../../util/iilButtons";
 import { getStateSelectMenu } from "../../util/iilStatusSelect";
 import { IilCard } from "../iil/iilCard";
 
@@ -164,12 +164,8 @@ const getIilItemEditor = () =>
           onBlur={handleBlur}
         >
     <Row>
-      <Col sm={1} className="item_division item_dragbtn">
-        {getModalButton(onModalShow, iilItem.id!)}
-        {/*<div>{React.cloneElement(this.props.children, {...this.props})}</div>*/}
-      </Col>
-      <Col sm={8}>
-        <IilCard iil={iilItem} compact={false} />
+      <Col sm={9}>
+        <IilCard iil={iilItem} compact={false} onModalShow={onModalShow}/>
       </Col>
       <Col sm={2}>
         {getStateSelectMenu( iilItem, updateIilStatus)}
