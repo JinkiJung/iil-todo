@@ -11,10 +11,10 @@ export interface IiilCardAttributeProp {
 
 export const IilCardAttribute = ({iil, type, color, bgColor}: IiilCardAttributeProp) => {
     const type2icon: any = {
-        startIf: "💡",
+        activateIf: "💡",
         actor: "👤",
         act: "💪",
-        endIf: "🏁"
+        finishIf: "🏁"
     }
     return <div style={{ width: "100%", height: "100%", backgroundColor: bgColor }}>
             <div style={{ fontSize: "16px", color: color, padding: "2px"}}>

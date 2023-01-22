@@ -116,7 +116,7 @@ export const IilItemCreator = ({
             }
             </Col>
             <Col xs={2}>
-            {getInputForAttribute(iilItem, 'endIf', onIilItemUpdate, register, handleEnterKey)}
+            {getInputForAttribute(iilItem, 'finishIf', onIilItemUpdate, register, handleEnterKey)}
             </Col>
             <Col xs={2}>
             {renderAddButton(iilItem, isDirty, createIil)}

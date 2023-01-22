@@ -26,10 +26,28 @@ export interface IilDto {
     id?: string;
     /**
      * 
-     * @type {{ [key: string]: string; }}
+     * @type {string}
      * @memberof IilDto
      */
-    describe?: { [key: string]: string; };
+    namespace?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof IilDto
+     */
+    version?: string;
+    /**
+     * 
+     * @type {{ [key: string]: any; }}
+     * @memberof IilDto
+     */
+    help?: { [key: string]: any; };
+    /**
+     * 
+     * @type {{ [key: string]: any; }}
+     * @memberof IilDto
+     */
+    about?: { [key: string]: any; };
     /**
      * 
      * @type {string}
@@ -47,13 +65,7 @@ export interface IilDto {
      * @type {string}
      * @memberof IilDto
      */
-    namespace?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof IilDto
-     */
-    startIf?: string;
+    activateIf?: string;
     /**
      * 
      * @type {string}
@@ -71,7 +83,7 @@ export interface IilDto {
      * @type {string}
      * @memberof IilDto
      */
-    endIf?: string;
+    finishIf?: string;
     /**
      * 
      * @type {string}
@@ -83,25 +95,25 @@ export interface IilDto {
      * @type {string}
      * @memberof IilDto
      */
+    creator?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof IilDto
+     */
     owner?: string;
     /**
      * 
      * @type {string}
      * @memberof IilDto
      */
-    status?: IilDtoStatusEnum;
+    state?: IilDtoStateEnum;
     /**
      * 
      * @type {Date}
      * @memberof IilDto
      */
-    createdAt?: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof IilDto
-     */
-    lastUpdatedAt?: Date;
+    updatedAt?: Date;
     /**
      * 
      * @type {Array<NextFlowDto>}
@@ -114,12 +126,12 @@ export interface IilDto {
     * @export
     * @enum {string}
     */
-export enum IilDtoStatusEnum {
-    NOTSTARTED = 'NOTSTARTED',
+export enum IilDtoStateEnum {
+    NOTACTIVATED = 'NOTACTIVATED',
     ACTIVE = 'ACTIVE',
     FOCUSED = 'FOCUSED',
     PENDING = 'PENDING',
-    DONE = 'DONE',
+    FINISHED = 'FINISHED',
     ACHIEVED = 'ACHIEVED'
 }
 

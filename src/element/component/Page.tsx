@@ -68,7 +68,6 @@ export const Page = ({
         nextFlowApiHandler.getNextFlows().then((response) => response.data)
         .then((nf) => setNextFlows(nf));
     }, [serviceStatus, pageContext, ownerId]);
-    console.log(nextFlows);
     return (
         <div>
         {

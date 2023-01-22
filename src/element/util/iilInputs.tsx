@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form } from "react-bootstrap";
 import { IilDto } from '../../ill-repo-client';
 import { getValuesFromInputElement } from "./elemToIil";
-import { iilDescribeInput } from './iilDescribeInput';
+import { iilAboutInput } from './iilAboutInput';
 
 export interface IIndexable {
   [key: string]: any;
@@ -40,8 +40,8 @@ export const getInputForAttribute = (iil: IilDto,
     handleEnterKey,
   );
 
-export const getDescribeInput = (iil: IilDto,
+export const getAboutInput = (iil: IilDto,
   onIilItemChange: Function,
   register: Function,
   handleEnterKey: Function,) =>
-  iilDescribeInput('emoji', '', iil.describe!, onIilItemChange, register, handleEnterKey);
+  iilAboutInput('emoji', '', iil.about!, onIilItemChange, register, handleEnterKey);

@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { IilDto, NextFlowDto } from "../../../../ill-repo-client";
 import { getRandomEmoji } from "../../../../util/emojiGenerator";
 import { getBrandNewIil } from "../../../model/iilManager";
-import { getDescribeInput, getInputForAttribute } from "../../../util/iilInputs";
-import { getStateSelectMenu } from "../../../util/iilStatusSelect";
+import { getAboutInput, getInputForAttribute } from "../../../util/iilInputs";
+import { getStateSelectMenu } from "../../../util/iilStateSelect";
 import { iilAddButton } from "../../../buttons/iilAddButton";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IilSelector } from "../../../util/iilSelector";
@@ -141,7 +141,7 @@ export const IilUpdator = ({
                                             Start if
                                         </Col>
                                         <Col xs={10}>
-                                        { getInputForAttribute(selectedIil, 'startIf', onIilItemChange, register, handleEnterKey) }
+                                        { getInputForAttribute(selectedIil, 'activateIf', onIilItemChange, register, handleEnterKey) }
                                         </Col>
                                     </Row>
                                     <Row xs="auto">
@@ -182,10 +182,10 @@ export const IilUpdator = ({
                                 <Card>
                                     <Row xs="auto">
                                         <Col xs={2} className="align-self-center">
-                                            End if
+                                            Finish if
                                         </Col>
                                         <Col xs={10}>
-                                        { getInputForAttribute(selectedIil, 'endIf', onIilItemChange, register, handleEnterKey) }
+                                        { getInputForAttribute(selectedIil, 'finishIf', onIilItemChange, register, handleEnterKey) }
                                         </Col>
                                     </Row>
                                     <Row xs="auto">
@@ -215,11 +215,11 @@ export const IilUpdator = ({
                                         </Row>
                                         <Row xs="auto">
                                             <Col xs={2} className="align-self-center">
-                                                Describe
+                                                About
                                             </Col>
                                             <Col xs={10}>
                                             {
-                                                getDescribeInput(selectedIil, onIilItemChange, register, handleEnterKey)
+                                                getAboutInput(selectedIil, onIilItemChange, register, handleEnterKey)
                                             }
                                             </Col>
                                         </Row>

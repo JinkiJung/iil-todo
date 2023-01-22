@@ -85,6 +85,6 @@ export const renderDragButton = (
 export const getButtonWithEmoji = (iil: IilDto) => 
 <ButtonGroup className="d-flex">
   <Button>
-  {iil.describe?.emoji ? iil.describe?.emoji : ''}
+  {iil.about?.emoji ? iil.about?.emoji : ''}
   </Button>
 </ButtonGroup>

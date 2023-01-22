@@ -5,7 +5,7 @@ import Picker from "emoji-picker-react";
 import { useDrag, useDrop } from "react-dnd";
 import { Col, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { IilDto, IilDtoStatusEnum } from "../../../ill-repo-client";
+import { IilDto, IilDtoStateEnum } from "../../../ill-repo-client";
 import { PageContext } from "../../../type/pageContext";
 import { OperationContext } from "../../../App";
 import { IOperationParam } from "../../model/operationParam";
@@ -13,7 +13,7 @@ import UseIil from "../../../hooksComponent/useIil";
 import { validateIil } from "../../util/iilValidator";
 import { ItemTypes } from "../../model/itemType";
 import { getButtonWithEmoji, renderDeleteButton } from "../../util/iilButtons";
-import { getStateSelectMenu } from "../../util/iilStatusSelect";
+import { getStateSelectMenu } from "../../util/iilStateSelect";
 import { IilCard } from "../iil/iilCard";
 
 interface IIilItemUpdatorProp {
@@ -123,7 +123,7 @@ export const IilItemUpdator = ({
 
 const getCheckBox = (iil: IilDto, onChangeCheckBox: Function) =>
 <Checkbox
-  checked={iil.status === IilDtoStatusEnum.DONE}
+  checked={iil.state === IilDtoStateEnum.FINISHED}
   onChange={(e) => onChangeCheckBox(iil)}
   name={`${iil.id}==status==checkbox`}
   color="primary"

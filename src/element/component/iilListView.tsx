@@ -4,7 +4,7 @@ import { PageContext } from "../../type/pageContext";
 import UseIilList from "../../hooksComponent/useIilList";
 import { IilItemCreator } from "./iilList/iilItemCreator";
 import { isStatusFitToContext } from "../util/illFilterByContext";
-import { IilDto, IilDtoStatusEnum, NextFlowDto } from "../../ill-repo-client";
+import { IilDto, IilDtoStateEnum, NextFlowDto } from "../../ill-repo-client";
 import { getRandomEmoji } from "../../util/emojiGenerator";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IilItemUpdator } from "./iilList/iilItemUpdator";
@@ -89,7 +89,7 @@ export const IilListView = ({
         iilList.map((iil: IilDto, index) => 
         pageContext === PageContext.List ||
         (pageContext === PageContext.FocusedList &&
-        iil.status === IilDtoStatusEnum.FOCUSED) ?
+        iil.state === IilDtoStateEnum.FOCUSED) ?
           <IilItemUpdator key={index} givenIil={iil} 
             onIilListElemChange={onIilListElemChange}
             iilList={iilList}

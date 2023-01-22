@@ -17,7 +17,7 @@ export const IilCard = (
                 !compact?
                 <div className="d-flex">
                     <div>
-                        {iil.startIf && <IilCardAttribute iil={iil} type={'startIf'} color="#161616" bgColor="#FFFFFF" />}
+                        {iil.activateIf && <IilCardAttribute iil={iil} type={'activateIf'} color="#161616" bgColor="#FFFFFF" />}
                     </div>
                     <div>
                         {iil.actor && <IilCardAttribute iil={iil} type={'actor'} color="#161616" bgColor="#FFFFFF" />}
@@ -26,7 +26,7 @@ export const IilCard = (
                         {iil.act && <IilCardAttribute iil={iil} type={'act'} color="#161616" bgColor="#FFFFFF" />}
                     </div>
                     <div>
-                        {iil.endIf && <IilCardAttribute iil={iil} type={'endIf'} color="#161616" bgColor="#FFFFFF" />}
+                        {iil.finishIf && <IilCardAttribute iil={iil} type={'finishIf'} color="#161616" bgColor="#FFFFFF" />}
                     </div>
                 </div> :
                 <div role="button"
@@ -40,10 +40,10 @@ export const IilCard = (
                     }}
                     tabIndex={0}
                 className="card">
-                    <div>{iil.startIf && <IilCardAttribute iil={iil} type={'startIf'} color="#161616" bgColor="#FFFFFF" />}</div>
+                    <div>{iil.activateIf && <IilCardAttribute iil={iil} type={'activateIf'} color="#161616" bgColor="#FFFFFF" />}</div>
                     <div>{iil.actor && <IilCardAttribute iil={iil} type={'actor'} color="#161616" bgColor="#FFFFFF" />}</div>
                     <div>{iil.act && <IilCardAttribute iil={iil} type={'act'} color="161616" bgColor="#FFFFFF" />}</div>
-                    <div>{iil.endIf && <IilCardAttribute iil={iil} type={'endIf'} color="#161616" bgColor="#FFFFFF" />}</div>
+                    <div>{iil.finishIf && <IilCardAttribute iil={iil} type={'finishIf'} color="#161616" bgColor="#FFFFFF" />}</div>
                 </div>
             }
     </Container>

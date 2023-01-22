@@ -1,4 +1,4 @@
-import { IilDtoStatusEnum } from "../ill-repo-client";
+import { IilDtoStateEnum } from "../ill-repo-client";
 
 export enum PageContext {
     Graph = 0,
@@ -8,6 +8,6 @@ export enum PageContext {
 
 export const contextMapping: { [id: number] : string[]; } = {};
 // context for editing
-contextMapping[PageContext.Graph] = [IilDtoStatusEnum.NOTSTARTED, IilDtoStatusEnum.ACTIVE, IilDtoStatusEnum.FOCUSED, IilDtoStatusEnum.PENDING];
-contextMapping[PageContext.FocusedList] = [IilDtoStatusEnum.FOCUSED];
-contextMapping[PageContext.List] = [IilDtoStatusEnum.NOTSTARTED, IilDtoStatusEnum.ACTIVE, IilDtoStatusEnum.FOCUSED, IilDtoStatusEnum.PENDING, IilDtoStatusEnum.DONE, IilDtoStatusEnum.ACHIEVED ];
+contextMapping[PageContext.Graph] = [IilDtoStateEnum.NOTACTIVATED, IilDtoStateEnum.ACTIVE, IilDtoStateEnum.FOCUSED, IilDtoStateEnum.PENDING];
+contextMapping[PageContext.FocusedList] = [IilDtoStateEnum.FOCUSED];
+contextMapping[PageContext.List] = [IilDtoStateEnum.NOTACTIVATED, IilDtoStateEnum.ACTIVE, IilDtoStateEnum.FOCUSED, IilDtoStateEnum.PENDING, IilDtoStateEnum.FINISHED, IilDtoStateEnum.ACHIEVED ];

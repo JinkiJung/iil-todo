@@ -1,4 +1,4 @@
-import { IilDto, IilDtoStatusEnum } from '../../ill-repo-client';
+import { IilDto, IilDtoStateEnum } from '../../ill-repo-client';
 
 export const getBrandNewIil = (
     emoji: string,
@@ -7,20 +7,20 @@ export const getBrandNewIil = (
     ownerId: string,
     id?: string,
     goal?: string,
-    startIf?: string,
-    endIf?: string,
+    activateIf?: string,
+    finishIf?: string,
     input?: string,
     output?: string,
   ): IilDto => {
     return {
       id,
       goal,
-      describe: {'emoji': emoji},
-      startIf,
-      endIf,
+      about: {'emoji': emoji},
+      activateIf,
+      finishIf,
       actor,
       act,
-      status: IilDtoStatusEnum.NOTSTARTED,
+      state: IilDtoStateEnum.NOTACTIVATED,
       owner: ownerId,
       input,
       output,
