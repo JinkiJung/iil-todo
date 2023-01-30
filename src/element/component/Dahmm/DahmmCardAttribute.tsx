@@ -1,14 +1,14 @@
 import React from "react";
-import { NextFlowDto } from "../../../ill-repo-client"
+import { DahmmDto } from "../../../ill-repo-client/models/dahmm-dto";
 
-export interface NextFlowCardAttributeProp{
-    nextFlow: NextFlowDto;
+export interface DahmmCardAttributeProp{
+    nextFlow: DahmmDto;
     type: string;
     color: string;
     bgColor: string;
 }
 
-export const NextFlowCardAttribute = ({nextFlow, type, color, bgColor}: NextFlowCardAttributeProp) => {
+export const DahmmCardAttribute = ({nextFlow, type, color, bgColor}: DahmmCardAttributeProp) => {
     const type2icon: any = {
         condition: "?",
         from: "from",

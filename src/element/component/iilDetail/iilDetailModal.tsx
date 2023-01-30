@@ -1,9 +1,8 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import React from "react";
 import { Modal } from "react-bootstrap";
-import { IilControllerApi, IilDto, NextFlowDto } from "../../../ill-repo-client";
-import { getRandomEmoji } from "../../../util/emojiGenerator";
-import { getBrandNewIil } from "../../model/iilManager";
+import { IilControllerApi, IilDto } from "../../../ill-repo-client";
+import { DahmmDto } from "../../../ill-repo-client/models/dahmm-dto";
 import { IilUpdator } from "../iil/updator/iilUpdator";
 
 export interface IilDetailModalProp {
@@ -11,21 +10,21 @@ export interface IilDetailModalProp {
   onHide: () => void;
   iilItem: IilDto;
   onIilItemChange: Function;
-  iils: IilDto[];
-  nextFlows: NextFlowDto[];
+  iilList: IilDto[];
+  nextFlows: DahmmDto[];
   ownerId: string;
   onSubmit: (iil: IilDto) => Promise<AxiosResponse<IilDto> | undefined>;
   onDelete: (id: string) => Promise<AxiosResponse<void> | undefined>;
   onReset: (goalId?: string) => void;
-  createNextFlowCall: (body: NextFlowDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<NextFlowDto>>;
-  updateNextFlowCall: (body: NextFlowDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<NextFlowDto>>;
-  deleteNextFlowCall: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
+  createDahmmCall: (body: DahmmDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<DahmmDto>>;
+  updateDahmmCall: (body: DahmmDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<DahmmDto>>;
+  deleteDahmmCall: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
 }
 
 export const IilDetailModal = ({
   show,
   onHide,
-  iils,
+  iilList,
   nextFlows,
   ownerId,
   iilItem,
@@ -33,9 +32,9 @@ export const IilDetailModal = ({
   onSubmit,
   onDelete,
   onReset,
-  createNextFlowCall,
-  updateNextFlowCall,
-  deleteNextFlowCall,
+  createDahmmCall,
+  updateDahmmCall,
+  deleteDahmmCall,
 }: IilDetailModalProp ) => {
     return (
       <Modal
@@ -48,7 +47,7 @@ export const IilDetailModal = ({
         <Modal.Header closeButton>
         </Modal.Header>
         <Modal.Body>
-            <IilUpdator iils={iils}
+            <IilUpdator iilList={iilList}
               nextFlows={nextFlows}
               selectedIil={ iilItem}
               onIilItemChange={onIilItemChange}
@@ -56,9 +55,9 @@ export const IilDetailModal = ({
               onSubmit={onSubmit}
               onDelete={onDelete}
               onReset={onReset}
-              onNextFlowCreate={createNextFlowCall}
-              onNextFlowUpdate={updateNextFlowCall}
-              onNextFlowDelete={deleteNextFlowCall}
+              onDahmmCreate={createDahmmCall}
+              onDahmmUpdate={updateDahmmCall}
+              onDahmmDelete={deleteDahmmCall}
               />
         </Modal.Body>
       </Modal>

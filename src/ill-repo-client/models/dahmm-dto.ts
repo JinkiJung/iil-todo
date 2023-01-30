@@ -14,61 +14,67 @@
 /**
  * 
  * @export
- * @interface NextFlowDto
+ * @interface DahmmDto
  */
-export interface NextFlowDto {
+export interface DahmmDto {
     /**
      * 
      * @type {string}
-     * @memberof NextFlowDto
+     * @memberof DahmmDto
      */
     id?: string;
     /**
      * 
-     * @type {{ [key: string]: string; }}
-     * @memberof NextFlowDto
+     * @type {{ [key: string]: any; }}
+     * @memberof DahmmDto
      */
-    describe?: { [key: string]: string; };
+    about?: { [key: string]: any; };
     /**
      * 
      * @type {string}
-     * @memberof NextFlowDto
+     * @memberof DahmmDto
+     */
+    version?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof DahmmDto
      */
     namespace?: string;
     /**
      * 
      * @type {string}
-     * @memberof NextFlowDto
+     * @memberof DahmmDto
      */
     input?: string;
     /**
      * 
      * @type {string}
-     * @memberof NextFlowDto
+     * @memberof DahmmDto
      */
     condition?: string;
     /**
      * 
      * @type {string}
-     * @memberof NextFlowDto
+     * @memberof DahmmDto
      */
-    creator?: string;
+    maintainer?: string;
     /**
      * 
      * @type {string}
-     * @memberof NextFlowDto
+     * @memberof DahmmDto
      */
     owner?: string;
     /**
      * 
      * @type {string}
-     * @memberof NextFlowDto
+     * @memberof DahmmDto
      */
-    from?: string;
+    iilFrom?: string;
     /**
      * 
      * @type {string}
-     * @memberof NextFlowDto
+     * @memberof DahmmDto
      */
-    to?: string;
+    iilTo?: string;
 }

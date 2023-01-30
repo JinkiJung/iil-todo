@@ -11,7 +11,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { NextFlowDto } from './next-flow-dto';
+import { DahmmDto } from './dahmm-dto';
 /**
  * 
  * @export
@@ -95,7 +95,7 @@ export interface IilDto {
      * @type {string}
      * @memberof IilDto
      */
-    creator?: string;
+    maintainer?: string;
     /**
      * 
      * @type {string}
@@ -116,10 +116,10 @@ export interface IilDto {
     updatedAt?: Date;
     /**
      * 
-     * @type {Array<NextFlowDto>}
+     * @type {Array<DahmmDto>}
      * @memberof IilDto
      */
-    next?: Array<NextFlowDto>;
+    dahmm?: Array<DahmmDto>;
 }
 
 /**

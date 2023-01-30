@@ -4,15 +4,16 @@ import { Button, ButtonGroup, Container, Modal } from "react-bootstrap";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { ConfirmProvider } from "../../hooksComponent/ConfirmContext";
-import { IilControllerApi, IilDto, NextFlowControllerApi, NextFlowDto } from "../../ill-repo-client";
+import { DahmmControllerApi, IilControllerApi, IilDto, } from "../../ill-repo-client";
 import { PageContext } from "../../type/pageContext";
-import { getRandomEmoji } from "../../util/emojiGenerator";
 import { IilListView } from "./iilListView";
 import { getBrandNewIil } from "../model/iilManager";
 import { PageHeader } from "./PageHeader";
 import { IilDetailModal } from "./iilDetail/iilDetailModal";
 import UseIil from "../../hooksComponent/useIil";
 import { validateIil } from "../util/iilValidator";
+import { DahmmDto } from "../../ill-repo-client/models/dahmm-dto";
+import UseIilList from "../../hooksComponent/useIilList";
 
 const defaultPageContext = PageContext.List;
 export interface IPageProp {
@@ -26,20 +27,20 @@ export const Page = ({
 }: IPageProp) => {
     const [pageContext, setPageContext] = useState<PageContext>(defaultPageContext);
     const [serviceStatus, setServiceStatus] = useState(0);
-    const [iils, setIils] = useState<IilDto[]>([]);
-    const [nextFlows, setNextFlows] = useState<NextFlowDto[]>([]);
+    const [nextFlows, setDahmms] = useState<DahmmDto[]>([]);
     const [modalShow, setModalShow] = useState(false);
     const iilApiHandler = new IilControllerApi();
-    const nextFlowApiHandler = new NextFlowControllerApi();
-    const { iilItem, setIilItem, onIilItemUpdate } = UseIil(getBrandNewIil(getRandomEmoji(),
-        ownerId, "", ownerId, "new"));
+    const nextFlowApiHandler = new DahmmControllerApi();
+    const { iilList, onIilListChange, onIilListElemChange } = UseIilList([]);
+    const { iilItem, setIilItem, onIilItemUpdate } = UseIil(getBrandNewIil(ownerId, "", ownerId, "new"));
 
     const onSubmit = async (iilItem: IilDto) => {
         if (validateIil(iilItem)){
             if (iilItem.id === 'new') {
                 const res = await iilApiHandler.createIil({ ...iilItem, id: undefined });
                 if (res.status === 200) {
-                    setIils([...iils, res.data as IilDto]);
+                    //onIilListElemChange(res.data as IilDto);
+                    onIilListChange([...iilList, res.data as IilDto]);
                     setModalShow(false);
                 }
                 return res;
@@ -54,19 +55,18 @@ export const Page = ({
     }
 
     const onResetIilItem = (goalId?: string) => {
-        setIilItem(getBrandNewIil(getRandomEmoji(),
-            ownerId, "", ownerId, "new", goalId!));
+        setIilItem(getBrandNewIil(ownerId, "", ownerId, "new", goalId!));
     }
 
     useEffect(() => {
         iilApiHandler.getIils().then((response) => response.data)
         .then((iilsFromBackend: IilDto[]) => {
-            setIils(iilsFromBackend);
+            onIilListChange(iilsFromBackend);
             setServiceStatus(1);
         })
         .catch((err) => setServiceStatus(-1));
-        nextFlowApiHandler.getNextFlows().then((response) => response.data)
-        .then((nf) => setNextFlows(nf));
+        nextFlowApiHandler.getDahmms().then((response) => response.data)
+        .then((nf) => setDahmms(nf));
     }, [serviceStatus, pageContext, ownerId]);
     return (
         <div>
@@ -81,8 +81,7 @@ export const Page = ({
                                 <div className="item">
                                     <ButtonGroup className="d-flex">
                                         <Button variant="primary" onClick={() => {
-                                            setIilItem(getBrandNewIil(getRandomEmoji(),
-                                                ownerId, "", ownerId, "new"));
+                                            setIilItem(getBrandNewIil(ownerId, "", ownerId, "new"));
                                             setModalShow(true);
                                             }}>
                                             Add new
@@ -94,26 +93,28 @@ export const Page = ({
                                         onHide={() => setModalShow(false)}
                                         iilItem={iilItem}
                                         onIilItemChange={onIilItemUpdate}
-                                        iils={iils}
+                                        iilList={iilList}
                                         nextFlows={nextFlows}
                                         ownerId={ownerId}
                                         onSubmit={onSubmit}
                                         onDelete={onDelete}
                                         onReset={onResetIilItem}
-                                        createNextFlowCall={(nextFlow: NextFlowDto) => nextFlowApiHandler.createNextFlow(nextFlow)}
-                                        updateNextFlowCall={(partialNextFlow: NextFlowDto, id: string) => nextFlowApiHandler.updateNextFlow(partialNextFlow, id)}
-                                        deleteNextFlowCall={(id: string) => nextFlowApiHandler.deleteNextFlow(id)}
+                                        createDahmmCall={(nextFlow: DahmmDto) => nextFlowApiHandler.createDahmm(nextFlow)}
+                                        updateDahmmCall={(partialDahmm: DahmmDto, id: string) => nextFlowApiHandler.updateDahmm(partialDahmm, id)}
+                                        deleteDahmmCall={(id: string) => nextFlowApiHandler.deleteDahmm(id)}
                                     />
                                     <hr className="dashed"></hr>
                                 </div>
                                 <IilListView 
-                                    iils={iils}
+                                    iilList={iilList}
+                                    onIilListChange={onIilListChange}
+                                    onIilListElemChange={onIilListElemChange}
                                     createIilCall={(iil: IilDto) => iilApiHandler.createIil(iil)}
                                     updateIilCall={(partialIilDto: IilDto, id: string) => iilApiHandler.updateIil(partialIilDto, id)}
                                     deleteIilCall={(id: string) => iilApiHandler.deleteIil(id)}
                                     ownerId={ownerId} pageContext={pageContext}
                                     onModalShow={(e) => {
-                                        const selected = iils.filter(i => i.id === e.currentTarget.id).pop();
+                                        const selected = iilList.filter(i => i.id === e.currentTarget.id).pop();
                                         if (selected) {
                                             setIilItem(selected)
                                             setModalShow(true);
@@ -122,7 +123,7 @@ export const Page = ({
                                     <IilDetailModal
                                         show={modalShow}
                                         onHide={() => setModalShow(false)}
-                                        iils={iils}
+                                        iilList={iilList}
                                         nextFlows={nextFlows}
                                         iilItem={iilItem}
                                         onIilItemChange={onIilItemUpdate}
@@ -130,9 +131,9 @@ export const Page = ({
                                         onSubmit={onSubmit}
                                         onDelete={onDelete}
                                         onReset={onResetIilItem}
-                                        createNextFlowCall={(nextFlow: NextFlowDto) => nextFlowApiHandler.createNextFlow(nextFlow)}
-                                        updateNextFlowCall={(partialNextFlow: NextFlowDto, id: string) => nextFlowApiHandler.updateNextFlow(partialNextFlow, id)}
-                                        deleteNextFlowCall={(id: string) => nextFlowApiHandler.deleteNextFlow(id)}
+                                        createDahmmCall={(nextFlow: DahmmDto) => nextFlowApiHandler.createDahmm(nextFlow)}
+                                        updateDahmmCall={(partialDahmm: DahmmDto, id: string) => nextFlowApiHandler.updateDahmm(partialDahmm, id)}
+                                        deleteDahmmCall={(id: string) => nextFlowApiHandler.deleteDahmm(id)}
                                     />
                                 </IilListView>
                             </Container>

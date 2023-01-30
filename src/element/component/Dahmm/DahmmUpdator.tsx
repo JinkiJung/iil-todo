@@ -2,18 +2,19 @@ import { AxiosResponse } from "axios";
 import React, { useEffect, useRef, useState } from "react"
 import { Button, ButtonGroup, Form } from "react-bootstrap"
 import { Controller, useForm } from "react-hook-form";
-import { IilDto, NextFlowDto } from "../../../ill-repo-client";
+import { IilDto } from "../../../ill-repo-client";
+import { DahmmDto } from "../../../ill-repo-client/models/dahmm-dto";
 import { IilSelector } from "../../util/iilSelector";
 
-export interface NextFlowUpdatorProp{
+export interface DahmmUpdatorProp{
     fromId: string;
     iils: IilDto[];
-    onSubmit: (nextFlow: NextFlowDto) => void;//Promise<AxiosResponse<NextFlowDto> | undefined>;
+    onSubmit: (nextFlow: DahmmDto) => void;//Promise<AxiosResponse<DahmmDto> | undefined>;
     onDelete: (id: string) => void; //Promise<AxiosResponse<void> | undefined>;
     onReset: () => void;
 }
 
-export const NextFlowUpdator = ({fromId, iils, onSubmit, onDelete, onReset}: NextFlowUpdatorProp) => {
+export const DahmmUpdator = ({fromId, iils, onSubmit, onDelete, onReset}: DahmmUpdatorProp) => {
     const { control, register, handleSubmit, setValue, formState: { errors } } = useForm();
     const toRef = useRef<any>(null);
     const [ selectedTo, setSelectedTo ] = useState<string | undefined>("");

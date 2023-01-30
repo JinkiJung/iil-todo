@@ -1,7 +1,6 @@
 import { IilDto, IilDtoStateEnum } from '../../ill-repo-client';
 
 export const getBrandNewIil = (
-    emoji: string,
     actor: string,
     act: string,
     ownerId: string,
@@ -15,7 +14,7 @@ export const getBrandNewIil = (
     return {
       id,
       goal,
-      about: {'emoji': emoji},
+      about: {},
       activateIf,
       finishIf,
       actor,

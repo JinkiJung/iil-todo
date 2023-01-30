@@ -2,18 +2,18 @@ import React, { MouseEventHandler, ReactElement, useEffect, useState } from "rea
 import { getBrandNewIil } from "../model/iilManager";
 import { PageContext } from "../../type/pageContext";
 import UseIilList from "../../hooksComponent/useIilList";
-import { IilItemCreator } from "./iilList/iilItemCreator";
 import { isStatusFitToContext } from "../util/illFilterByContext";
-import { IilDto, IilDtoStateEnum, NextFlowDto } from "../../ill-repo-client";
-import { getRandomEmoji } from "../../util/emojiGenerator";
+import { IilDto, IilDtoStateEnum } from "../../ill-repo-client";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IilItemUpdator } from "./iilList/iilItemUpdator";
 import { IilDetailModal } from "./iilDetail/iilDetailModal";
 
 export interface IIilListViewProp {
-  iils: IilDto[];
+  iilList: IilDto[];
   ownerId: string;
   pageContext: PageContext;
+  onIilListChange: Function;
+  onIilListElemChange: Function;
   createIilCall: (body: IilDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
   updateIilCall: (body: IilDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
   deleteIilCall: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
@@ -23,18 +23,19 @@ export interface IIilListViewProp {
 }
 
 export const IilListView = ({
-  iils,
+  iilList,
   ownerId,
   pageContext,
+  onIilListChange,
+  onIilListElemChange,
   createIilCall,
   updateIilCall,
   deleteIilCall,
   onModalShow,
   onLogOut,
 }: IIilListViewProp) => {
-  const { iilList, onIilListChange, onIilListElemChange } = UseIilList(iils);
-  const [newIil, setNewIil] = useState<IilDto>(getBrandNewIil(getRandomEmoji(), ownerId, "", ownerId, "new"));
-
+  const [newIil, setNewIil] = useState<IilDto>(getBrandNewIil(ownerId, "", ownerId, "new"));
+  
   const removeAllFocused = async (piilList: IilDto[]) => {
     /*
     return await callUpdateBatchAPI(url, ownerId, piilList)
@@ -74,17 +75,8 @@ export const IilListView = ({
   }
   */
 
-  const provideIilItemCreator = () => {
-    return <IilItemCreator iilList={iilList} onIilListChange={onIilListChange} pageContext={pageContext}
-              createCall={createIilCall}
-              ownerId={ownerId} givenIil={newIil}
-              onModalShow={onModalShow}
-            />;
-  }
-
   return (
     <>
-      {/*pageContext === PageContext.List ? provideIilItemCreator() : <></>*/}
       {(pageContext === PageContext.List || pageContext === PageContext.FocusedList) &&
         iilList.map((iil: IilDto, index) => 
         pageContext === PageContext.List ||

@@ -1,5 +1,5 @@
 import { Checkbox } from "@material-ui/core";
-import React, { MouseEventHandler, useContext, useRef } from "react";
+import React, { MouseEventHandler, useContext, useEffect, useRef } from "react";
 import Popup from "reactjs-popup";
 import Picker from "emoji-picker-react";
 import { useDrag, useDrop } from "react-dnd";
@@ -41,6 +41,12 @@ export const IilItemUpdator = ({
   const param = useContext(OperationContext) as IOperationParam;
 
   const {iilItem, setIilItem, onIilItemUpdate} = UseIil(givenIil, validateIil);
+
+  useEffect(() => {
+    if (givenIil.id !== iilItem.id) {
+      setIilItem(givenIil);
+    }
+  }, [givenIil]);
 
   const {
     register,
@@ -155,34 +161,33 @@ const getEmojiPopup = () =>
     />
   </Popup>
 
-const getIilItemEditor = () => 
-  <div ref={ref} id={"item_"+iilItem.id} key={"item_"+iilItem.id} data-handler-id={handlerId}>
-    <section
-          className="item"
-          id={"form_"+iilItem.id}
-          key={"form_"+iilItem.id}
-          onBlur={handleBlur}
-        >
-    <Row>
-      <Col sm={9}>
-        <IilCard iil={iilItem} compact={false} onModalShow={onModalShow}/>
-      </Col>
-      <Col sm={2}>
-        {getStateSelectMenu( iilItem, updateIilStatus)}
-      </Col>
-      <Col sm={1}>
-        {renderDeleteButton(iilItem, deleteIil)}
-      </Col>
-    </Row>
-    {getSeperator()}
-    </section>
-    </div>
-
   if (pageContext === PageContext.List)
   {
     connectDrag(ref)
     connectDrop(ref)
   }
   
-  return getIilItemEditor();
+  return (
+    <div ref={ref} id={"item_"+iilItem.id} key={"item_"+iilItem.id} data-handler-id={handlerId}>
+      <section
+            className="item"
+            id={"form_"+iilItem.id}
+            key={"form_"+iilItem.id}
+            onBlur={handleBlur}
+          >
+      <Row>
+        <Col sm={9}>
+          <IilCard iil={iilItem} compact={false} onModalShow={onModalShow}/>
+        </Col>
+        <Col sm={2}>
+          {getStateSelectMenu( iilItem, updateIilStatus)}
+        </Col>
+        <Col sm={1}>
+          {renderDeleteButton(iilItem, deleteIil)}
+        </Col>
+      </Row>
+      {getSeperator()}
+      </section>
+      </div>
+  );
 };

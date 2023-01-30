@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { IilDto } from '../ill-repo-client';
 
-export const applyUpdateToIilList = (iil: IilDto, iilList: IilDto[]) => [...iilList.filter(x => x.id !== iil.id), iil]
+export const applyUpdateToIilList = (iil: IilDto, iilList: IilDto[]) => [...iilList, iil]
 
 const cmpIilByDate = (a: IilDto, b: IilDto): number => {
-  return (new Date(b.createdAt!)).getTime() - (new Date(a.createdAt!)).getTime();
+  return (new Date(b.updatedAt!)).getTime() - (new Date(a.updatedAt!)).getTime();
 }
 
 const UseIilList = (initialIilList: IilDto[], validator?: Function) => {

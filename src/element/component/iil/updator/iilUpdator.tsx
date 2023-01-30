@@ -1,34 +1,33 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Accordion, Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { IilDto, NextFlowDto } from "../../../../ill-repo-client";
-import { getRandomEmoji } from "../../../../util/emojiGenerator";
-import { getBrandNewIil } from "../../../model/iilManager";
-import { getAboutInput, getInputForAttribute } from "../../../util/iilInputs";
+import { IilDto } from "../../../../ill-repo-client";
+import { getDictInput, getInputForAttribute } from "../../../util/iilInputs";
+import ReactJson from 'react-json-view-2';
 import { getStateSelectMenu } from "../../../util/iilStateSelect";
-import { iilAddButton } from "../../../buttons/iilAddButton";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IilSelector } from "../../../util/iilSelector";
 import { IilCardList } from "../iilCardList";
-import { NextFlowUpdator } from "../../NextFlow/NextFlowUpdator";
-import { NextFlowList } from "../../NextFlow/NextFlowList";
+import { DahmmUpdator } from "../../Dahmm/DahmmUpdator";
+import { DahmmList } from "../../Dahmm/DahmmList";
+import { DahmmDto } from "../../../../ill-repo-client/models/dahmm-dto";
 
 export interface IIilUpdatorProp {
-    iils: IilDto[];
-    nextFlows: NextFlowDto[];
+    iilList: IilDto[];
+    nextFlows: DahmmDto[];
     selectedIil: IilDto;
     onIilItemChange: Function;
     ownerId: string;
     onSubmit: (iil: IilDto) => Promise<AxiosResponse<IilDto> | undefined>;
     onDelete: (id: string) => Promise<AxiosResponse<void> | undefined>;
     onReset: (goalId?: string) => void;
-    onNextFlowCreate: (body: NextFlowDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
-    onNextFlowUpdate: (body: NextFlowDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
-    onNextFlowDelete: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
+    onDahmmCreate: (body: DahmmDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
+    onDahmmUpdate: (body: DahmmDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
+    onDahmmDelete: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
 }
 
 export const IilUpdator = ({
-    iils,
+    iilList,
     nextFlows,
     selectedIil,
     onIilItemChange,
@@ -36,14 +35,14 @@ export const IilUpdator = ({
     onSubmit,
     onDelete,
     onReset,
-    onNextFlowCreate,
-    onNextFlowUpdate,
-    onNextFlowDelete,
+    onDahmmCreate,
+    onDahmmUpdate,
+    onDahmmDelete,
   }: IIilUpdatorProp) => {
     const goalRef = useRef<any>(null);
     const [ selectedGoal, setSelectedGoal ] = useState<string | undefined>(selectedIil?.goal);
-    const [previousFlows, setPreviousFlows] = useState<NextFlowDto[]>([]);
-    const [incomingFlows, setIncomingFlows] = useState<NextFlowDto[]>([]);
+    const [previousFlows, setPreviousFlows] = useState<DahmmDto[]>([]);
+    const [incomingFlows, setIncomingFlows] = useState<DahmmDto[]>([]);
     const {
       register,
       handleSubmit,
@@ -76,12 +75,12 @@ export const IilUpdator = ({
           .catch((error: any) => alert(error));
     }
 
-    const getPreviousFlows = (): NextFlowDto[] => {
-        return nextFlows.filter(f => f.to === selectedIil.id);
+    const getPreviousFlows = (): DahmmDto[] => {
+        return nextFlows.filter(f => f.iilTo === selectedIil.id);
     }
 
-    const getNextFlows = (): NextFlowDto[] => {
-        return nextFlows.filter(f => f.from === selectedIil.id);
+    const getDahmms = (): DahmmDto[] => {
+        return nextFlows.filter(f => f.iilFrom === selectedIil.id);
     }
 
     useEffect(() => {
@@ -91,7 +90,7 @@ export const IilUpdator = ({
             goalRef.current.clear();
         }
         if (nextFlows) {
-            setIncomingFlows(getNextFlows());
+            setIncomingFlows(getDahmms());
             setPreviousFlows(getPreviousFlows());
         }
     },[selectedIil]);
@@ -108,7 +107,7 @@ export const IilUpdator = ({
                         Goal
                     </Card.Header>
                     <Card.Body>
-                        <IilSelector iils={iils} onIilChange={onGoalChanged} inputRef={goalRef} selectedIilId={selectedGoal} />
+                        <IilSelector iils={iilList} onIilChange={onGoalChanged} inputRef={goalRef} selectedIilId={selectedGoal} />
                     </Card.Body>
                 </Card>
             </Col>
@@ -138,7 +137,7 @@ export const IilUpdator = ({
                                 <Card>
                                     <Row xs="auto">
                                         <Col xs={2} className="align-self-center">
-                                            Start if
+                                            Activate if
                                         </Col>
                                         <Col xs={10}>
                                         { getInputForAttribute(selectedIil, 'activateIf', onIilItemChange, register, handleEnterKey) }
@@ -205,24 +204,56 @@ export const IilUpdator = ({
                                     <Accordion.Header>Advanced</Accordion.Header>
                                     <Accordion.Body>
                                     <Card>
-                                        <Row xs="auto">
-                                            <Col xs={2} className="align-self-center">
-                                                ID
-                                            </Col>
-                                            <Col xs={10}>
-                                                {selectedIil.id}
-                                            </Col>
-                                        </Row>
-                                        <Row xs="auto">
-                                            <Col xs={2} className="align-self-center">
-                                                About
-                                            </Col>
-                                            <Col xs={10}>
-                                            {
-                                                getAboutInput(selectedIil, onIilItemChange, register, handleEnterKey)
-                                            }
-                                            </Col>
-                                        </Row>
+                                        { selectedIil.id !== 'new' &&
+                                            <Row xs="auto">
+                                                <Col xs={2} className="align-self-center">
+                                                    ID
+                                                </Col>
+                                                <Col xs={10}>
+                                                    {selectedIil.id}
+                                                </Col>
+                                            </Row>
+                                        }
+                                        { (selectedIil.id === 'new' || selectedIil.about) && 
+                                            <Row xs="auto">
+                                                <Col xs={2} className="align-self-center">
+                                                    About
+                                                </Col>
+                                                <Col xs={10}>
+                                                {
+                                                    <ReactJson src={selectedIil.about!} name="about"
+                                                        onEdit={form => onIilItemChange({...selectedIil, about: form.updated_src})}
+                                                        onAdd={form => onIilItemChange({...selectedIil, about: form.updated_src})}
+                                                        onDelete={form => onIilItemChange({...selectedIil, about: form.updated_src})}/>
+                                                }
+                                                </Col>
+                                            </Row>
+                                        }
+                                        { (selectedIil.id === 'new' || selectedIil.help) && 
+                                            <Row xs="auto">
+                                                <Col xs={2} className="align-self-center">
+                                                    Help
+                                                </Col>
+                                                <Col xs={10}>
+                                                {
+                                                    <ReactJson src={selectedIil.help!} name="help"
+                                                        onEdit={form => onIilItemChange({...selectedIil, help: form.updated_src})}
+                                                        onAdd={form => onIilItemChange({...selectedIil, help: form.updated_src})}
+                                                        onDelete={form => onIilItemChange({...selectedIil, help: form.updated_src})}/>
+                                                }
+                                                </Col>
+                                            </Row>
+                                        }
+                                        { selectedIil.id !== 'new' &&
+                                            <Row xs="auto">
+                                                <Col xs={2} className="align-self-center">
+                                                    Maintainer
+                                                </Col>
+                                                <Col xs={10}>
+                                                    {selectedIil.id}
+                                                </Col>
+                                            </Row>
+                                        }
                                         <Row xs="auto">
                                             <Col xs={2} className="align-self-center">
                                                 Owner
@@ -269,10 +300,9 @@ export const IilUpdator = ({
                         Next
                     </Card.Header>
                     <Card.Body>
-                        {console.log(nextFlows)}
-                        <NextFlowList nextFlowList={nextFlows.filter(i => i.to === selectedIil.id)} iilList={iils} />
-                        <NextFlowUpdator fromId={selectedIil.id!} iils={iils} 
-                        onSubmit={(data: NextFlowDto) => onNextFlowCreate(data)} onDelete={onNextFlowDelete} onReset={() => {}} />
+                        <DahmmList nextFlowList={nextFlows.filter(i => i.iilTo === selectedIil.id)} iilList={iilList} />
+                        <DahmmUpdator fromId={selectedIil.id!} iils={iilList} 
+                        onSubmit={(data: DahmmDto) => onDahmmCreate(data)} onDelete={onDahmmDelete} onReset={() => {}} />
                     </Card.Body>
                 </Card>
             </Col>
@@ -290,7 +320,7 @@ export const IilUpdator = ({
                             </Card.Header>
                             <Card.Body>
                                 <IilCardList
-                                    iils={iils.filter(iil => iil.goal === selectedIil.id)}
+                                    iils={iilList.filter(iil => iil.goal === selectedIil.id)}
                                     goalIil={selectedIil}
                                     onAddTask={onReset}
                                 />

@@ -16,25 +16,25 @@ import { Configuration } from '../configuration';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../base';
-import { NextFlowDto } from '../models';
+import { DahmmDto } from '../models/dahmm-dto';
 /**
- * NextFlowControllerApi - axios parameter creator
+ * DahmmControllerApi - axios parameter creator
  * @export
  */
-export const NextFlowControllerApiAxiosParamCreator = function (configuration?: Configuration) {
+export const DahmmControllerApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {NextFlowDto} body 
+         * @param {DahmmDto} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createNextFlow: async (body: NextFlowDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createDahmm: async (body: DahmmDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'body' is not null or undefined
             if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling createNextFlow.');
+                throw new RequiredError('body','Required parameter body was null or undefined when calling createDahmm.');
             }
-            const localVarPath = `/api/nextflows`;
+            const localVarPath = `/api/dahmms`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
             let baseOptions;
@@ -71,12 +71,12 @@ export const NextFlowControllerApiAxiosParamCreator = function (configuration?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteNextFlow: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteDahmm: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
-                throw new RequiredError('id','Required parameter id was null or undefined when calling deleteNextFlow.');
+                throw new RequiredError('id','Required parameter id was null or undefined when calling deleteDahmm.');
             }
-            const localVarPath = `/api/nextflows/{id}`
+            const localVarPath = `/api/dahmms/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -110,12 +110,12 @@ export const NextFlowControllerApiAxiosParamCreator = function (configuration?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getNextFlow: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getDahmm: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
-                throw new RequiredError('id','Required parameter id was null or undefined when calling getNextFlow.');
+                throw new RequiredError('id','Required parameter id was null or undefined when calling getDahmm.');
             }
-            const localVarPath = `/api/nextflows/{id}`
+            const localVarPath = `/api/dahmms/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -148,8 +148,8 @@ export const NextFlowControllerApiAxiosParamCreator = function (configuration?: 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getNextFlows: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/nextflows`;
+        getDahmms: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/dahmms`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
             let baseOptions;
@@ -178,21 +178,21 @@ export const NextFlowControllerApiAxiosParamCreator = function (configuration?: 
         },
         /**
          * 
-         * @param {NextFlowDto} body 
+         * @param {DahmmDto} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateNextFlow: async (body: NextFlowDto, id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateDahmm: async (body: DahmmDto, id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'body' is not null or undefined
             if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling updateNextFlow.');
+                throw new RequiredError('body','Required parameter body was null or undefined when calling updateDahmm.');
             }
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
-                throw new RequiredError('id','Required parameter id was null or undefined when calling updateNextFlow.');
+                throw new RequiredError('id','Required parameter id was null or undefined when calling updateDahmm.');
             }
-            const localVarPath = `/api/nextflows/{id}`
+            const localVarPath = `/api/dahmms/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -228,19 +228,19 @@ export const NextFlowControllerApiAxiosParamCreator = function (configuration?: 
 };
 
 /**
- * NextFlowControllerApi - functional programming interface
+ * DahmmControllerApi - functional programming interface
  * @export
  */
-export const NextFlowControllerApiFp = function(configuration?: Configuration) {
+export const DahmmControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {NextFlowDto} body 
+         * @param {DahmmDto} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createNextFlow(body: NextFlowDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<NextFlowDto>>> {
-            const localVarAxiosArgs = await NextFlowControllerApiAxiosParamCreator(configuration).createNextFlow(body, options);
+        async createDahmm(body: DahmmDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<DahmmDto>>> {
+            const localVarAxiosArgs = await DahmmControllerApiAxiosParamCreator(configuration).createDahmm(body, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -252,8 +252,8 @@ export const NextFlowControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteNextFlow(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
-            const localVarAxiosArgs = await NextFlowControllerApiAxiosParamCreator(configuration).deleteNextFlow(id, options);
+        async deleteDahmm(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
+            const localVarAxiosArgs = await DahmmControllerApiAxiosParamCreator(configuration).deleteDahmm(id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -265,8 +265,8 @@ export const NextFlowControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getNextFlow(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<NextFlowDto>>> {
-            const localVarAxiosArgs = await NextFlowControllerApiAxiosParamCreator(configuration).getNextFlow(id, options);
+        async getDahmm(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<DahmmDto>>> {
+            const localVarAxiosArgs = await DahmmControllerApiAxiosParamCreator(configuration).getDahmm(id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -277,8 +277,8 @@ export const NextFlowControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getNextFlows(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<Array<NextFlowDto>>>> {
-            const localVarAxiosArgs = await NextFlowControllerApiAxiosParamCreator(configuration).getNextFlows(options);
+        async getDahmms(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<Array<DahmmDto>>>> {
+            const localVarAxiosArgs = await DahmmControllerApiAxiosParamCreator(configuration).getDahmms(options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -286,13 +286,13 @@ export const NextFlowControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {NextFlowDto} body 
+         * @param {DahmmDto} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateNextFlow(body: NextFlowDto, id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<NextFlowDto>>> {
-            const localVarAxiosArgs = await NextFlowControllerApiAxiosParamCreator(configuration).updateNextFlow(body, id, options);
+        async updateDahmm(body: DahmmDto, id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<DahmmDto>>> {
+            const localVarAxiosArgs = await DahmmControllerApiAxiosParamCreator(configuration).updateDahmm(body, id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -302,19 +302,19 @@ export const NextFlowControllerApiFp = function(configuration?: Configuration) {
 };
 
 /**
- * NextFlowControllerApi - factory interface
+ * DahmmControllerApi - factory interface
  * @export
  */
-export const NextFlowControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const DahmmControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     return {
         /**
          * 
-         * @param {NextFlowDto} body 
+         * @param {DahmmDto} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createNextFlow(body: NextFlowDto, options?: AxiosRequestConfig): Promise<AxiosResponse<NextFlowDto>> {
-            return NextFlowControllerApiFp(configuration).createNextFlow(body, options).then((request) => request(axios, basePath));
+        async createDahmm(body: DahmmDto, options?: AxiosRequestConfig): Promise<AxiosResponse<DahmmDto>> {
+            return DahmmControllerApiFp(configuration).createDahmm(body, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -322,8 +322,8 @@ export const NextFlowControllerApiFactory = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteNextFlow(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
-            return NextFlowControllerApiFp(configuration).deleteNextFlow(id, options).then((request) => request(axios, basePath));
+        async deleteDahmm(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
+            return DahmmControllerApiFp(configuration).deleteDahmm(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -331,85 +331,85 @@ export const NextFlowControllerApiFactory = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getNextFlow(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<NextFlowDto>> {
-            return NextFlowControllerApiFp(configuration).getNextFlow(id, options).then((request) => request(axios, basePath));
+        async getDahmm(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<DahmmDto>> {
+            return DahmmControllerApiFp(configuration).getDahmm(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getNextFlows(options?: AxiosRequestConfig): Promise<AxiosResponse<Array<NextFlowDto>>> {
-            return NextFlowControllerApiFp(configuration).getNextFlows(options).then((request) => request(axios, basePath));
+        async getDahmms(options?: AxiosRequestConfig): Promise<AxiosResponse<Array<DahmmDto>>> {
+            return DahmmControllerApiFp(configuration).getDahmms(options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {NextFlowDto} body 
+         * @param {DahmmDto} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateNextFlow(body: NextFlowDto, id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<NextFlowDto>> {
-            return NextFlowControllerApiFp(configuration).updateNextFlow(body, id, options).then((request) => request(axios, basePath));
+        async updateDahmm(body: DahmmDto, id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<DahmmDto>> {
+            return DahmmControllerApiFp(configuration).updateDahmm(body, id, options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * NextFlowControllerApi - object-oriented interface
+ * DahmmControllerApi - object-oriented interface
  * @export
- * @class NextFlowControllerApi
+ * @class DahmmControllerApi
  * @extends {BaseAPI}
  */
-export class NextFlowControllerApi extends BaseAPI {
+export class DahmmControllerApi extends BaseAPI {
     /**
      * 
-     * @param {NextFlowDto} body 
+     * @param {DahmmDto} body 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof NextFlowControllerApi
+     * @memberof DahmmControllerApi
      */
-    public async createNextFlow(body: NextFlowDto, options?: AxiosRequestConfig) : Promise<AxiosResponse<NextFlowDto>> {
-        return NextFlowControllerApiFp(this.configuration).createNextFlow(body, options).then((request) => request(this.axios, this.basePath));
+    public async createDahmm(body: DahmmDto, options?: AxiosRequestConfig) : Promise<AxiosResponse<DahmmDto>> {
+        return DahmmControllerApiFp(this.configuration).createDahmm(body, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof NextFlowControllerApi
+     * @memberof DahmmControllerApi
      */
-    public async deleteNextFlow(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
-        return NextFlowControllerApiFp(this.configuration).deleteNextFlow(id, options).then((request) => request(this.axios, this.basePath));
+    public async deleteDahmm(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
+        return DahmmControllerApiFp(this.configuration).deleteDahmm(id, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof NextFlowControllerApi
+     * @memberof DahmmControllerApi
      */
-    public async getNextFlow(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<NextFlowDto>> {
-        return NextFlowControllerApiFp(this.configuration).getNextFlow(id, options).then((request) => request(this.axios, this.basePath));
+    public async getDahmm(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<DahmmDto>> {
+        return DahmmControllerApiFp(this.configuration).getDahmm(id, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof NextFlowControllerApi
+     * @memberof DahmmControllerApi
      */
-    public async getNextFlows(options?: AxiosRequestConfig) : Promise<AxiosResponse<Array<NextFlowDto>>> {
-        return NextFlowControllerApiFp(this.configuration).getNextFlows(options).then((request) => request(this.axios, this.basePath));
+    public async getDahmms(options?: AxiosRequestConfig) : Promise<AxiosResponse<Array<DahmmDto>>> {
+        return DahmmControllerApiFp(this.configuration).getDahmms(options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
-     * @param {NextFlowDto} body 
+     * @param {DahmmDto} body 
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof NextFlowControllerApi
+     * @memberof DahmmControllerApi
      */
-    public async updateNextFlow(body: NextFlowDto, id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<NextFlowDto>> {
-        return NextFlowControllerApiFp(this.configuration).updateNextFlow(body, id, options).then((request) => request(this.axios, this.basePath));
+    public async updateDahmm(body: DahmmDto, id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<DahmmDto>> {
+        return DahmmControllerApiFp(this.configuration).updateDahmm(body, id, options).then((request) => request(this.axios, this.basePath));
     }
 }
