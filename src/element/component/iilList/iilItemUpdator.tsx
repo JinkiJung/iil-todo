@@ -1,7 +1,5 @@
 import { Checkbox } from "@material-ui/core";
 import React, { MouseEventHandler, useContext, useEffect, useRef } from "react";
-import Popup from "reactjs-popup";
-import Picker from "emoji-picker-react";
 import { useDrag, useDrop } from "react-dnd";
 import { Col, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
@@ -9,7 +7,6 @@ import { IilDto, IilDtoStateEnum } from "../../../ill-repo-client";
 import { PageContext } from "../../../type/pageContext";
 import { OperationContext } from "../../../App";
 import { IOperationParam } from "../../model/operationParam";
-import UseIil from "../../../hooksComponent/useIil";
 import { validateIil } from "../../util/iilValidator";
 import { ItemTypes } from "../../model/itemType";
 import { getButtonWithEmoji, renderDeleteButton } from "../../util/iilButtons";
@@ -17,7 +14,7 @@ import { getStateSelectMenu } from "../../util/iilStateSelect";
 import { IilCard } from "../iil/iilCard";
 
 interface IIilItemUpdatorProp {
-  givenIil: IilDto;
+  iilItem: IilDto;
   onIilListElemChange: Function;
   iilList: IilDto[];
   onIilListChange: Function;
@@ -28,7 +25,7 @@ interface IIilItemUpdatorProp {
 }
 
 export const IilItemUpdator = ({
-  givenIil,
+  iilItem,
   onIilListElemChange,
   iilList,
   onIilListChange,
@@ -40,26 +37,18 @@ export const IilItemUpdator = ({
   const ref = useRef<HTMLDivElement>(null);
   const param = useContext(OperationContext) as IOperationParam;
 
-  const {iilItem, setIilItem, onIilItemUpdate} = UseIil(givenIil, validateIil);
-
-  useEffect(() => {
-    if (givenIil.id !== iilItem.id) {
-      setIilItem(givenIil);
-    }
-  }, [givenIil]);
-
   const {
     register,
     handleSubmit,
     // Read the formState before render to subscribe the form state through the Proxy
     formState: { errors, isDirty, isSubmitting, touchedFields, submitCount },
   } = useForm({
-    defaultValues: givenIil
+    defaultValues: iilItem
   });
 
   const [{ isDragging, handlerId }, connectDrag] = useDrag({
     type: ItemTypes.IIL,
-    item: { id: givenIil.id },
+    item: { id: iilItem.id },
     collect: (monitor) => {
       const result = {
         handlerId: monitor.getHandlerId(),
@@ -72,7 +61,7 @@ export const IilItemUpdator = ({
   const [, connectDrop] = useDrop({
     accept: ItemTypes.IIL,
     hover({ id: draggedId }: { id: string; type: string }) {
-      if (draggedId !== givenIil.id) {
+      if (draggedId !== iilItem.id) {
         //moveCard(draggedId, givenIil.id!)
       }
     },
@@ -134,12 +123,11 @@ const getCheckBox = (iil: IilDto, onChangeCheckBox: Function) =>
   name={`${iil.id}==status==checkbox`}
   color="primary"
 />
-
+/*
 const getEmojiPopup = () => 
   <Popup
     onClose={() =>
       {
-          /* updateWithSection(document.getElementById(iil.id)!); */
       }
     }
     trigger={
@@ -160,6 +148,7 @@ const getEmojiPopup = () =>
       }}
     />
   </Popup>
+  */
 
   if (pageContext === PageContext.List)
   {

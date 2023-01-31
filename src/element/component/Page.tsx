@@ -45,7 +45,15 @@ export const Page = ({
                 }
                 return res;
             } else {
-                return await iilApiHandler.updateIil(iilItem, iilItem.id!);
+                return await iilApiHandler.updateIil(iilItem, iilItem.id!).then(
+                    res => {
+                        if (res.status === 200) {
+                            onIilListElemChange(res.data as IilDto);
+                            setModalShow(false);
+                        }
+                        return res;
+                    }
+                );
             }
         }
     }
@@ -109,7 +117,6 @@ export const Page = ({
                                     iilList={iilList}
                                     onIilListChange={onIilListChange}
                                     onIilListElemChange={onIilListElemChange}
-                                    createIilCall={(iil: IilDto) => iilApiHandler.createIil(iil)}
                                     updateIilCall={(partialIilDto: IilDto, id: string) => iilApiHandler.updateIil(partialIilDto, id)}
                                     deleteIilCall={(id: string) => iilApiHandler.deleteIil(id)}
                                     ownerId={ownerId} pageContext={pageContext}

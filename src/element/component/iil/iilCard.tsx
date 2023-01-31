@@ -16,18 +16,10 @@ export const IilCard = (
             {
                 !compact?
                 <div className="d-flex">
-                    <div>
-                        {iil.activateIf && <IilCardAttribute iil={iil} type={'activateIf'} color="#161616" bgColor="#FFFFFF" />}
-                    </div>
-                    <div>
-                        {iil.actor && <IilCardAttribute iil={iil} type={'actor'} color="#161616" bgColor="#FFFFFF" />}
-                    </div>
-                    <div>
-                        {iil.act && <IilCardAttribute iil={iil} type={'act'} color="#161616" bgColor="#FFFFFF" />}
-                    </div>
-                    <div>
-                        {iil.finishIf && <IilCardAttribute iil={iil} type={'finishIf'} color="#161616" bgColor="#FFFFFF" />}
-                    </div>
+                    <div>{iil.act && <IilCardAttribute iil={iil} type={'act'} color="161616" bgColor="#FFFFFF" />}</div>
+                    <div>{iil.activateIf && <IilCardAttribute iil={iil} type={'activateIf'} color="#161616" bgColor="#FFFFFF" />}</div>
+                    <div>{iil.finishIf && <IilCardAttribute iil={iil} type={'finishIf'} color="#161616" bgColor="#FFFFFF" />}</div>
+                    <div>{iil.actor && <IilCardAttribute iil={iil} type={'actor'} color="#161616" bgColor="#FFFFFF" />}</div>
                 </div> :
                 <div role="button"
                     style={{
@@ -40,10 +32,10 @@ export const IilCard = (
                     }}
                     tabIndex={0}
                 className="card">
-                    <div>{iil.activateIf && <IilCardAttribute iil={iil} type={'activateIf'} color="#161616" bgColor="#FFFFFF" />}</div>
-                    <div>{iil.actor && <IilCardAttribute iil={iil} type={'actor'} color="#161616" bgColor="#FFFFFF" />}</div>
                     <div>{iil.act && <IilCardAttribute iil={iil} type={'act'} color="161616" bgColor="#FFFFFF" />}</div>
+                    <div>{iil.activateIf && <IilCardAttribute iil={iil} type={'activateIf'} color="#161616" bgColor="#FFFFFF" />}</div>
                     <div>{iil.finishIf && <IilCardAttribute iil={iil} type={'finishIf'} color="#161616" bgColor="#FFFFFF" />}</div>
+                    <div>{iil.actor && <IilCardAttribute iil={iil} type={'actor'} color="#161616" bgColor="#FFFFFF" />}</div>
                 </div>
             }
     </Container>

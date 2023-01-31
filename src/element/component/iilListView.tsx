@@ -14,7 +14,6 @@ export interface IIilListViewProp {
   pageContext: PageContext;
   onIilListChange: Function;
   onIilListElemChange: Function;
-  createIilCall: (body: IilDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
   updateIilCall: (body: IilDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
   deleteIilCall: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
   onModalShow: MouseEventHandler<HTMLButtonElement>;
@@ -28,7 +27,6 @@ export const IilListView = ({
   pageContext,
   onIilListChange,
   onIilListElemChange,
-  createIilCall,
   updateIilCall,
   deleteIilCall,
   onModalShow,
@@ -82,7 +80,7 @@ export const IilListView = ({
         pageContext === PageContext.List ||
         (pageContext === PageContext.FocusedList &&
         iil.state === IilDtoStateEnum.FOCUSED) ?
-          <IilItemUpdator key={index} givenIil={iil} 
+          <IilItemUpdator key={index} iilItem={iil} 
             onIilListElemChange={onIilListElemChange}
             iilList={iilList}
             onIilListChange={onIilListChange}
