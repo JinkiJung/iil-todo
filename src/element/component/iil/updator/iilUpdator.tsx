@@ -8,41 +8,28 @@ import { getStateSelectMenu } from "../../../util/iilStateSelect";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IilSelector } from "../../../util/iilSelector";
 import { IilCardList } from "../iilCardList";
-import { DahmmUpdator } from "../../Dahmm/DahmmUpdator";
-import { DahmmList } from "../../Dahmm/DahmmList";
-import { DahmmDto } from "../../../../ill-repo-client/models/dahmm-dto";
 
 export interface IIilUpdatorProp {
     iilList: IilDto[];
-    nextFlows: DahmmDto[];
     selectedIil: IilDto;
     onIilItemChange: Function;
     ownerId: string;
     onSubmit: (iil: IilDto) => Promise<AxiosResponse<IilDto> | undefined>;
     onDelete: (id: string) => Promise<AxiosResponse<void> | undefined>;
     onReset: (goalId?: string) => void;
-    onDahmmCreate: (body: DahmmDto, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
-    onDahmmUpdate: (body: DahmmDto, id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<IilDto>>;
-    onDahmmDelete: (id: string, options?: AxiosRequestConfig) => Promise<AxiosResponse<void>>;
 }
 
 export const IilUpdator = ({
     iilList,
-    nextFlows,
     selectedIil,
     onIilItemChange,
     ownerId,
     onSubmit,
     onDelete,
     onReset,
-    onDahmmCreate,
-    onDahmmUpdate,
-    onDahmmDelete,
   }: IIilUpdatorProp) => {
     const goalRef = useRef<any>(null);
     const [ selectedGoal, setSelectedGoal ] = useState<string | undefined>(selectedIil?.goal);
-    const [previousFlows, setPreviousFlows] = useState<DahmmDto[]>([]);
-    const [incomingFlows, setIncomingFlows] = useState<DahmmDto[]>([]);
     const {
       register,
       handleSubmit,
@@ -75,23 +62,11 @@ export const IilUpdator = ({
           .catch((error: any) => alert(error));
     }
 
-    const getPreviousFlows = (): DahmmDto[] => {
-        return nextFlows.filter(f => f.iilTo === selectedIil.id);
-    }
-
-    const getDahmms = (): DahmmDto[] => {
-        return nextFlows.filter(f => f.iilFrom === selectedIil.id);
-    }
-
     useEffect(() => {
         if (selectedIil.goal) {
             setSelectedGoal(selectedIil.goal);
         } else {
             goalRef.current.clear();
-        }
-        if (nextFlows) {
-            setIncomingFlows(getDahmms());
-            setPreviousFlows(getPreviousFlows());
         }
     },[selectedIil]);
 
@@ -300,9 +275,6 @@ export const IilUpdator = ({
                         Next
                     </Card.Header>
                     <Card.Body>
-                        <DahmmList nextFlowList={nextFlows.filter(i => i.iilTo === selectedIil.id)} iilList={iilList} />
-                        <DahmmUpdator fromId={selectedIil.id!} iils={iilList} 
-                        onSubmit={(data: DahmmDto) => onDahmmCreate(data)} onDelete={onDahmmDelete} onReset={() => {}} />
                     </Card.Body>
                 </Card>
             </Col>

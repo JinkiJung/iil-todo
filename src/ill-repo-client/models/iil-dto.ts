@@ -11,7 +11,8 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { DahmmDto } from './dahmm-dto';
+import { ActionDto } from './action-dto';
+import { ConditionDto } from './condition-dto';
 /**
  * 
  * @export
@@ -56,22 +57,22 @@ export interface IilDto {
     goal?: string;
     /**
      * 
-     * @type {string}
+     * @type {{ [key: string]: any; }}
      * @memberof IilDto
      */
-    input?: string;
+    input?: { [key: string]: any; };
     /**
      * 
-     * @type {string}
+     * @type {ConditionDto}
      * @memberof IilDto
      */
-    activateIf?: string;
+    activateIf?: ConditionDto;
     /**
      * 
-     * @type {string}
+     * @type {ActionDto}
      * @memberof IilDto
      */
-    act?: string;
+    act?: ActionDto;
     /**
      * 
      * @type {string}
@@ -80,16 +81,16 @@ export interface IilDto {
     actor?: string;
     /**
      * 
-     * @type {string}
+     * @type {ConditionDto}
      * @memberof IilDto
      */
-    finishIf?: string;
+    finishIf?: ConditionDto;
     /**
      * 
-     * @type {string}
+     * @type {{ [key: string]: any; }}
      * @memberof IilDto
      */
-    output?: string;
+    output?: { [key: string]: any; };
     /**
      * 
      * @type {string}
@@ -104,6 +105,12 @@ export interface IilDto {
     owner?: string;
     /**
      * 
+     * @type {ConditionDto}
+     * @memberof IilDto
+     */
+     abortIf?: ConditionDto;
+    /**
+     * 
      * @type {string}
      * @memberof IilDto
      */
@@ -116,10 +123,10 @@ export interface IilDto {
     updatedAt?: Date;
     /**
      * 
-     * @type {Array<DahmmDto>}
+     * @type {{ [key: string]: any; }}
      * @memberof IilDto
      */
-    dahmm?: Array<DahmmDto>;
+    next?: { [key: string]: any; };
 }
 
 /**
@@ -129,9 +136,8 @@ export interface IilDto {
 export enum IilDtoStateEnum {
     NOTACTIVATED = 'NOTACTIVATED',
     ACTIVE = 'ACTIVE',
-    FOCUSED = 'FOCUSED',
     PENDING = 'PENDING',
     FINISHED = 'FINISHED',
-    ACHIEVED = 'ACHIEVED'
+    ABORTED = 'ABORTED'
 }
 

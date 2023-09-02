@@ -10,6 +10,7 @@ const cmpIilByDate = (a: IilDto, b: IilDto): number => {
 const UseIilList = (initialIilList: IilDto[], validator?: Function) => {
     const [ iilList, setIilList] = useState(initialIilList);
     const onIilListChange = (iils: IilDto[], cmpIil?: (a: IilDto, b: IilDto)=>number) => {
+      console.log(iils);
       iils.sort(cmpIil ? cmpIil : cmpIilByDate);
       setIilList(iils);
     };

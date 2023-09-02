@@ -11,30 +11,30 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import globalAxios, { AxiosResponse, AxiosInstance, AxiosRequestConfig } from 'axios';
+import globalAxios, { AxiosResponse, AxiosInstance, AxiosRequestConfig, AxiosHeaders } from 'axios';
 import { Configuration } from '../configuration';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../base';
-import { DahmmDto } from '../models/dahmm-dto';
+import { ConditionDto } from '../models';
 /**
- * DahmmControllerApi - axios parameter creator
+ * ConditionControllerApi - axios parameter creator
  * @export
  */
-export const DahmmControllerApiAxiosParamCreator = function (configuration?: Configuration) {
+export const ConditionControllerApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {DahmmDto} body 
+         * @param {ConditionDto} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createDahmm: async (body: DahmmDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createCondition: async (body: ConditionDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'body' is not null or undefined
             if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling createDahmm.');
+                throw new RequiredError('body','Required parameter body was null or undefined when calling createCondition.');
             }
-            const localVarPath = `/api/dahmms`;
+            const localVarPath = `/api/conditions`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
             let baseOptions;
@@ -57,7 +57,7 @@ export const DahmmControllerApiAxiosParamCreator = function (configuration?: Con
             localVarUrlObj.search = (new URLSearchParams(query)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof body !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
+            const needsSerialization = (typeof body !== "string") || ((localVarRequestOptions.headers)! as AxiosHeaders).getContentType() === 'application/json';
             localVarRequestOptions.data =  needsSerialization ? JSON.stringify(body !== undefined ? body : {}) : (body || "");
 
             return {
@@ -71,12 +71,12 @@ export const DahmmControllerApiAxiosParamCreator = function (configuration?: Con
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteDahmm: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteCondition: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
-                throw new RequiredError('id','Required parameter id was null or undefined when calling deleteDahmm.');
+                throw new RequiredError('id','Required parameter id was null or undefined when calling deleteCondition.');
             }
-            const localVarPath = `/api/dahmms/{id}`
+            const localVarPath = `/api/conditions/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -110,12 +110,12 @@ export const DahmmControllerApiAxiosParamCreator = function (configuration?: Con
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getDahmm: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getCondition: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
-                throw new RequiredError('id','Required parameter id was null or undefined when calling getDahmm.');
+                throw new RequiredError('id','Required parameter id was null or undefined when calling getCondition.');
             }
-            const localVarPath = `/api/dahmms/{id}`
+            const localVarPath = `/api/conditions/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -148,8 +148,8 @@ export const DahmmControllerApiAxiosParamCreator = function (configuration?: Con
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getDahmms: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/dahmms`;
+        getConditions: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/conditions`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
             let baseOptions;
@@ -178,21 +178,21 @@ export const DahmmControllerApiAxiosParamCreator = function (configuration?: Con
         },
         /**
          * 
-         * @param {DahmmDto} body 
+         * @param {ConditionDto} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateDahmm: async (body: DahmmDto, id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateCondition: async (body: ConditionDto, id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'body' is not null or undefined
             if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling updateDahmm.');
+                throw new RequiredError('body','Required parameter body was null or undefined when calling updateCondition.');
             }
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
-                throw new RequiredError('id','Required parameter id was null or undefined when calling updateDahmm.');
+                throw new RequiredError('id','Required parameter id was null or undefined when calling updateCondition.');
             }
-            const localVarPath = `/api/dahmms/{id}`
+            const localVarPath = `/api/conditions/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -216,7 +216,7 @@ export const DahmmControllerApiAxiosParamCreator = function (configuration?: Con
             localVarUrlObj.search = (new URLSearchParams(query)).toString();
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            const needsSerialization = (typeof body !== "string") || localVarRequestOptions.headers['Content-Type'] === 'application/json';
+            const needsSerialization = (typeof body !== "string") || ((localVarRequestOptions.headers)! as AxiosHeaders).getContentType() === 'application/json';
             localVarRequestOptions.data =  needsSerialization ? JSON.stringify(body !== undefined ? body : {}) : (body || "");
 
             return {
@@ -228,19 +228,19 @@ export const DahmmControllerApiAxiosParamCreator = function (configuration?: Con
 };
 
 /**
- * DahmmControllerApi - functional programming interface
+ * ConditionControllerApi - functional programming interface
  * @export
  */
-export const DahmmControllerApiFp = function(configuration?: Configuration) {
+export const ConditionControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {DahmmDto} body 
+         * @param {ConditionDto} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createDahmm(body: DahmmDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<DahmmDto>>> {
-            const localVarAxiosArgs = await DahmmControllerApiAxiosParamCreator(configuration).createDahmm(body, options);
+        async createCondition(body: ConditionDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<ConditionDto>>> {
+            const localVarAxiosArgs = await ConditionControllerApiAxiosParamCreator(configuration).createCondition(body, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -252,8 +252,8 @@ export const DahmmControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteDahmm(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
-            const localVarAxiosArgs = await DahmmControllerApiAxiosParamCreator(configuration).deleteDahmm(id, options);
+        async deleteCondition(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
+            const localVarAxiosArgs = await ConditionControllerApiAxiosParamCreator(configuration).deleteCondition(id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -265,8 +265,8 @@ export const DahmmControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getDahmm(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<DahmmDto>>> {
-            const localVarAxiosArgs = await DahmmControllerApiAxiosParamCreator(configuration).getDahmm(id, options);
+        async getCondition(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<ConditionDto>>> {
+            const localVarAxiosArgs = await ConditionControllerApiAxiosParamCreator(configuration).getCondition(id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -277,8 +277,8 @@ export const DahmmControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getDahmms(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<Array<DahmmDto>>>> {
-            const localVarAxiosArgs = await DahmmControllerApiAxiosParamCreator(configuration).getDahmms(options);
+        async getConditions(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<Array<ConditionDto>>>> {
+            const localVarAxiosArgs = await ConditionControllerApiAxiosParamCreator(configuration).getConditions(options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -286,13 +286,13 @@ export const DahmmControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {DahmmDto} body 
+         * @param {ConditionDto} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateDahmm(body: DahmmDto, id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<DahmmDto>>> {
-            const localVarAxiosArgs = await DahmmControllerApiAxiosParamCreator(configuration).updateDahmm(body, id, options);
+        async updateCondition(body: ConditionDto, id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<ConditionDto>>> {
+            const localVarAxiosArgs = await ConditionControllerApiAxiosParamCreator(configuration).updateCondition(body, id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -302,19 +302,19 @@ export const DahmmControllerApiFp = function(configuration?: Configuration) {
 };
 
 /**
- * DahmmControllerApi - factory interface
+ * ConditionControllerApi - factory interface
  * @export
  */
-export const DahmmControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const ConditionControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     return {
         /**
          * 
-         * @param {DahmmDto} body 
+         * @param {ConditionDto} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createDahmm(body: DahmmDto, options?: AxiosRequestConfig): Promise<AxiosResponse<DahmmDto>> {
-            return DahmmControllerApiFp(configuration).createDahmm(body, options).then((request) => request(axios, basePath));
+        async createCondition(body: ConditionDto, options?: AxiosRequestConfig): Promise<AxiosResponse<ConditionDto>> {
+            return ConditionControllerApiFp(configuration).createCondition(body, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -322,8 +322,8 @@ export const DahmmControllerApiFactory = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteDahmm(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
-            return DahmmControllerApiFp(configuration).deleteDahmm(id, options).then((request) => request(axios, basePath));
+        async deleteCondition(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
+            return ConditionControllerApiFp(configuration).deleteCondition(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -331,85 +331,85 @@ export const DahmmControllerApiFactory = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getDahmm(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<DahmmDto>> {
-            return DahmmControllerApiFp(configuration).getDahmm(id, options).then((request) => request(axios, basePath));
+        async getCondition(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<ConditionDto>> {
+            return ConditionControllerApiFp(configuration).getCondition(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getDahmms(options?: AxiosRequestConfig): Promise<AxiosResponse<Array<DahmmDto>>> {
-            return DahmmControllerApiFp(configuration).getDahmms(options).then((request) => request(axios, basePath));
+        async getConditions(options?: AxiosRequestConfig): Promise<AxiosResponse<Array<ConditionDto>>> {
+            return ConditionControllerApiFp(configuration).getConditions(options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {DahmmDto} body 
+         * @param {ConditionDto} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateDahmm(body: DahmmDto, id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<DahmmDto>> {
-            return DahmmControllerApiFp(configuration).updateDahmm(body, id, options).then((request) => request(axios, basePath));
+        async updateCondition(body: ConditionDto, id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<ConditionDto>> {
+            return ConditionControllerApiFp(configuration).updateCondition(body, id, options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * DahmmControllerApi - object-oriented interface
+ * ConditionControllerApi - object-oriented interface
  * @export
- * @class DahmmControllerApi
+ * @class ConditionControllerApi
  * @extends {BaseAPI}
  */
-export class DahmmControllerApi extends BaseAPI {
+export class ConditionControllerApi extends BaseAPI {
     /**
      * 
-     * @param {DahmmDto} body 
+     * @param {ConditionDto} body 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DahmmControllerApi
+     * @memberof ConditionControllerApi
      */
-    public async createDahmm(body: DahmmDto, options?: AxiosRequestConfig) : Promise<AxiosResponse<DahmmDto>> {
-        return DahmmControllerApiFp(this.configuration).createDahmm(body, options).then((request) => request(this.axios, this.basePath));
+    public async createCondition(body: ConditionDto, options?: AxiosRequestConfig) : Promise<AxiosResponse<ConditionDto>> {
+        return ConditionControllerApiFp(this.configuration).createCondition(body, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DahmmControllerApi
+     * @memberof ConditionControllerApi
      */
-    public async deleteDahmm(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
-        return DahmmControllerApiFp(this.configuration).deleteDahmm(id, options).then((request) => request(this.axios, this.basePath));
+    public async deleteCondition(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
+        return ConditionControllerApiFp(this.configuration).deleteCondition(id, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DahmmControllerApi
+     * @memberof ConditionControllerApi
      */
-    public async getDahmm(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<DahmmDto>> {
-        return DahmmControllerApiFp(this.configuration).getDahmm(id, options).then((request) => request(this.axios, this.basePath));
+    public async getCondition(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<ConditionDto>> {
+        return ConditionControllerApiFp(this.configuration).getCondition(id, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DahmmControllerApi
+     * @memberof ConditionControllerApi
      */
-    public async getDahmms(options?: AxiosRequestConfig) : Promise<AxiosResponse<Array<DahmmDto>>> {
-        return DahmmControllerApiFp(this.configuration).getDahmms(options).then((request) => request(this.axios, this.basePath));
+    public async getConditions(options?: AxiosRequestConfig) : Promise<AxiosResponse<Array<ConditionDto>>> {
+        return ConditionControllerApiFp(this.configuration).getConditions(options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
-     * @param {DahmmDto} body 
+     * @param {ConditionDto} body 
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof DahmmControllerApi
+     * @memberof ConditionControllerApi
      */
-    public async updateDahmm(body: DahmmDto, id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<DahmmDto>> {
-        return DahmmControllerApiFp(this.configuration).updateDahmm(body, id, options).then((request) => request(this.axios, this.basePath));
+    public async updateCondition(body: ConditionDto, id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<ConditionDto>> {
+        return ConditionControllerApiFp(this.configuration).updateCondition(body, id, options).then((request) => request(this.axios, this.basePath));
     }
 }

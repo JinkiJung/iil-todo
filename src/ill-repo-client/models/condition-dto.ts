@@ -14,67 +14,43 @@
 /**
  * 
  * @export
- * @interface DahmmDto
+ * @interface ConditionDto
  */
-export interface DahmmDto {
+export interface ConditionDto {
     /**
      * 
      * @type {string}
-     * @memberof DahmmDto
+     * @memberof ConditionDto
      */
     id?: string;
     /**
      * 
-     * @type {{ [key: string]: any; }}
-     * @memberof DahmmDto
-     */
-    about?: { [key: string]: any; };
-    /**
-     * 
      * @type {string}
-     * @memberof DahmmDto
-     */
-    version?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DahmmDto
+     * @memberof ConditionDto
      */
     namespace?: string;
     /**
      * 
      * @type {string}
-     * @memberof DahmmDto
+     * @memberof ConditionDto
      */
-    input?: string;
+    shortName?: string;
     /**
      * 
      * @type {string}
-     * @memberof DahmmDto
+     * @memberof ConditionDto
      */
-    condition?: string;
+    name?: string;
     /**
      * 
      * @type {string}
-     * @memberof DahmmDto
+     * @memberof ConditionDto
      */
-    maintainer?: string;
+    type?: string;
     /**
      * 
      * @type {string}
-     * @memberof DahmmDto
+     * @memberof ConditionDto
      */
-    owner?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DahmmDto
-     */
-    iilFrom?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof DahmmDto
-     */
-    iilTo?: string;
+    code?: string;
 }

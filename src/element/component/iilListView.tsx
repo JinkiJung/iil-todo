@@ -79,7 +79,7 @@ export const IilListView = ({
         iilList.map((iil: IilDto, index) => 
         pageContext === PageContext.List ||
         (pageContext === PageContext.FocusedList &&
-        iil.state === IilDtoStateEnum.FOCUSED) ?
+        iil.state === IilDtoStateEnum.ACTIVE) ?
           <IilItemUpdator key={index} iilItem={iil} 
             onIilListElemChange={onIilListElemChange}
             iilList={iilList}

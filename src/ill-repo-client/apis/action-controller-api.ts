@@ -16,25 +16,25 @@ import { Configuration } from '../configuration';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../base';
-import { IilDto } from '../models';
+import { ActionDto } from '../models';
 /**
- * IilControllerApi - axios parameter creator
+ * ActionControllerApi - axios parameter creator
  * @export
  */
-export const IilControllerApiAxiosParamCreator = function (configuration?: Configuration) {
+export const ActionControllerApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {IilDto} body 
+         * @param {ActionDto} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createIil: async (body: IilDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createAction: async (body: ActionDto, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'body' is not null or undefined
             if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling createIil.');
+                throw new RequiredError('body','Required parameter body was null or undefined when calling createAction.');
             }
-            const localVarPath = `/api/iils`;
+            const localVarPath = `/api/actions`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
             let baseOptions;
@@ -71,12 +71,12 @@ export const IilControllerApiAxiosParamCreator = function (configuration?: Confi
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteIil: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteAction: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
-                throw new RequiredError('id','Required parameter id was null or undefined when calling deleteIil.');
+                throw new RequiredError('id','Required parameter id was null or undefined when calling deleteAction.');
             }
-            const localVarPath = `/api/iils/{id}`
+            const localVarPath = `/api/actions/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -110,12 +110,12 @@ export const IilControllerApiAxiosParamCreator = function (configuration?: Confi
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getIil: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAction: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
-                throw new RequiredError('id','Required parameter id was null or undefined when calling getIil.');
+                throw new RequiredError('id','Required parameter id was null or undefined when calling getAction.');
             }
-            const localVarPath = `/api/iils/{id}`
+            const localVarPath = `/api/actions/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -148,8 +148,8 @@ export const IilControllerApiAxiosParamCreator = function (configuration?: Confi
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getIils: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/api/iils`;
+        getActions: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/actions`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
             let baseOptions;
@@ -178,21 +178,21 @@ export const IilControllerApiAxiosParamCreator = function (configuration?: Confi
         },
         /**
          * 
-         * @param {IilDto} body 
+         * @param {ActionDto} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateIil: async (body: IilDto, id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateAction: async (body: ActionDto, id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'body' is not null or undefined
             if (body === null || body === undefined) {
-                throw new RequiredError('body','Required parameter body was null or undefined when calling updateIil.');
+                throw new RequiredError('body','Required parameter body was null or undefined when calling updateAction.');
             }
             // verify required parameter 'id' is not null or undefined
             if (id === null || id === undefined) {
-                throw new RequiredError('id','Required parameter id was null or undefined when calling updateIil.');
+                throw new RequiredError('id','Required parameter id was null or undefined when calling updateAction.');
             }
-            const localVarPath = `/api/iils/{id}`
+            const localVarPath = `/api/actions/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, 'https://example.com');
@@ -228,19 +228,19 @@ export const IilControllerApiAxiosParamCreator = function (configuration?: Confi
 };
 
 /**
- * IilControllerApi - functional programming interface
+ * ActionControllerApi - functional programming interface
  * @export
  */
-export const IilControllerApiFp = function(configuration?: Configuration) {
+export const ActionControllerApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {IilDto} body 
+         * @param {ActionDto} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createIil(body: IilDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<IilDto>>> {
-            const localVarAxiosArgs = await IilControllerApiAxiosParamCreator(configuration).createIil(body, options);
+        async createAction(body: ActionDto, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<ActionDto>>> {
+            const localVarAxiosArgs = await ActionControllerApiAxiosParamCreator(configuration).createAction(body, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -252,8 +252,8 @@ export const IilControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteIil(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
-            const localVarAxiosArgs = await IilControllerApiAxiosParamCreator(configuration).deleteIil(id, options);
+        async deleteAction(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<void>>> {
+            const localVarAxiosArgs = await ActionControllerApiAxiosParamCreator(configuration).deleteAction(id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -265,8 +265,8 @@ export const IilControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getIil(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<IilDto>>> {
-            const localVarAxiosArgs = await IilControllerApiAxiosParamCreator(configuration).getIil(id, options);
+        async getAction(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<ActionDto>>> {
+            const localVarAxiosArgs = await ActionControllerApiAxiosParamCreator(configuration).getAction(id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -277,8 +277,8 @@ export const IilControllerApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getIils(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<Array<IilDto>>>> {
-            const localVarAxiosArgs = await IilControllerApiAxiosParamCreator(configuration).getIils(options);
+        async getActions(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<Array<ActionDto>>>> {
+            const localVarAxiosArgs = await ActionControllerApiAxiosParamCreator(configuration).getActions(options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -286,13 +286,13 @@ export const IilControllerApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {IilDto} body 
+         * @param {ActionDto} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateIil(body: IilDto, id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<IilDto>>> {
-            const localVarAxiosArgs = await IilControllerApiAxiosParamCreator(configuration).updateIil(body, id, options);
+        async updateAction(body: ActionDto, id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => Promise<AxiosResponse<ActionDto>>> {
+            const localVarAxiosArgs = await ActionControllerApiAxiosParamCreator(configuration).updateAction(body, id, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs :AxiosRequestConfig = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -302,19 +302,19 @@ export const IilControllerApiFp = function(configuration?: Configuration) {
 };
 
 /**
- * IilControllerApi - factory interface
+ * ActionControllerApi - factory interface
  * @export
  */
-export const IilControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const ActionControllerApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     return {
         /**
          * 
-         * @param {IilDto} body 
+         * @param {ActionDto} body 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createIil(body: IilDto, options?: AxiosRequestConfig): Promise<AxiosResponse<IilDto>> {
-            return IilControllerApiFp(configuration).createIil(body, options).then((request) => request(axios, basePath));
+        async createAction(body: ActionDto, options?: AxiosRequestConfig): Promise<AxiosResponse<ActionDto>> {
+            return ActionControllerApiFp(configuration).createAction(body, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -322,8 +322,8 @@ export const IilControllerApiFactory = function (configuration?: Configuration, 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteIil(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
-            return IilControllerApiFp(configuration).deleteIil(id, options).then((request) => request(axios, basePath));
+        async deleteAction(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<void>> {
+            return ActionControllerApiFp(configuration).deleteAction(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -331,85 +331,85 @@ export const IilControllerApiFactory = function (configuration?: Configuration, 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getIil(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<IilDto>> {
-            return IilControllerApiFp(configuration).getIil(id, options).then((request) => request(axios, basePath));
+        async getAction(id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<ActionDto>> {
+            return ActionControllerApiFp(configuration).getAction(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getIils(options?: AxiosRequestConfig): Promise<AxiosResponse<Array<IilDto>>> {
-            return IilControllerApiFp(configuration).getIils(options).then((request) => request(axios, basePath));
+        async getActions(options?: AxiosRequestConfig): Promise<AxiosResponse<Array<ActionDto>>> {
+            return ActionControllerApiFp(configuration).getActions(options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {IilDto} body 
+         * @param {ActionDto} body 
          * @param {string} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateIil(body: IilDto, id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<IilDto>> {
-            return IilControllerApiFp(configuration).updateIil(body, id, options).then((request) => request(axios, basePath));
+        async updateAction(body: ActionDto, id: string, options?: AxiosRequestConfig): Promise<AxiosResponse<ActionDto>> {
+            return ActionControllerApiFp(configuration).updateAction(body, id, options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * IilControllerApi - object-oriented interface
+ * ActionControllerApi - object-oriented interface
  * @export
- * @class IilControllerApi
+ * @class ActionControllerApi
  * @extends {BaseAPI}
  */
-export class IilControllerApi extends BaseAPI {
+export class ActionControllerApi extends BaseAPI {
     /**
      * 
-     * @param {IilDto} body 
+     * @param {ActionDto} body 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof IilControllerApi
+     * @memberof ActionControllerApi
      */
-    public async createIil(body: IilDto, options?: AxiosRequestConfig) : Promise<AxiosResponse<IilDto>> {
-        return IilControllerApiFp(this.configuration).createIil(body, options).then((request) => request(this.axios, this.basePath));
+    public async createAction(body: ActionDto, options?: AxiosRequestConfig) : Promise<AxiosResponse<ActionDto>> {
+        return ActionControllerApiFp(this.configuration).createAction(body, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof IilControllerApi
+     * @memberof ActionControllerApi
      */
-    public async deleteIil(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
-        return IilControllerApiFp(this.configuration).deleteIil(id, options).then((request) => request(this.axios, this.basePath));
+    public async deleteAction(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<void>> {
+        return ActionControllerApiFp(this.configuration).deleteAction(id, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof IilControllerApi
+     * @memberof ActionControllerApi
      */
-    public async getIil(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<IilDto>> {
-        return IilControllerApiFp(this.configuration).getIil(id, options).then((request) => request(this.axios, this.basePath));
+    public async getAction(id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<ActionDto>> {
+        return ActionControllerApiFp(this.configuration).getAction(id, options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof IilControllerApi
+     * @memberof ActionControllerApi
      */
-    public async getIils(options?: AxiosRequestConfig) : Promise<AxiosResponse<Array<IilDto>>> {
-        return IilControllerApiFp(this.configuration).getIils(options).then((request) => request(this.axios, this.basePath));
+    public async getActions(options?: AxiosRequestConfig) : Promise<AxiosResponse<Array<ActionDto>>> {
+        return ActionControllerApiFp(this.configuration).getActions(options).then((request) => request(this.axios, this.basePath));
     }
     /**
      * 
-     * @param {IilDto} body 
+     * @param {ActionDto} body 
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof IilControllerApi
+     * @memberof ActionControllerApi
      */
-    public async updateIil(body: IilDto, id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<IilDto>> {
-        return IilControllerApiFp(this.configuration).updateIil(body, id, options).then((request) => request(this.axios, this.basePath));
+    public async updateAction(body: ActionDto, id: string, options?: AxiosRequestConfig) : Promise<AxiosResponse<ActionDto>> {
+        return ActionControllerApiFp(this.configuration).updateAction(body, id, options).then((request) => request(this.axios, this.basePath));
     }
 }
