@@ -19,3 +19,122 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+
+
+.iil-liner,
+.iil-liner * {
+  box-sizing: border-box;
+}
+.iil-liner {
+  background: var(--gray-0, #fbf7f7);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 1120px;
+  position: relative;
+}
+.status-activate-if {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: absolute;
+  left: 0px;
+  top: 5px;
+  overflow: visible;
+}
+.frame-3 {
+  flex-shrink: 0;
+  width: 702px;
+  height: 40px;
+  position: absolute;
+  left: 46px;
+  top: calc(50% - 20px);
+}
+.what {
+  background: var(--gray-1, #e3e0e0);
+  height: 40px;
+  position: absolute;
+  right: 0px;
+  left: 0px;
+  top: calc(50% - 20px);
+}
+.meeting-in-person {
+  color: #000000;
+  text-align: left;
+  font: 400 15px "JejuGothic", sans-serif;
+  position: absolute;
+  left: 5px;
+  top: calc(50% - 9px);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.finish-if {
+  background: var(--warn-1, #f8e5a5);
+  padding: 3px 6px 3px 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  width: 139px;
+  height: 40px;
+  position: absolute;
+  left: 758px;
+  top: calc(50% - 20px);
+  overflow: hidden;
+}
+._5-27-15 {
+  color: #000000;
+  text-align: left;
+  font: 400 15px "JejuGothic", sans-serif;
+  position: relative;
+  width: 127px;
+  height: 33px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.actor {
+  flex-shrink: 0;
+  width: 99px;
+  height: 40px;
+  position: absolute;
+  left: 905px;
+  top: calc(50% - 20px);
+}
+.finish-if2 {
+  background: var(--norm-0, #d8eae2);
+  width: 99px;
+  height: 40px;
+  position: absolute;
+  right: 0px;
+  top: calc(50% - 20px);
+}
+.ellipse-1 {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  left: 8px;
+  top: 5px;
+}
+.next {
+  flex-shrink: 0;
+  position: absolute;
+  right: 48px;
+  top: calc(50% - 20px);
+  overflow: visible;
+}
+.menu {
+  flex-shrink: 0;
+  position: absolute;
+  left: 1080px;
+  top: 5px;
+  overflow: visible;
+}

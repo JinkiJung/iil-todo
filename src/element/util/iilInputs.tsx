@@ -38,7 +38,7 @@ export const getInputForAttribute = (iil: IilDto,
     onIilItemChange,
     register,
     handleEnterKey,
-  );
+);
 
 export const getDictInput = (dictionary: string,
   onIilItemChange: Function,

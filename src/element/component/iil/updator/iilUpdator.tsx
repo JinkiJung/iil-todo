@@ -8,6 +8,7 @@ import { getStateSelectMenu } from "../../../util/iilStateSelect";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IilSelector } from "../../../util/iilSelector";
 import { IilCardList } from "../iilCardList";
+import { ConditionSelector } from "../../../util/ConditionSelector";
 
 export interface IIilUpdatorProp {
     iilList: IilDto[];
@@ -27,39 +28,42 @@ export const IilUpdator = ({
     onSubmit,
     onDelete,
     onReset,
-  }: IIilUpdatorProp) => {
+}: IIilUpdatorProp) => {
     const goalRef = useRef<any>(null);
-    const [ selectedGoal, setSelectedGoal ] = useState<string | undefined>(selectedIil?.goal);
+    const [selectedGoal, setSelectedGoal] = useState<string | undefined>(selectedIil?.goal);
     const {
-      register,
-      handleSubmit,
-      // Read the formState before render to subscribe the form state through the Proxy
-      formState: { errors, isDirty, isSubmitting, touchedFields, submitCount },
+        register,
+        handleSubmit,
+        // Read the formState before render to subscribe the form state through the Proxy
+        formState: { errors, isDirty, isSubmitting, touchedFields, submitCount },
     } = useForm({
-      defaultValues: selectedIil
+        defaultValues: selectedIil
     });
 
-    const onGoalChanged = (chosenIils: IilDto[]) => {
+    const onGoalChanged = (chosenIils: IilDto[]): boolean => {
         if (chosenIils.length) {
             if (selectedIil.id === chosenIils[0].id) {
                 alert("Goal and task should not be identical");
+                return false;
             } else {
-                onIilItemChange({id: selectedIil.id, goal: chosenIils[0].id});
+                onIilItemChange({ id: selectedIil.id, goal: chosenIils[0].id });
+                return true;
             }
         }
+        return false;
     }
-  
+
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
-        onSubmit(selectedIil);
-      }
+        if (e.key === "Enter") {
+            onSubmit(selectedIil);
+        }
     };
 
     const submit = (e: any) => {
         e.preventDefault();
-        onSubmit(selectedIil).then(async (res: any) => 
+        onSubmit(selectedIil).then(async (res: any) =>
             onReset())
-          .catch((error: any) => alert(error));
+            .catch((error: any) => alert(error));
     }
 
     useEffect(() => {
@@ -68,217 +72,217 @@ export const IilUpdator = ({
         } else {
             goalRef.current.clear();
         }
-    },[selectedIil]);
+    }, [selectedIil]);
 
     return (
         <>
-        <Row xs="2">
-            <Col xs="2">
+            <Row xs="2">
+                <Col xs="2">
 
-            </Col>
-            <Col xs="8">
-                <Card style={{ width: '100%' }}>
-                    <Card.Header>
-                        Goal
-                    </Card.Header>
-                    <Card.Body>
-                        <IilSelector iils={iilList} onIilChange={onGoalChanged} inputRef={goalRef} selectedIilId={selectedGoal} />
-                    </Card.Body>
-                </Card>
-            </Col>
-            <Col xs="2">
+                </Col>
+                <Col xs="8">
+                    <Card style={{ width: '100%' }}>
+                        <Card.Header>
+                            Goal
+                        </Card.Header>
+                        <Card.Body>
+                            <IilSelector iils={iilList.filter(e => e.id !== selectedIil.id)} onIilChange={onGoalChanged} inputRef={goalRef} selectedIilId={selectedGoal} />
+                        </Card.Body>
+                    </Card>
+                </Col>
+                <Col xs="2">
 
-            </Col>
-        </Row>
-        <Row xs="2">
-            <Col xs="2">
-                <Card style={{ width: '100%' }}>
-                    <Card.Header>
-                        Previous
-                    </Card.Header>
-                    <Card.Body>
-                        <div>
+                </Col>
+            </Row>
+            <Row xs="2">
+                <Col xs="2">
+                    <Card style={{ width: '100%' }}>
+                        <Card.Header>
+                            Previous
+                        </Card.Header>
+                        <Card.Body>
+                            <div>
 
-                        </div>
-                    </Card.Body>
-                </Card>
-            </Col>
-            <Col xs="8">
-                <Form onSubmit={submit}>
-                <Card style={{ width: '100%' }}>
-                    <Card.Body>
-                        <Row style={{padding: '10px'}}>
-                            <Col>
-                                <Card>
-                                    <Row xs="auto">
-                                        <Col xs={2} className="align-self-center">
-                                            Activate if
-                                        </Col>
-                                        <Col xs={10}>
-                                        { getInputForAttribute(selectedIil, 'activateIf', onIilItemChange, register, handleEnterKey) }
-                                        </Col>
-                                    </Row>
-                                    <Row xs="auto">
-                                        <Col xs={2} className="align-self-center">
-                                            Input
-                                        </Col>
-                                        <Col xs={10}>
-                                        { getInputForAttribute(selectedIil, 'input', onIilItemChange, register, handleEnterKey) }
-                                        </Col>
-                                    </Row>
-                                </Card>
-                            </Col>
-                        </Row>
-                        <Row style={{padding: '10px'}}>
-                            <Col>
-                                <Card>
-                                    <Row xs="auto">
-                                        <Col xs={2} className="align-self-center">
-                                            Who
-                                        </Col>
-                                        <Col xs={10}>
-                                        { getInputForAttribute(selectedIil, 'actor', onIilItemChange, register, handleEnterKey) }
-                                        </Col>
-                                    </Row>
-                                    <Row xs="auto">
-                                        <Col xs={2} className="align-self-center">
-                                            Doing What
-                                        </Col>
-                                        <Col xs={10}>
-                                        { getInputForAttribute(selectedIil, 'act', onIilItemChange, register, handleEnterKey) }
-                                        </Col>
-                                    </Row>
-                                </Card>
-                            </Col>
-                        </Row>
-                        <Row style={{padding: '10px'}}>
-                            <Col>
-                                <Card>
-                                    <Row xs="auto">
-                                        <Col xs={2} className="align-self-center">
-                                            Finish if
-                                        </Col>
-                                        <Col xs={10}>
-                                        { getInputForAttribute(selectedIil, 'finishIf', onIilItemChange, register, handleEnterKey) }
-                                        </Col>
-                                    </Row>
-                                    <Row xs="auto">
-                                        <Col xs={2} className="align-self-center">
-                                            Output
-                                        </Col>
-                                        <Col xs={10}>
-                                        { getInputForAttribute(selectedIil, 'output', onIilItemChange, register, handleEnterKey) }
-                                        </Col>
-                                    </Row>
-                                </Card>
-                            </Col>
-                        </Row>
-                        <Row>
-                        <Accordion>
-                                <Accordion.Item eventKey="0">
-                                    <Accordion.Header>Advanced</Accordion.Header>
-                                    <Accordion.Body>
-                                    <Card>
-                                        { selectedIil.id !== 'new' &&
+                            </div>
+                        </Card.Body>
+                    </Card>
+                </Col>
+                <Col xs="8">
+                    <Form onSubmit={submit}>
+                        <Card style={{ width: '100%' }}>
+                            <Card.Body>
+                                <Row style={{ padding: '10px' }}>
+                                    <Col>
+                                        <Card>
                                             <Row xs="auto">
                                                 <Col xs={2} className="align-self-center">
-                                                    ID
+                                                    Activate if
                                                 </Col>
                                                 <Col xs={10}>
-                                                    {selectedIil.id}
+                                                    {getInputForAttribute(selectedIil, 'activateIf', onIilItemChange, register, handleEnterKey)}
                                                 </Col>
                                             </Row>
-                                        }
-                                        { (selectedIil.id === 'new' || selectedIil.about) && 
                                             <Row xs="auto">
                                                 <Col xs={2} className="align-self-center">
-                                                    About
+                                                    Input
                                                 </Col>
                                                 <Col xs={10}>
-                                                {
-                                                    <ReactJson src={selectedIil.about!} name="about"
-                                                        onEdit={form => onIilItemChange({...selectedIil, about: form.updated_src})}
-                                                        onAdd={form => onIilItemChange({...selectedIil, about: form.updated_src})}
-                                                        onDelete={form => onIilItemChange({...selectedIil, about: form.updated_src})}/>
-                                                }
+                                                    {getInputForAttribute(selectedIil, 'input', onIilItemChange, register, handleEnterKey)}
                                                 </Col>
                                             </Row>
-                                        }
-                                        { (selectedIil.id === 'new' || selectedIil.help) && 
+                                        </Card>
+                                    </Col>
+                                </Row>
+                                <Row style={{ padding: '10px' }}>
+                                    <Col>
+                                        <Card>
                                             <Row xs="auto">
                                                 <Col xs={2} className="align-self-center">
-                                                    Help
+                                                    Who
                                                 </Col>
                                                 <Col xs={10}>
-                                                {
-                                                    <ReactJson src={selectedIil.help!} name="help"
-                                                        onEdit={form => onIilItemChange({...selectedIil, help: form.updated_src})}
-                                                        onAdd={form => onIilItemChange({...selectedIil, help: form.updated_src})}
-                                                        onDelete={form => onIilItemChange({...selectedIil, help: form.updated_src})}/>
-                                                }
+                                                    {getInputForAttribute(selectedIil, 'actor', onIilItemChange, register, handleEnterKey)}
                                                 </Col>
                                             </Row>
-                                        }
-                                        { selectedIil.id !== 'new' &&
                                             <Row xs="auto">
                                                 <Col xs={2} className="align-self-center">
-                                                    Maintainer
+                                                    Doing What
                                                 </Col>
                                                 <Col xs={10}>
-                                                    {selectedIil.id}
+                                                    {getInputForAttribute(selectedIil, 'act', onIilItemChange, register, handleEnterKey)}
                                                 </Col>
                                             </Row>
-                                        }
-                                        <Row xs="auto">
-                                            <Col xs={2} className="align-self-center">
-                                                Owner
-                                            </Col>
-                                            <Col xs={10}>
-                                            { getInputForAttribute(selectedIil, 'owner', onIilItemChange, register, handleEnterKey) }
-                                            </Col>
-                                        </Row>
-                                        <Row xs="auto">
-                                            <Col xs={2} className="align-self-center">
-                                                Status
-                                            </Col>
-                                            <Col xs={10}>
-                                            { getStateSelectMenu( selectedIil, onIilItemChange) }
-                                            </Col>
-                                        </Row>
-                                    </Card>
-                                    </Accordion.Body>
-                                </Accordion.Item>
-                            </Accordion>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <ButtonGroup className="d-flex">
-                                    <Button variant="primary" type="submit">Save</Button>
-                                </ButtonGroup>
-                            </Col>
-                            <Col>
-                                <ButtonGroup className="d-flex">
-                                    {selectedIil.id === 'new' ?
-                                        <Button variant="danger" onClick={() => onReset()}>Reset</Button>:
-                                        <Button variant="danger" onClick={() => onReset()}>Delete</Button>
-                                    }
-                                </ButtonGroup>
-                            </Col>
-                        </Row>
-                    </Card.Body>
-                </Card>
-                </Form>
-            </Col>
-            <Col xs="2">
-                <Card style={{ width: '100%' }}>
-                    <Card.Header>
-                        Next
-                    </Card.Header>
-                    <Card.Body>
-                    </Card.Body>
-                </Card>
-            </Col>
-        </Row>
+                                        </Card>
+                                    </Col>
+                                </Row>
+                                <Row style={{ padding: '10px' }}>
+                                    <Col>
+                                        <Card>
+                                            <Row xs="auto">
+                                                <Col xs={2} className="align-self-center">
+                                                    Finish if
+                                                </Col>
+                                                <Col xs={10}>
+                                                    {getInputForAttribute(selectedIil, 'finishIf', onIilItemChange, register, handleEnterKey)}
+                                                </Col>
+                                            </Row>
+                                            <Row xs="auto">
+                                                <Col xs={2} className="align-self-center">
+                                                    Output
+                                                </Col>
+                                                <Col xs={10}>
+                                                    {getInputForAttribute(selectedIil, 'output', onIilItemChange, register, handleEnterKey)}
+                                                </Col>
+                                            </Row>
+                                        </Card>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Accordion>
+                                        <Accordion.Item eventKey="0">
+                                            <Accordion.Header>Advanced</Accordion.Header>
+                                            <Accordion.Body>
+                                                <Card>
+                                                    {selectedIil.id !== 'new' &&
+                                                        <Row xs="auto">
+                                                            <Col xs={2} className="align-self-center">
+                                                                ID
+                                                            </Col>
+                                                            <Col xs={10}>
+                                                                {selectedIil.id}
+                                                            </Col>
+                                                        </Row>
+                                                    }
+                                                    {(selectedIil.id === 'new' || selectedIil.about) &&
+                                                        <Row xs="auto">
+                                                            <Col xs={2} className="align-self-center">
+                                                                About
+                                                            </Col>
+                                                            <Col xs={10}>
+                                                                {
+                                                                    <ReactJson src={selectedIil.about!} name="about"
+                                                                        onEdit={form => onIilItemChange({ ...selectedIil, about: form.updated_src })}
+                                                                        onAdd={form => onIilItemChange({ ...selectedIil, about: form.updated_src })}
+                                                                        onDelete={form => onIilItemChange({ ...selectedIil, about: form.updated_src })} />
+                                                                }
+                                                            </Col>
+                                                        </Row>
+                                                    }
+                                                    {(selectedIil.id === 'new' || selectedIil.help) &&
+                                                        <Row xs="auto">
+                                                            <Col xs={2} className="align-self-center">
+                                                                Help
+                                                            </Col>
+                                                            <Col xs={10}>
+                                                                {
+                                                                    <ReactJson src={selectedIil.help!} name="help"
+                                                                        onEdit={form => onIilItemChange({ ...selectedIil, help: form.updated_src })}
+                                                                        onAdd={form => onIilItemChange({ ...selectedIil, help: form.updated_src })}
+                                                                        onDelete={form => onIilItemChange({ ...selectedIil, help: form.updated_src })} />
+                                                                }
+                                                            </Col>
+                                                        </Row>
+                                                    }
+                                                    {selectedIil.id !== 'new' &&
+                                                        <Row xs="auto">
+                                                            <Col xs={2} className="align-self-center">
+                                                                Maintainer
+                                                            </Col>
+                                                            <Col xs={10}>
+                                                                {selectedIil.id}
+                                                            </Col>
+                                                        </Row>
+                                                    }
+                                                    <Row xs="auto">
+                                                        <Col xs={2} className="align-self-center">
+                                                            Owner
+                                                        </Col>
+                                                        <Col xs={10}>
+                                                            {getInputForAttribute(selectedIil, 'owner', onIilItemChange, register, handleEnterKey)}
+                                                        </Col>
+                                                    </Row>
+                                                    <Row xs="auto">
+                                                        <Col xs={2} className="align-self-center">
+                                                            Status
+                                                        </Col>
+                                                        <Col xs={10}>
+                                                            {getStateSelectMenu(selectedIil, onIilItemChange)}
+                                                        </Col>
+                                                    </Row>
+                                                </Card>
+                                            </Accordion.Body>
+                                        </Accordion.Item>
+                                    </Accordion>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <ButtonGroup className="d-flex">
+                                            <Button variant="primary" type="submit">Save</Button>
+                                        </ButtonGroup>
+                                    </Col>
+                                    <Col>
+                                        <ButtonGroup className="d-flex">
+                                            {selectedIil.id === 'new' ?
+                                                <Button variant="danger" onClick={() => onReset()}>Reset</Button> :
+                                                <Button variant="danger" onClick={() => onReset()}>Delete</Button>
+                                            }
+                                        </ButtonGroup>
+                                    </Col>
+                                </Row>
+                            </Card.Body>
+                        </Card>
+                    </Form>
+                </Col>
+                <Col xs="2">
+                    <Card style={{ width: '100%' }}>
+                        <Card.Header>
+                            Next
+                        </Card.Header>
+                        <Card.Body>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
             {
                 selectedIil.id !== 'new' &&
                 <Row xs="2">
@@ -304,7 +308,7 @@ export const IilUpdator = ({
                     </Col>
                 </Row>
             }
-        
+
         </>
     );
-  }
+}
