@@ -8,7 +8,7 @@ import { getStateSelectMenu } from "../../../util/iilStateSelect";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IilSelector } from "../../../util/iilSelector";
 import { IilCardList } from "../iilCardList";
-import { ConditionSelector } from "../../../util/ConditionSelector";
+import { ConditionSelector } from "../../../util/conditionSelector";
 
 export interface IIilUpdatorProp {
     iilList: IilDto[];
@@ -20,7 +20,7 @@ export interface IIilUpdatorProp {
     onReset: (goalId?: string) => void;
 }
 
-export const IilUpdator = ({
+export const IilForm = ({
     iilList,
     selectedIil,
     onIilItemChange,
@@ -29,8 +29,9 @@ export const IilUpdator = ({
     onDelete,
     onReset,
 }: IIilUpdatorProp) => {
-    const goalRef = useRef<any>(null);
     const [selectedGoal, setSelectedGoal] = useState<string | undefined>(selectedIil?.goal);
+    const goalRef = useRef<any>(null);
+    const activateIfRef = useRef<any>(null);
     const {
         register,
         handleSubmit,
@@ -40,8 +41,8 @@ export const IilUpdator = ({
         defaultValues: selectedIil
     });
 
-    const onGoalChanged = (chosenIils: IilDto[]): boolean => {
-        if (chosenIils.length) {
+    const updateGoal = (chosenIils: IilDto[]): boolean => {
+        if (chosenIils.length > 0) {
             if (selectedIil.id === chosenIils[0].id) {
                 alert("Goal and task should not be identical");
                 return false;
@@ -53,6 +54,13 @@ export const IilUpdator = ({
         return false;
     }
 
+    // a function updates activateIf of iil
+    const updateActivateIf = (chosenIils: IilDto[]) => {
+        if (chosenIils.length > 0) {
+            onIilItemChange({ id: selectedIil.id, activateIf: chosenIils[0].activateIf });
+        }
+    }
+    
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             onSubmit(selectedIil);
@@ -86,7 +94,7 @@ export const IilUpdator = ({
                             Goal
                         </Card.Header>
                         <Card.Body>
-                            <IilSelector iils={iilList.filter(e => e.id !== selectedIil.id)} onIilChange={onGoalChanged} inputRef={goalRef} selectedIilId={selectedGoal} />
+                            <IilSelector iils={iilList.filter(e => e.id !== selectedIil.id)} onIilChange={updateGoal} inputRef={goalRef} givenIilId={selectedGoal} />
                         </Card.Body>
                     </Card>
                 </Col>
@@ -119,7 +127,7 @@ export const IilUpdator = ({
                                                     Activate if
                                                 </Col>
                                                 <Col xs={10}>
-                                                    {getInputForAttribute(selectedIil, 'activateIf', onIilItemChange, register, handleEnterKey)}
+                                                    <ConditionSelector onConditionChange={updateActivateIf} inputRef={activateIfRef} givenCondition={selectedIil.activateIf} />
                                                 </Col>
                                             </Row>
                                             <Row xs="auto">

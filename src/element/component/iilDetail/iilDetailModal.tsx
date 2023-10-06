@@ -1,8 +1,8 @@
-import { AxiosRequestConfig, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import React from "react";
 import { Modal } from "react-bootstrap";
-import { IilControllerApi, IilDto } from "../../../ill-repo-client";
-import { IilUpdator } from "../iil/updator/iilUpdator";
+import { IilDto } from "../../../ill-repo-client";
+import { IilForm } from "../iil/updator/iilForm";
 
 export interface IilDetailModalProp {
   show: boolean;
@@ -27,6 +27,7 @@ export const IilDetailModal = ({
   onDelete,
   onReset,
 }: IilDetailModalProp ) => {
+
     return (
       <Modal
         show={show}
@@ -38,7 +39,7 @@ export const IilDetailModal = ({
         <Modal.Header closeButton>
         </Modal.Header>
         <Modal.Body>
-            <IilUpdator iilList={iilList}
+            <IilForm iilList={iilList}
               selectedIil={ iilItem}
               onIilItemChange={onIilItemChange}
               ownerId={ownerId}
