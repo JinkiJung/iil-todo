@@ -5,21 +5,21 @@ import { IilDto } from "../../ill-repo-client";
 import { getIilText } from "./iilAbstractor";
 
 export interface IilSelectorProp{
-  iils: IilDto[];
+  iilList: IilDto[];
   onIilChange: ((chosenIils: any[]) => boolean);
   inputRef: React.MutableRefObject<null>;
-  givenIilId: string|undefined;
+  givenIil: IilDto | undefined;
 }
 
 export const IilSelector = (
-  {iils, onIilChange, inputRef, givenIilId}: IilSelectorProp
+  {iilList: iils, onIilChange, inputRef, givenIil}: IilSelectorProp
   ) => {
-  const [singleSelection, setSingleSelection] = useState<IilDto[]>(iils.filter(e => e.id === givenIilId));
+  const [singleSelection, setSingleSelection] = useState<IilDto[]>(givenIil ? [givenIil] : []);
   useEffect(() => {
-    if(singleSelection.length === 0 || singleSelection.filter(e => e.id === givenIilId).length === 0){
-      setSingleSelection(iils.filter(e => e.id === givenIilId));
+    if(givenIil){
+      setSingleSelection([givenIil]);
     }
-  },[givenIilId]);
+  },[givenIil]);
   
   // use Typeahead to select one element of the iils
   return (

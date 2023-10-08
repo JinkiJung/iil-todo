@@ -2,7 +2,7 @@ import { AxiosResponse } from "axios";
 import React from "react";
 import { Modal } from "react-bootstrap";
 import { IilDto } from "../../../ill-repo-client";
-import { IilForm } from "../iil/updator/iilForm";
+import { IilForm } from "../iil/iilForm";
 
 export interface IilDetailModalProp {
   show: boolean;

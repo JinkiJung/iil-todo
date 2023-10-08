@@ -1,30 +1,30 @@
-// ConditionSelector component that works like IilSelector but for conditions
+// ActionSelector component that works like IilSelector but for actions
 
 import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { AsyncTypeahead, Typeahead } from "react-bootstrap-typeahead";
-import { ConditionControllerApi, ConditionDto } from "../../ill-repo-client";
+import { ActionDto, ActionControllerApi } from "../../ill-repo-client";
 
-export interface ConditionSelectorProp {
-    onConditionChange: ((chosenConditions: any[]) => void);
+export interface ActionSelectorProp {
+    onActionChange: ((chosenActions: any[]) => void);
     inputRef: React.MutableRefObject<null>;
-    givenCondition: ConditionDto | undefined;
+    givenAction: ActionDto | undefined;
 }
 
-export const ConditionSelector = (
-    { onConditionChange, inputRef, givenCondition }: ConditionSelectorProp
+export const ActionSelector = (
+    { onActionChange, inputRef, givenAction }: ActionSelectorProp
 ) => {
-    const [conditions, setConditions] = useState<ConditionDto[]>([]);
+    const [actions, setActions] = useState<ActionDto[]>([]);
 
-    const [singleSelection, setSingleSelection] = useState<ConditionDto[]>(givenCondition ? [givenCondition] : []);
+    const [singleSelection, setSingleSelection] = useState<ActionDto[]>(givenAction ? [givenAction] : []);
     const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {
-        if (givenCondition) {
-            setSingleSelection([givenCondition]);
+        if (givenAction) {
+            setSingleSelection([givenAction]);
         }
-    }, [givenCondition]);
+    }, [givenAction]);
 
-    const conditionControllerApi = new ConditionControllerApi();
+    const actionControllerApi = new ActionControllerApi();
 
     // Bypass client-side filtering by returning `true`. Results are already
     // filtered by the search endpoint, so no need to do it again.
@@ -33,9 +33,9 @@ export const ConditionSelector = (
     const handleSearch = (query: string) => {
         setIsLoading(true);
 
-        conditionControllerApi.getConditions().then((resp) => {
+        actionControllerApi.getActions().then((resp) => {
             const { data } = resp;
-            setConditions(data);
+            setActions(data);
             setIsLoading(false);
         });
     };
@@ -51,12 +51,12 @@ export const ConditionSelector = (
                 ref={inputRef}
                 onSearch={handleSearch}
                 onChange={(selected) => {
-                    onConditionChange!(selected);
-                    setSingleSelection(selected as ConditionDto[]);
+                    onActionChange!(selected);
+                    setSingleSelection(selected as ActionDto[]);
                 }}
-                options={conditions}
-                placeholder="Search for a condition"
-                renderMenuItemChildren={(option: ConditionDto) => (
+                options={actions}
+                placeholder="Search for a action"
+                renderMenuItemChildren={(option: ActionDto) => (
                     <>
                         <span>{option.name}</span>
                     </>

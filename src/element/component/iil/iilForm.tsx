@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Accordion, Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { IilDto } from "../../../../ill-repo-client";
-import { getDictInput, getInputForAttribute } from "../../../util/iilInputs";
+import { IilDto } from "../../../ill-repo-client";
+import { getDictInput, getInputForAttribute } from "../../util/iilInputs";
 import ReactJson from 'react-json-view-2';
-import { getStateSelectMenu } from "../../../util/iilStateSelect";
-import { AxiosRequestConfig, AxiosResponse } from "axios";
-import { IilSelector } from "../../../util/iilSelector";
-import { IilCardList } from "../iilCardList";
-import { ConditionSelector } from "../../../util/conditionSelector";
+import { getStateSelectMenu } from "../../util/iilStateSelect";
+import { AxiosResponse } from "axios";
+import { IilSelector } from "../../util/iilSelector";
+import { IilCardList } from "./iilCardList";
+import { ConditionSelector } from "../../util/conditionSelector";
+import { ActionSelector } from "../../util/actionSelector";
 
 export interface IIilUpdatorProp {
     iilList: IilDto[];
@@ -29,9 +30,12 @@ export const IilForm = ({
     onDelete,
     onReset,
 }: IIilUpdatorProp) => {
-    const [selectedGoal, setSelectedGoal] = useState<string | undefined>(selectedIil?.goal);
     const goalRef = useRef<any>(null);
     const activateIfRef = useRef<any>(null);
+    const finishIfRef = useRef<any>(null);
+    const abortIfRef = useRef<any>(null);
+    const actRef = useRef<any>(null);
+
     const {
         register,
         handleSubmit,
@@ -60,7 +64,25 @@ export const IilForm = ({
             onIilItemChange({ id: selectedIil.id, activateIf: chosenIils[0].activateIf });
         }
     }
-    
+
+    const updateFinishIf = (chosenIils: IilDto[]) => {
+        if (chosenIils.length > 0) {
+            onIilItemChange({ id: selectedIil.id, endIf: chosenIils[0].finishIf });
+        }
+    }
+
+    const updateAbortIf = (chosenIils: IilDto[]) => {
+        if (chosenIils.length > 0) {
+            onIilItemChange({ id: selectedIil.id, abortIf: chosenIils[0].abortIf });
+        }
+    }
+
+    const updateAct = (chosenIils: IilDto[]) => {
+        if (chosenIils.length > 0) {
+            onIilItemChange({ id: selectedIil.id, act: chosenIils[0].act });
+        }
+    }
+
     const handleEnterKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             onSubmit(selectedIil);
@@ -75,8 +97,8 @@ export const IilForm = ({
     }
 
     useEffect(() => {
+        console.log(selectedIil.goal);
         if (selectedIil.goal) {
-            setSelectedGoal(selectedIil.goal);
         } else {
             goalRef.current.clear();
         }
@@ -94,7 +116,9 @@ export const IilForm = ({
                             Goal
                         </Card.Header>
                         <Card.Body>
-                            <IilSelector iils={iilList.filter(e => e.id !== selectedIil.id)} onIilChange={updateGoal} inputRef={goalRef} givenIilId={selectedGoal} />
+                            <IilSelector iilList={iilList.filter(e => e.id !== selectedIil.id)} onIilChange={updateGoal} inputRef={goalRef} givenIil={
+                                selectedIil.goal ? iilList.find(e => e.id === selectedIil.goal) : undefined
+                            } />
                         </Card.Body>
                     </Card>
                 </Col>
@@ -130,14 +154,6 @@ export const IilForm = ({
                                                     <ConditionSelector onConditionChange={updateActivateIf} inputRef={activateIfRef} givenCondition={selectedIil.activateIf} />
                                                 </Col>
                                             </Row>
-                                            <Row xs="auto">
-                                                <Col xs={2} className="align-self-center">
-                                                    Input
-                                                </Col>
-                                                <Col xs={10}>
-                                                    {getInputForAttribute(selectedIil, 'input', onIilItemChange, register, handleEnterKey)}
-                                                </Col>
-                                            </Row>
                                         </Card>
                                     </Col>
                                 </Row>
@@ -157,7 +173,7 @@ export const IilForm = ({
                                                     Doing What
                                                 </Col>
                                                 <Col xs={10}>
-                                                    {getInputForAttribute(selectedIil, 'act', onIilItemChange, register, handleEnterKey)}
+                                                    <ActionSelector onActionChange={updateAct} inputRef={actRef} givenAction={selectedIil.act} />
                                                 </Col>
                                             </Row>
                                         </Card>
@@ -171,15 +187,15 @@ export const IilForm = ({
                                                     Finish if
                                                 </Col>
                                                 <Col xs={10}>
-                                                    {getInputForAttribute(selectedIil, 'finishIf', onIilItemChange, register, handleEnterKey)}
+                                                    <ConditionSelector onConditionChange={updateFinishIf} inputRef={finishIfRef} givenCondition={selectedIil.finishIf} />
                                                 </Col>
                                             </Row>
                                             <Row xs="auto">
                                                 <Col xs={2} className="align-self-center">
-                                                    Output
+                                                    Abort if
                                                 </Col>
                                                 <Col xs={10}>
-                                                    {getInputForAttribute(selectedIil, 'output', onIilItemChange, register, handleEnterKey)}
+                                                    <ConditionSelector onConditionChange={updateAbortIf} inputRef={abortIfRef} givenCondition={selectedIil.abortIf} />
                                                 </Col>
                                             </Row>
                                         </Card>
@@ -241,6 +257,34 @@ export const IilForm = ({
                                                             </Col>
                                                         </Row>
                                                     }
+                                                    <Row xs="auto">
+                                                        <Col xs={2} className="align-self-center">
+                                                            Input
+                                                        </Col>
+                                                        <Col xs={10}>
+                                                                {
+                                                                    <ReactJson src={selectedIil.input!} name="input"
+                                                                        onEdit={form => onIilItemChange({ ...selectedIil, input: form.updated_src })}
+                                                                        onAdd={form => onIilItemChange({ ...selectedIil, input: form.updated_src })}
+                                                                        onDelete={form => onIilItemChange({ ...selectedIil, input: form.updated_src })} />
+                                                                }
+                                                            </Col>
+                                                    </Row>
+
+                                                    <Row xs="auto">
+                                                        <Col xs={2} className="align-self-center">
+                                                            Output
+                                                        </Col>
+                                                        <Col xs={10}>
+                                                                {
+                                                                    <ReactJson src={selectedIil.output!} name="output"
+                                                                        onEdit={form => onIilItemChange({ ...selectedIil, output: form.updated_src })}
+                                                                        onAdd={form => onIilItemChange({ ...selectedIil, output: form.updated_src })}
+                                                                        onDelete={form => onIilItemChange({ ...selectedIil, output: form.updated_src })} />
+                                                                }
+                                                            </Col>
+                                                    </Row>
+
                                                     <Row xs="auto">
                                                         <Col xs={2} className="align-self-center">
                                                             Owner
