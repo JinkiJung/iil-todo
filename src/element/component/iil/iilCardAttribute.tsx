@@ -1,6 +1,4 @@
-import React from "react"
-import { Badge } from "react-bootstrap"
-import { IilDto } from "../../../ill-repo-client"
+import React from "react";
 
 export interface IiilCardAttributeProp {
     value: string;

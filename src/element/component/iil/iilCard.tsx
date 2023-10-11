@@ -1,7 +1,6 @@
 import React, { MouseEventHandler } from "react";
-import { Badge, Col, Container, Row } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import { IilDto } from "../../../ill-repo-client";
-import { IilCardAttribute } from "./iilCardAttribute";
 
 export interface IiilSummaryProp {
     iil: IilDto;

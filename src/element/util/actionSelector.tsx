@@ -1,8 +1,8 @@
 // ActionSelector component that works like IilSelector but for actions
 
 import React, { useEffect, useState } from "react";
-import { Form } from "react-bootstrap";
-import { AsyncTypeahead, Typeahead } from "react-bootstrap-typeahead";
+import { Button, Form, InputGroup } from "react-bootstrap";
+import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import { ActionDto, ActionControllerApi } from "../../ill-repo-client";
 
 export interface ActionSelectorProp {
@@ -17,7 +17,7 @@ export const ActionSelector = (
     const [actions, setActions] = useState<ActionDto[]>([]);
 
     const [singleSelection, setSingleSelection] = useState<ActionDto[]>(givenAction ? [givenAction] : []);
-    const [isLoading, setIsLoading] = useState(false);
+
     useEffect(() => {
         if (givenAction) {
             setSingleSelection([givenAction]);
@@ -31,38 +31,44 @@ export const ActionSelector = (
     const filterBy = () => true;
 
     const handleSearch = (query: string) => {
-        setIsLoading(true);
-
         actionControllerApi.getActions().then((resp) => {
             const { data } = resp;
             setActions(data);
-            setIsLoading(false);
         });
     };
 
     return (
         <Form.Group>
-            <AsyncTypeahead
-                filterBy={filterBy}
-                id="async-example"
-                isLoading={isLoading}
-                labelKey="name"
-                minLength={3}
-                ref={inputRef}
-                onSearch={handleSearch}
-                onChange={(selected) => {
-                    onActionChange!(selected);
-                    setSingleSelection(selected as ActionDto[]);
-                }}
-                options={actions}
-                placeholder="Search for a action"
-                renderMenuItemChildren={(option: ActionDto) => (
-                    <>
-                        <span>{option.name}</span>
-                    </>
-                )}
-                selected={singleSelection}
-            />
+            <InputGroup>
+                <AsyncTypeahead
+                    filterBy={filterBy}
+                    id="async-example"
+                    labelKey="name"
+                    minLength={1}
+                    className="flex-grow-1"
+                    ref={inputRef}
+                    onSearch={handleSearch}
+                    onChange={(selected) => {
+                        onActionChange!(selected);
+                        setSingleSelection(selected as ActionDto[]);
+                    }}
+                    options={actions}
+                    placeholder="Search for a action"
+                    renderMenuItemChildren={(option: ActionDto) => (
+                        <>
+                            <span>{option.name}</span>
+                        </>
+                    )}
+                    selected={singleSelection}
+                />
+                <Button
+                    onClick={() => {
+                        console.log("Play again");
+                    }}
+                    variant="outline-secondary">
+                    +
+                </Button>
+            </InputGroup>
         </Form.Group>
     );
 }

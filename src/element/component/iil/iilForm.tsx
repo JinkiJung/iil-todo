@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import { AxiosResponse } from "axios";
+import React, { useEffect, useRef } from "react";
 import { Accordion, Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
-import { IilDto } from "../../../ill-repo-client";
-import { getDictInput, getInputForAttribute } from "../../util/iilInputs";
 import ReactJson from 'react-json-view-2';
-import { getStateSelectMenu } from "../../util/iilStateSelect";
-import { AxiosResponse } from "axios";
-import { IilSelector } from "../../util/iilSelector";
-import { IilCardList } from "./iilCardList";
-import { ConditionSelector } from "../../util/conditionSelector";
+import { IilDto } from "../../../ill-repo-client";
 import { ActionSelector } from "../../util/actionSelector";
+import { ConditionSelector } from "../../util/conditionSelector";
+import { getInputForAttribute } from "../../util/iilInputs";
+import { IilSelector } from "../../util/iilSelector";
+import { getStateSelectMenu } from "../../util/iilStateSelect";
+import { IilCardList } from "./iilCardList";
 
 export interface IIilUpdatorProp {
     iilList: IilDto[];
@@ -91,13 +91,15 @@ export const IilForm = ({
 
     const submit = (e: any) => {
         e.preventDefault();
+        console.log(selectedIil);
+        /*
         onSubmit(selectedIil).then(async (res: any) =>
             onReset())
             .catch((error: any) => alert(error));
+            */
     }
 
     useEffect(() => {
-        console.log(selectedIil.goal);
         if (selectedIil.goal) {
         } else {
             goalRef.current.clear();

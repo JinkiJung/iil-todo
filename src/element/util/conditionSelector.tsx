@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
-import { AsyncTypeahead, Typeahead } from "react-bootstrap-typeahead";
+import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import { ConditionControllerApi, ConditionDto, ConditionDtoTypeEnum } from "../../ill-repo-client";
 import * as Icon from 'react-bootstrap-icons';
 
@@ -19,7 +19,6 @@ export const ConditionSelector = (
     const [condition, setCondition] = useState<ConditionDto | undefined>(givenCondition);
 
     const [singleSelection, setSingleSelection] = useState<ConditionDto[]>(givenCondition ? [givenCondition] : []);
-    const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {
         if (givenCondition) {
             setSingleSelection([givenCondition]);
@@ -33,13 +32,11 @@ export const ConditionSelector = (
     const filterBy = () => true;
 
     const handleSearch = (query: string) => {
-        setIsLoading(true);
         // check the condition.type is one of a value in ConditionDtoTypeEnum
         if (condition?.type && Object.values(ConditionDtoTypeEnum).includes(condition.type)) {
             conditionControllerApi.getConditionsByType(condition.type).then((resp) => {
                 const { data } = resp;
                 setConditions(data);
-                setIsLoading(false);
             });
         }
     };
@@ -105,7 +102,6 @@ export const ConditionSelector = (
                 <AsyncTypeahead
                     filterBy={filterBy}
                     id="async-example"
-                    isLoading={isLoading}
                     labelKey="name"
                     className="flex-grow-1"
                     minLength={1}
@@ -124,6 +120,13 @@ export const ConditionSelector = (
                     )}
                     selected={singleSelection}
                 />
+                <Button
+                    onClick={() => {
+                        console.log("Play again");
+                    }}
+                    variant="outline-secondary">
+                    +
+                </Button>
             </InputGroup>
         </Form.Group>
     );

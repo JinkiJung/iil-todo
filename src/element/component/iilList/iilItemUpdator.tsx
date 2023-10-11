@@ -1,5 +1,5 @@
 import { Checkbox } from "@material-ui/core";
-import React, { MouseEventHandler, useContext, useEffect, useRef } from "react";
+import React, { MouseEventHandler, useContext, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { Col, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
@@ -9,7 +9,7 @@ import { OperationContext } from "../../../App";
 import { IOperationParam } from "../../model/operationParam";
 import { validateIil } from "../../util/iilValidator";
 import { ItemTypes } from "../../model/itemType";
-import { getButtonWithEmoji, renderDeleteButton } from "../../util/iilButtons";
+import { renderDeleteButton } from "../../util/iilButtons";
 import { getStateSelectMenu } from "../../util/iilStateSelect";
 import { IilCard } from "../iil/iilCard";
 
@@ -115,7 +115,8 @@ export const IilItemUpdator = ({
   const getSeperator = () => {
     return <hr className="dashed"></hr>;
   }
-
+  
+/*
 const getCheckBox = (iil: IilDto, onChangeCheckBox: Function) =>
 <Checkbox
   checked={iil.state === IilDtoStateEnum.FINISHED}
@@ -123,7 +124,7 @@ const getCheckBox = (iil: IilDto, onChangeCheckBox: Function) =>
   name={`${iil.id}==status==checkbox`}
   color="primary"
 />
-/*
+
 const getEmojiPopup = () => 
   <Popup
     onClose={() =>

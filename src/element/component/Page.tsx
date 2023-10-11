@@ -1,6 +1,6 @@
 import React, { MouseEventHandler, useEffect } from "react";
 import { useState } from "react";
-import { Button, ButtonGroup, Container, Modal } from "react-bootstrap";
+import { Button, ButtonGroup, Container } from "react-bootstrap";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { ConfirmProvider } from "../../hooksComponent/ConfirmContext";

@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from "react";
+import React from "react";
 import DeleteButton from "../../hooksComponent/DeleteButton";
 import { IOperationParam } from "../model/operationParam";
 import { FlowButton } from "./flowButton";

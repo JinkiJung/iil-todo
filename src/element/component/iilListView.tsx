@@ -1,12 +1,8 @@
-import React, { MouseEventHandler, ReactElement, useEffect, useState } from "react";
-import { getBrandNewIil } from "../model/iilManager";
+import React, { MouseEventHandler } from "react";
 import { PageContext } from "../../type/pageContext";
-import UseIilList from "../../hooksComponent/useIilList";
-import { isStatusFitToContext } from "../util/illFilterByContext";
 import { IilDto, IilDtoStateEnum } from "../../ill-repo-client";
 import { AxiosRequestConfig, AxiosResponse } from "axios";
 import { IilItemUpdator } from "./iilList/iilItemUpdator";
-import { IilDetailModal } from "./iilDetail/iilDetailModal";
 
 export interface IIilListViewProp {
   iilList: IilDto[];
@@ -32,15 +28,15 @@ export const IilListView = ({
   onModalShow,
   onLogOut,
 }: IIilListViewProp) => {
-  const [newIil, setNewIil] = useState<IilDto>(getBrandNewIil(ownerId, "", ownerId, "new"));
-  
+  /*
   const removeAllFocused = async (piilList: IilDto[]) => {
-    /*
+    
     return await callUpdateBatchAPI(url, ownerId, piilList)
         .then((res: any) => { oniilListChange([]); return res;})
         .catch((error) => alert(error));
-        */
+        
   }
+  */
 
   /*
   const scheduleUpdate = (updateFn: any) => {
@@ -79,7 +75,7 @@ export const IilListView = ({
         iilList.map((iil: IilDto, index) => 
         pageContext === PageContext.List ||
         (pageContext === PageContext.FocusedList &&
-        iil.state === IilDtoStateEnum.ACTIVE) ?
+        iil.state === IilDtoStateEnum.ACTIVATED) ?
           <IilItemUpdator key={index} iilItem={iil} 
             onIilListElemChange={onIilListElemChange}
             iilList={iilList}

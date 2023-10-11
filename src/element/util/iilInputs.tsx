@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Form } from "react-bootstrap";
 import { IilDto } from '../../ill-repo-client';
 import { getValuesFromInputElement } from "./elemToIil";

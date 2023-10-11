@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
 import 'reflect-metadata';
-import useKeycloak from './keycloak/useKeycloak';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Page } from './element/component/Page';
 
-const testURL = "http://localhost:12500/iil";
-const keycloakJsonFilePath = '../json/keycloak.json';
 export const OperationContext = React.createContext({});
 
 /*
+const testURL = "http://localhost:12500/iil";
+const keycloakJsonFilePath = '../json/keycloak.json';
 <OperationContext.Provider value={{backEndUrl: testURL, ownerId: userId}}>
         {
         keycloak ? 
