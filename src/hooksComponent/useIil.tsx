@@ -3,13 +3,16 @@ import { IilDto } from '../ill-repo-client';
 
 const UseIil = (initialItem: IilDto, validator?: Function) => {
     const [ iilItem, setIilItem ] = useState(initialItem);
-    const onIilItemUpdate = (item: IilDto) => {
-        if (item.id === iilItem.id){
-            if (item.goal) {
-                iilItem.goal = item.goal;
+    const onIilItemUpdate = (newItem: IilDto) => {
+        if (newItem.id === iilItem.id){
+            setIilItem({...iilItem, ...newItem});
+            /*
+            if (newItem.goal) {
+                iilItem.goal = newItem.goal;
             } else {
-                setIilItem({...iilItem, ...item});
+                setIilItem({...iilItem, ...newItem});
             }
+            */
         }
     };
     return { iilItem, setIilItem, onIilItemUpdate };

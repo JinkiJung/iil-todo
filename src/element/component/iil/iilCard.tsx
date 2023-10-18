@@ -1,6 +1,7 @@
 import React, { MouseEventHandler } from "react";
 import { Container } from "react-bootstrap";
 import { IilDto } from "../../../ill-repo-client";
+import { getIilText } from "../../util/iilAbstractor";
 
 export interface IiilSummaryProp {
     iil: IilDto;
@@ -29,7 +30,7 @@ export const IilCard = (
   </svg>
 
   <div className="act">
-    <div className="meeting-in-person">{iil.act!.name}</div>
+    <div className="meeting-in-person">{getIilText(iil)}</div>
   </div>
   <div className="finish-if">
     <div className="_5-27-15">5/27/15</div>

@@ -8,8 +8,8 @@ export interface IilDetailModalProp {
   show: boolean;
   onHide: () => void;
   iilItem: IilDto;
+  goalIil: IilDto | undefined;
   onIilItemChange: Function;
-  iilList: IilDto[];
   ownerId: string;
   onSubmit: (iil: IilDto) => Promise<AxiosResponse<IilDto> | undefined>;
   onDelete: (id: string) => Promise<AxiosResponse<void> | undefined>;
@@ -19,9 +19,9 @@ export interface IilDetailModalProp {
 export const IilDetailModal = ({
   show,
   onHide,
-  iilList,
   ownerId,
   iilItem,
+  goalIil,
   onIilItemChange,
   onSubmit,
   onDelete,
@@ -39,8 +39,9 @@ export const IilDetailModal = ({
         <Modal.Header closeButton>
         </Modal.Header>
         <Modal.Body>
-            <IilForm iilList={iilList}
+            <IilForm
               selectedIil={ iilItem}
+              goalIil={goalIil}
               onIilItemChange={onIilItemChange}
               ownerId={ownerId}
               onSubmit={onSubmit}

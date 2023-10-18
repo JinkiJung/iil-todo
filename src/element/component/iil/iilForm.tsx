@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { Accordion, Button, ButtonGroup, Card, Col, Form, Row } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import ReactJson from 'react-json-view-2';
-import { IilDto } from "../../../ill-repo-client";
+import { ActionDto, ConditionDto, IilDto } from "../../../ill-repo-client";
 import { ActionSelector } from "../../util/actionSelector";
 import { ConditionSelector } from "../../util/conditionSelector";
 import { getInputForAttribute } from "../../util/iilInputs";
@@ -12,8 +12,8 @@ import { getStateSelectMenu } from "../../util/iilStateSelect";
 import { IilCardList } from "./iilCardList";
 
 export interface IIilUpdatorProp {
-    iilList: IilDto[];
     selectedIil: IilDto;
+    goalIil: IilDto | undefined;
     onIilItemChange: Function;
     ownerId: string;
     onSubmit: (iil: IilDto) => Promise<AxiosResponse<IilDto> | undefined>;
@@ -22,10 +22,10 @@ export interface IIilUpdatorProp {
 }
 
 export const IilForm = ({
-    iilList,
     selectedIil,
     onIilItemChange,
     ownerId,
+    goalIil,
     onSubmit,
     onDelete,
     onReset,
@@ -59,27 +59,27 @@ export const IilForm = ({
     }
 
     // a function updates activateIf of iil
-    const updateActivateIf = (chosenIils: IilDto[]) => {
-        if (chosenIils.length > 0) {
-            onIilItemChange({ id: selectedIil.id, activateIf: chosenIils[0].activateIf });
+    const updateActivateIf = (chosenConditions: ConditionDto[]) => {
+        if (chosenConditions.length > 0) {
+            onIilItemChange({ id: selectedIil.id, activateIf: chosenConditions[0] });
         }
     }
 
-    const updateFinishIf = (chosenIils: IilDto[]) => {
-        if (chosenIils.length > 0) {
-            onIilItemChange({ id: selectedIil.id, endIf: chosenIils[0].finishIf });
+    const updateFinishIf = (chosenConditions: ConditionDto[]) => {
+        if (chosenConditions.length > 0) {
+            onIilItemChange({ id: selectedIil.id, finishIf: chosenConditions[0] });
         }
     }
 
-    const updateAbortIf = (chosenIils: IilDto[]) => {
-        if (chosenIils.length > 0) {
-            onIilItemChange({ id: selectedIil.id, abortIf: chosenIils[0].abortIf });
+    const updateAbortIf = (chosenConditions: ConditionDto[]) => {
+        if (chosenConditions.length > 0) {
+            onIilItemChange({ id: selectedIil.id, abortIf: chosenConditions[0] });
         }
     }
 
-    const updateAct = (chosenIils: IilDto[]) => {
-        if (chosenIils.length > 0) {
-            onIilItemChange({ id: selectedIil.id, act: chosenIils[0].act });
+    const updateAct = (chosenActions: ActionDto[]) => {
+        if (chosenActions.length > 0) {
+            onIilItemChange({ id: selectedIil.id, act: chosenActions[0] });
         }
     }
 
@@ -92,11 +92,9 @@ export const IilForm = ({
     const submit = (e: any) => {
         e.preventDefault();
         console.log(selectedIil);
-        /*
         onSubmit(selectedIil).then(async (res: any) =>
             onReset())
             .catch((error: any) => alert(error));
-            */
     }
 
     useEffect(() => {
@@ -118,9 +116,7 @@ export const IilForm = ({
                             Goal
                         </Card.Header>
                         <Card.Body>
-                            <IilSelector iilList={iilList.filter(e => e.id !== selectedIil.id)} onIilChange={updateGoal} inputRef={goalRef} givenIil={
-                                selectedIil.goal ? iilList.find(e => e.id === selectedIil.goal) : undefined
-                            } />
+                            <IilSelector onIilChange={updateGoal} inputRef={goalRef} givenIil={goalIil} />
                         </Card.Body>
                     </Card>
                 </Col>
@@ -349,11 +345,6 @@ export const IilForm = ({
                                 Tasks
                             </Card.Header>
                             <Card.Body>
-                                <IilCardList
-                                    iils={iilList.filter(iil => iil.goal === selectedIil.id)}
-                                    goalIil={selectedIil}
-                                    onAddTask={onReset}
-                                />
                             </Card.Body>
                         </Card>
                     </Col>

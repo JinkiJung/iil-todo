@@ -32,6 +32,10 @@ export const ConditionSelector = (
     const filterBy = () => true;
 
     const handleSearch = (query: string) => {
+        fetchConditions();
+    };
+
+    const fetchConditions = () => {
         // check the condition.type is one of a value in ConditionDtoTypeEnum
         if (condition?.type && Object.values(ConditionDtoTypeEnum).includes(condition.type)) {
             conditionControllerApi.getConditionsByType(condition.type).then((resp) => {
@@ -39,7 +43,7 @@ export const ConditionSelector = (
                 setConditions(data);
             });
         }
-    };
+    }
 
     // a function returns Icon and ConditionType value corresponding to given ConditionType
     // Icon.Clock for ConditionDtoTypeEnum.TIME
@@ -92,6 +96,7 @@ export const ConditionSelector = (
                                     variant="outline-secondary"
                                     onClick={() => {
                                         setCondition!({ condition, type: conditionType } as ConditionDto);
+                                        fetchConditions();
                                     }}
                                 >
                                     {getIconAndTypeString(conditionType)}

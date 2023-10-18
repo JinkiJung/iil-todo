@@ -94,9 +94,9 @@ export const Page = ({
                                     <IilDetailModal
                                         show={modalShow}
                                         onHide={() => setModalShow(false)}
+                                        goalIil={iilItem.goal ? iilList.filter(i => i.id === iilItem.goal).pop() : undefined}
                                         iilItem={iilItem}
                                         onIilItemChange={onIilItemUpdate}
-                                        iilList={iilList}
                                         ownerId={ownerId}
                                         onSubmit={onSubmit}
                                         onDelete={onDelete}
@@ -121,7 +121,7 @@ export const Page = ({
                                     <IilDetailModal
                                         show={modalShow}
                                         onHide={() => setModalShow(false)}
-                                        iilList={iilList}
+                                        goalIil={iilItem.goal ? iilList.filter(i => i.id === iilItem.goal).pop() : undefined}
                                         iilItem={iilItem}
                                         onIilItemChange={onIilItemUpdate}
                                         ownerId={ownerId}
